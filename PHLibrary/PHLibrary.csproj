@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.1</TargetFramework>
+    <Product>PHLibrary</Product>
+    <Description>common library for future usage, maybe for others .</Description>
+    <PackageId>PHLibrary</PackageId>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <PackageReleaseNotes>support for two demensions</PackageReleaseNotes>
+    <Version>1.0.4</Version>
+    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+    <Company>PHLibrary</Company>
+    <Authors>PHLibrary</Authors>
+    <PackageLicenseUrl>MIT</PackageLicenseUrl>
+    <FileVersion>1.0.4</FileVersion>
+    <AssemblyVersion>1.0.4</AssemblyVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Reflection" Version="4.3.0" />
+  </ItemGroup>
+
+</Project>

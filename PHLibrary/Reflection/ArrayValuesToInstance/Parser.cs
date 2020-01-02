@@ -22,19 +22,14 @@ namespace PHLibrary.Reflection.ArrayValuesToInstance
         {
             T t = new T();
             var tType = typeof(T);
-           
+
             foreach (var p in tType.GetTypeInfo().DeclaredProperties)
             {
-                int order;
-                try
-                {
-                    order = ((PropertyOrderAttribute)(p.GetCustomAttributes(false).First(x => x.GetType() == typeof(PropertyOrderAttribute)))).Order;
-                }
-                catch
-                {
-                    throw new OrderAttributeNotFound(p.Name, tType.FullName);
-                }
-                
+
+                if (!p.GetCustomAttributes(false).Any(x => x.GetType() == typeof(PropertyOrderAttribute))) { continue; }
+
+                int order = ((PropertyOrderAttribute)(p.GetCustomAttributes(false).First(x => x.GetType() == typeof(PropertyOrderAttribute)))).Order;
+
                 try
                 {
                     object value = null;
@@ -69,7 +64,7 @@ namespace PHLibrary.Reflection.ArrayValuesToInstance
             }
             return t;
         }
-        
+
         public IList<T> ParseList(ValueT[,] listValues)
         {
             var result = new List<T>();
@@ -82,16 +77,16 @@ namespace PHLibrary.Reflection.ArrayValuesToInstance
             }
             var topLength = listValues.GetLength(0);
             var secondDimLength = listValues.GetLength(1);
-            for (int i=startIndex;i< topLength; i++)
+            for (int i = startIndex; i < topLength; i++)
             {
                 ValueT[] valueTs = new ValueT[secondDimLength];
                 for (int j = 0; j < secondDimLength; j++)
                 {
                     valueTs[j] = listValues[i, j];
                 }
-              result.Add(Parse(valueTs));
+                result.Add(Parse(valueTs));
 
-                
+
             }
             return result;
         }

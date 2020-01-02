@@ -43,6 +43,18 @@ namespace PHLibrary.Reflection.ArrayValuesToInstance.Tests
             Assert.AreEqual(new DateTime(1988, 10, 11), persons[0].Birthday);
             Assert.AreEqual("Lincon2", persons[1].Name);
         }
+        [TestMethod()]
+        public void ParserOneHasNoOrderProperty()
+        {
+            var values = new string[,] { { "Lincon", "1988-10-11", "21", "13.2" }, { "Lincon2", "1988-10-11", "21", "13.2" } };
+            var convertor = new ArrayValuesToInstance.Parser<ClassMate2, string>();
+            var mater2 = convertor.ParseList(values);
+            Assert.AreEqual(2, mater2.Count);
+            Assert.AreEqual(null, mater2[0].Name);
+            Assert.AreEqual(21, mater2[0].Age);
+            Assert.AreEqual(new DateTime(1988, 10, 11), mater2[0].Birthday);
+            Assert.AreEqual(null, mater2[1].Name);
+        }
 
 
     }
@@ -65,6 +77,20 @@ namespace PHLibrary.Reflection.ArrayValuesToInstance.Tests
     {
       
         [PropertyOrder(0)]
+        public string Name { get; set; }
+        [PropertyOrder(2)]
+        public int Age { get; set; }
+        [PropertyOrder(1)]
+        public DateTime Birthday { get; set; }
+        [PropertyOrder(3)]
+        public decimal Weight { get; set; }
+
+    }
+    [DataStartArrayIndex(0)]
+    public class ClassMate2
+    {
+
+       
         public string Name { get; set; }
         [PropertyOrder(2)]
         public int Age { get; set; }

@@ -20,20 +20,32 @@ namespace PHLibrary.Reflection.ArrayValuesToInstance
         }
         public T Parse(IList<ValueT> values)
         {
-            T t = new T();
             var tType = typeof(T);
+            var properties= tType.GetTypeInfo().DeclaredProperties;
+            if(properties.Count()!=values.Count)
+            { 
+                throw new  ValuesCountNotMatch (tType, properties.Count(), values.Count);
+                }
+            T t = new T();
+            int propertyOrder=0;
 
             foreach (var p in tType.GetTypeInfo().DeclaredProperties)
             {
+                int valueOrder=propertyOrder;
+                if ( p.GetCustomAttributes(false).Any(x => x.GetType() == typeof(PropertyOrderAttribute))) { 
 
-                if (!p.GetCustomAttributes(false).Any(x => x.GetType() == typeof(PropertyOrderAttribute))) { continue; }
-
-                int order = ((PropertyOrderAttribute)(p.GetCustomAttributes(false).First(x => x.GetType() == typeof(PropertyOrderAttribute)))).Order;
-
-                try
-                {
+                  valueOrder = ((PropertyOrderAttribute)(p.GetCustomAttributes(false).First(x => x.GetType() == typeof(PropertyOrderAttribute)))).Order;
+                }
+                
                     object value = null;
-                    ValueT currentValue = values[order];
+                     
+                    ValueT currentValue =default;
+                    try
+                    { currentValue= values[valueOrder];
+                    }
+                    catch(ArgumentOutOfRangeException  ) {
+                        throw new OrderOutOfValuesRange(p.Name,valueOrder,nameof(tType));
+                        }
                     switch (p.PropertyType.Name)
                     {
                         case "String":
@@ -54,12 +66,15 @@ namespace PHLibrary.Reflection.ArrayValuesToInstance
                         default: throw new TypeConverterNotImplemented(p.Name, p.PropertyType);
 
                     }
+                try
+                {
                     //p.PropertyType
                     p.SetValue(t, value);
+                    propertyOrder++;
                 }
                 catch (Exception ex)
                 {
-                    throw new ValueSettingException(p.Name, order, values: string.Join("_", values), ex);
+                    throw new ValueSettingException(p.Name, valueOrder, values: string.Join("_", values), ex);
                 }
             }
             return t;

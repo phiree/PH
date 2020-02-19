@@ -47,16 +47,33 @@ namespace PHLibrary.Reflection.ArrayValuesToInstance.Tests
         public void ParserOneHasNoOrderProperty()
         {
             var values = new string[,] { { "Lincon", "1988-10-11", "21", "13.2" }, { "Lincon2", "1988-10-11", "21", "13.2" } };
-            var convertor = new ArrayValuesToInstance.Parser<ClassMate2, string>();
+            var convertor = new ArrayValuesToInstance.Parser<ClassMateNoProperty, string>();
             var mater2 = convertor.ParseList(values);
             Assert.AreEqual(2, mater2.Count);
-            Assert.AreEqual(null, mater2[0].Name);
+            Assert.AreEqual("Lincon", mater2[0].Name);
             Assert.AreEqual(21, mater2[0].Age);
             Assert.AreEqual(new DateTime(1988, 10, 11), mater2[0].Birthday);
-            Assert.AreEqual(null, mater2[1].Name);
+            Assert.AreEqual("Lincon2", mater2[1].Name);
         }
+       
+        [TestMethod()]
+        public void PropertiesCountNotMatchValues()
+        {
+            var values = new string[,] { { "Lincon", "1988-10-11", "21"  }, { "Lincon2", "1988-10-11", "21"   } };
+            var convertor = new ArrayValuesToInstance.Parser<ClassMateNoProperty, string>();
+            Assert.ThrowsException<Exceptions.ValuesCountNotMatch>(()=>convertor.ParseList(values));
+            
+        }
+        [TestMethod()]
+        public void OrderOutOfRange()
+        {
+            var values = new string[,] { { "Lincon", "1988-10-11", "21" }, { "Lincon2", "1988-10-11", "21" } };
+            var convertor = new ArrayValuesToInstance.Parser<ClassMate4, string>();
+            Assert.ThrowsException<Exceptions.OrderOutOfValuesRange>(() => convertor.ParseList(values)
+            ,"whatis ");
+            
 
-
+        }
     }
 
     public class Person
@@ -87,17 +104,38 @@ namespace PHLibrary.Reflection.ArrayValuesToInstance.Tests
 
     }
     [DataStartArrayIndex(0)]
-    public class ClassMate2
+    public class ClassMateNoProperty
     {
 
-       
         public string Name { get; set; }
-        [PropertyOrder(2)]
-        public int Age { get; set; }
-        [PropertyOrder(1)]
         public DateTime Birthday { get; set; }
-        [PropertyOrder(3)]
+        public int Age { get; set; }
+       
+     
+        
         public decimal Weight { get; set; }
+
+    }
+    public class ClassMate3
+    {
+
+        public string Name { get; set; }
+        public DateTime Birthday { get; set; }
+        public int Age { get; set; }
+
+
+
+        public decimal Weight { get; set; }
+
+    }
+    public class ClassMate4 { 
+
+        [PropertyOrder(4)]
+        public string Name { get; set; }
+        public DateTime Birthday { get; set; }
+        public int Age { get; set; }
+
+ 
 
     }
 }

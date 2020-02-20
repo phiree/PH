@@ -37,6 +37,19 @@ namespace PHLibrary.Reflection.ArrayValuesToInstance.Tests
             Assert.AreEqual("Lincon2", classmates[1].Name);
         }
         [TestMethod()]
+        public void FirstArrayPropertyOrderNotMatchPropertyOrder()
+        {
+            var values = new string[,] { { "Age", "Name", "Birthday", "Weight" }, { "21", "Lincon", "1988-10-11",  "13.2" }, { "22", "Lincon2", "1988-10-12",  "133" } };
+            var convertor = new ArrayValuesToInstance.Parser<ClassMate, string>
+                (new FirstArrayDeterminer<ClassMate>(new string[] { "Age", "Name", "Birthday", "Weight" }));
+            var classmates = convertor.ParseList(values);
+            Assert.AreEqual(2, classmates.Count);
+            Assert.AreEqual("Lincon", classmates[0].Name);
+            Assert.AreEqual(21, classmates[0].Age);
+            Assert.AreEqual(new DateTime(1988, 10, 11), classmates[0].Birthday);
+            Assert.AreEqual("Lincon2", classmates[1].Name);
+        }
+        [TestMethod()]
         public void ParserManyItemTest()
         {
             var values = new string[,] { { "Lincon", "1988-10-11", "21", "13.2" }, { "Lincon2", "1988-10-11", "21", "13.2" } };
@@ -112,7 +125,19 @@ namespace PHLibrary.Reflection.ArrayValuesToInstance.Tests
         public decimal Weight { get; set; }
 
     }
-   
+    public class ClassMate2
+    {
+
+        
+        public string Name { get; set; }
+      
+        public int Age { get; set; }
+       
+        public DateTime Birthday { get; set; }
+        
+        public decimal Weight { get; set; }
+
+    }
     public class ClassMateNoProperty
     {
 

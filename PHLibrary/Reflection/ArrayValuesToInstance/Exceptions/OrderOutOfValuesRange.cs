@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 
 namespace PHLibrary.Reflection.ArrayValuesToInstance.Exceptions
@@ -7,19 +8,17 @@ namespace PHLibrary.Reflection.ArrayValuesToInstance.Exceptions
     /// <summary>
     /// orderno out of values range.
     /// </summary>
-    public class OrderOutOfValuesRange : Exception
+    public class OrderOutOfValuesRange : ArrayValuesPropertyBaseException
     {
-        public OrderOutOfValuesRange(string propertyName,int propertyOrder, string typeName)
+        public OrderOutOfValuesRange(PropertyInfo property, Type type, int propertyOrder) : base(property, type)
         {
-            PropertyName = propertyName;
-            TypeName = typeName;
-            this.PropertyName=propertyName;
+            
+            PropertyOrder = propertyOrder;
+            
         }
-
-        public string PropertyName { get; protected set; }
-        public string TypeName { get; protected set; }
+ 
         public int PropertyOrder { get;protected set;}
-        public override string Message => $"orderno out of values range.type:{TypeName}.{PropertyName}.propertyOrder:{PropertyOrder}";
+        public override string Message => $"orderno [{ PropertyOrder}] out of values range.{base.Message}";
 
 
     }

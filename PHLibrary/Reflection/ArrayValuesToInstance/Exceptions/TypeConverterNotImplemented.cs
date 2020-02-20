@@ -1,23 +1,18 @@
 ﻿using PHLibrary.Base;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 
 namespace PHLibrary.Reflection.ArrayValuesToInstance.Exceptions
 {
-    public class TypeConverterNotImplemented : PHBaseException
+    public class TypeConverterNotImplemented : ArrayValuesPropertyBaseException
     {
-        public TypeConverterNotImplemented(string propertyName, Type propertyType)
+        public TypeConverterNotImplemented(Type  type,PropertyInfo property):base(property,type)
         {
-            PropertyName = propertyName;
-            PropertyType = propertyType;
-
+           
         }
-
-        public string PropertyName { get; set; }
-        public Type PropertyType { get; set; }
-
-        public override string Message => $"property[{PropertyName}]'s type[{PropertyType}]  doesn't implemented yet. please ask owner to add converter on this type in ArrayValuesToInstance.cs.{base.Message}";
+        public override string Message => $"property's type[{Property.DeclaringType.Name}]  doesn't implemented yet. please ask owner to add converter on this type in ArrayValuesToInstance.cs.{base.Message}";
 
     }
 }

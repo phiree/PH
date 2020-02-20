@@ -17,6 +17,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Reflection\ArrayValuesToInstance\Attributes\DataStartArrayIndexAttribute.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.Reflection" Version="4.3.0" />
   </ItemGroup>
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PHLibrary.Reflection.ArrayValuesToInstance;
+using PHLibrary.Reflection.ArrayValuesToInstance.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,7 +14,10 @@ namespace PHLibrary.Reflection.ArrayValuesToInstance.Tests
         public void ParserOneItemTest()
         {
             string[] values = new string[] { "Lincon", "1988-10-11", "21", "13.2" };
-            var convertor = new ArrayValuesToInstance.Parser<Person, string>();
+
+            var convertor = new ArrayValuesToInstance.Parser<Person, string>(
+                new PropertyAttributeDeterminer<Person>(values)
+                );;
             Person p = convertor.Parse(values);
             Assert.AreEqual("Lincon", p.Name);
             Assert.AreEqual(21, p.Age);
@@ -23,7 +27,8 @@ namespace PHLibrary.Reflection.ArrayValuesToInstance.Tests
         public void ParserWithArrayIndexAttributeOneItemTest()
         {
             var values = new string[,] { { "Name","Birthday","Age","Weight"}, { "Lincon", "1988-10-11", "21", "13.2" }, { "Lincon2", "1988-10-11", "21", "13.2" } };
-            var convertor = new ArrayValuesToInstance.Parser<ClassMate, string>();
+            var convertor = new ArrayValuesToInstance.Parser<ClassMate, string>
+                (new FirstArrayDeterminer<ClassMate>(new string[]{   "Name", "Birthday", "Age", "Weight"   }));
             var classmates = convertor.ParseList(values);
             Assert.AreEqual(2, classmates.Count);
             Assert.AreEqual("Lincon", classmates[0].Name);
@@ -35,7 +40,7 @@ namespace PHLibrary.Reflection.ArrayValuesToInstance.Tests
         public void ParserManyItemTest()
         {
             var values = new string[,] { { "Lincon", "1988-10-11", "21", "13.2" }, { "Lincon2", "1988-10-11", "21", "13.2" } };
-            var convertor = new ArrayValuesToInstance.Parser<Person, string>();
+            var convertor = new ArrayValuesToInstance.Parser<Person, string>(new PropertyAttributeDeterminer<Person>(new string[]{   "Lincon", "1988-10-11", "21", "13.2"  }));
             var persons = convertor.ParseList(values);
             Assert.AreEqual(2, persons.Count);
             Assert.AreEqual("Lincon", persons[0].Name);
@@ -47,7 +52,7 @@ namespace PHLibrary.Reflection.ArrayValuesToInstance.Tests
         public void ParserOneHasNoOrderProperty()
         {
             var values = new string[,] { { "Lincon", "1988-10-11", "21", "13.2" }, { "Lincon2", "1988-10-11", "21", "13.2" } };
-            var convertor = new ArrayValuesToInstance.Parser<ClassMateNoProperty, string>();
+            var convertor = new ArrayValuesToInstance.Parser<ClassMateNoProperty, string>(new PropertyAttributeDeterminer<ClassMateNoProperty>(new string[] { "Lincon", "1988-10-11", "21", "13.2" }));
             var mater2 = convertor.ParseList(values);
             Assert.AreEqual(2, mater2.Count);
             Assert.AreEqual("Lincon", mater2[0].Name);
@@ -57,20 +62,24 @@ namespace PHLibrary.Reflection.ArrayValuesToInstance.Tests
         }
        
         [TestMethod()]
+        [ExpectedException(typeof(ValuesCountNotMatch))]
         public void PropertiesCountNotMatchValues()
         {
             var values = new string[,] { { "Lincon", "1988-10-11", "21"  }, { "Lincon2", "1988-10-11", "21"   } };
-            var convertor = new ArrayValuesToInstance.Parser<ClassMateNoProperty, string>();
-            Assert.ThrowsException<Exceptions.ValuesCountNotMatch>(()=>convertor.ParseList(values));
+            var convertor = new ArrayValuesToInstance.Parser<ClassMateNoProperty, string>
+                (new PropertyAttributeDeterminer<ClassMateNoProperty>(new string[] { "Lincon", "1988-10-11", "21" }));
+          
             
         }
         [TestMethod()]
+        [ExpectedException(typeof(OrderOutOfValuesRange))]
         public void OrderOutOfRange()
         {
             var values = new string[,] { { "Lincon", "1988-10-11", "21" }, { "Lincon2", "1988-10-11", "21" } };
-            var convertor = new ArrayValuesToInstance.Parser<ClassMate4, string>();
-            Assert.ThrowsException<Exceptions.OrderOutOfValuesRange>(() => convertor.ParseList(values)
-            ,"whatis ");
+            var convertor = new ArrayValuesToInstance.Parser<ClassMate4, string>( new PropertyAttributeDeterminer<ClassMate4>(
+                new string []{ "Lincon", "1988-10-11", "21" }));
+             convertor.ParseList(values);
+            
             
 
         }
@@ -89,7 +98,7 @@ namespace PHLibrary.Reflection.ArrayValuesToInstance.Tests
         public decimal Weight { get; set; }
 
     }
-    [DataStartArrayIndex(1)]
+    
     public class ClassMate
     {
       
@@ -103,16 +112,13 @@ namespace PHLibrary.Reflection.ArrayValuesToInstance.Tests
         public decimal Weight { get; set; }
 
     }
-    [DataStartArrayIndex(0)]
+   
     public class ClassMateNoProperty
     {
 
         public string Name { get; set; }
         public DateTime Birthday { get; set; }
         public int Age { get; set; }
-       
-     
-        
         public decimal Weight { get; set; }
 
     }
@@ -132,7 +138,9 @@ namespace PHLibrary.Reflection.ArrayValuesToInstance.Tests
 
         [PropertyOrder(4)]
         public string Name { get; set; }
+        [PropertyOrder(1)]
         public DateTime Birthday { get; set; }
+        [PropertyOrder(3)]
         public int Age { get; set; }
 
  

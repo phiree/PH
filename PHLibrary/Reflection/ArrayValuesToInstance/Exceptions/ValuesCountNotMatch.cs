@@ -1,25 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
-
+using System.Linq;
 namespace PHLibrary.Reflection.ArrayValuesToInstance.Exceptions
 {
     /// <summary>
     /// values' count not equal to properties'
     /// </summary>
-    public class ValuesCountNotMatch  : Exception
+    public class ValuesCountNotMatch  :Exception
     {
-        public ValuesCountNotMatch(Type type, int propertiesCount, int valuesCount)
+        
+        public ValuesCountNotMatch(string   type,   int valuesCount) 
         {
-            Type = type;
-            PropertiesCount = propertiesCount;
+             
             ValuesCount = valuesCount;
+            Type=type;
         }
 
-        public Type Type { get; protected set; }
-        public int PropertiesCount { get; protected set; }
+       
+       public string Type { get;protected set;}
         public int ValuesCount { get; protected set; }
-        public override string Message => $"values' count not equal to properties'. type:[{nameof(Type)}].propertiesCount:[{PropertiesCount}].valuesCount:[{ValuesCount}].";
+        public override string Message => $"values' count [{ValuesCount}] not equal to properties'[ {Type}]. {base.Message}";
 
 
     }

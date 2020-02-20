@@ -2,15 +2,16 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Reflection;
 
 namespace PHLibrary.Reflection.ArrayValuesToInstance.Exceptions
 {
 
-    public class ValueSettingException : PHBaseException
+    public class ValueSettingException : ArrayValuesPropertyBaseException
     {
-        public ValueSettingException(string propertyName, int order, string values, Exception baseException) : base(baseException)
+        public ValueSettingException(Type  type,PropertyInfo property, int order, string values ) : base(property,type)
         {
-            PropertyName = propertyName;
+            
             Order = order;
             Values = values;
         }
@@ -20,6 +21,6 @@ namespace PHLibrary.Reflection.ArrayValuesToInstance.Exceptions
         public string Values { get; set; }
 
         public override string Message
-            => $"Error occurred when setting value.property:{PropertyName},order:{Order}，values:{string.Join("_", Values)}.Inner message:{BaseException.ToString()}";
+            => $"Error occurred when setting value on property:[{PropertyName}] in order:[{Order}]. Values:{string.Join("_", Values)}.{base.Message}";
     }
 }

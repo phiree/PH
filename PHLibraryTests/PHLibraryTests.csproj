@@ -17,4 +17,10 @@
     <ProjectReference Include="..\PHLibrary\PHLibrary.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Reflection\ArrayValuesToInstance\Files\ApiResult1.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

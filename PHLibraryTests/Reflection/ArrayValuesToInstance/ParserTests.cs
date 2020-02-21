@@ -106,11 +106,61 @@ namespace PHLibrary.Reflection.ArrayValuesToInstance.Tests
                 new string[] { "Lincon", "231", "1988-10-11", "21" }));
             convertor.ParseList(values);
 
-
+        }
+        [TestMethod]
+        public void Realdata1Test()
+        {
+            var values =
+                Newtonsoft.Json.JsonConvert.DeserializeObject<string[,]>(
+                System.IO.File.ReadAllText(
+                    Environment.CurrentDirectory
+                    + @"\Reflection\ArrayValuesToInstance\Files\ApiResult1.txt")
+                );
+            
+            var convertor = new ArrayValuesToInstance.Parser<IndexGSMLTE_PS_GEN, string>(new FirstArrayDeterminer<IndexGSMLTE_PS_GEN>(
+                new string[] { "TERMINAL_CODE", "UL_2G_TCP_PACKET", "CELL_ID", "TCP_UL_DATE", "DL_2G_TCP_PACKET", "TCP_DL_DATE", "FAILURE_CAUSE", "UL_2G_TCP_RE_PACKETS", "TCPDL_DATA", "TCP_DELAY", "SAEGW", "UL_2G_TCP_DISORDER_PACKETS", "TCP_CONNECT_REQ", "DL_2G_TCP_DISORDER_PACKETS", "TCP_CONNECT_SUC", "DL_2G_TCP_RE_PACKETS", "APN" }));
+           var result= convertor.ParseList(values);
+            Console.WriteLine(result.Count);
 
         }
     }
+    public class IndexGSMLTE_PS_GEN
+    {
 
+        public string TERMINAL_CODE { get; set; }
+        public string CELL_ID { get; set; }
+        public string APN { get; set; }
+        public string SAEGW { get; set; }
+        public string FAILURE_CAUSE { get; set; }
+        public string UL_2G_TCP_PACKET { get; set; }
+        public string DL_2G_TCP_PACKET { get; set; }
+        public string UL_2G_TCP_DISORDER_PACKETS { get; set; }
+        public string DL_2G_TCP_DISORDER_PACKETS { get; set; }
+        public string UL_2G_TCP_RE_PACKETS { get; set; }
+        public string DL_2G_TCP_RE_PACKETS { get; set; }
+        public string TCPDL_DATA { get; set; }
+        public string TCP_DELAY { get; set; }
+        public int TCP_CONNECT_REQ { get; set; }
+        public int TCP_CONNECT_SUC { get; set; }
+        public string TCP_UL_DATE { get; set; }
+        public string TCP_DL_DATE { get; set; }
+
+    }
+    public class UserActivity
+    {
+        public string IMSI { get; set; }
+        public string IMEI { get; set; }
+        public string MSISDN { get; set; }
+        public string CELL_ID { get; set; }
+
+        public string INDUSTRY_TYPE { get; set; }
+        public string APN_NAME { get; set; }
+        public string APN { get; set; }
+        public string CellIp { get; set; }
+        public string starttime { get; set; }
+        public string DeviceName { get; set; }
+        public string ServerIp { get; set; }
+    }
     public class Person
     {
         public Person() { }

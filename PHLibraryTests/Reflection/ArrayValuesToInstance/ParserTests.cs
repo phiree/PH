@@ -65,7 +65,8 @@ namespace PHLibrary.Reflection.ArrayValuesToInstance.Tests
         public void ParserOneHasNoOrderProperty()
         {
             var values = new string[,] { { "Lincon", "1988-10-11", "21", "13.2" }, { "Lincon2", "1988-10-11", "21", "13.2" } };
-            var convertor = new ArrayValuesToInstance.Parser<ClassMateNoProperty, string>(new PropertyAttributeDeterminer<ClassMateNoProperty>(new string[] { "Lincon", "1988-10-11", "21", "13.2" }));
+            var convertor = new ArrayValuesToInstance.Parser<ClassMateNoProperty, string>(
+                new PropertyAttributeDeterminer<ClassMateNoProperty>(new string[] { "Lincon", "1988-10-11", "21", "13.2" }));
             var mater2 = convertor.ParseList(values);
             Assert.AreEqual(2, mater2.Count);
             Assert.AreEqual("Lincon", mater2[0].Name);
@@ -73,7 +74,7 @@ namespace PHLibrary.Reflection.ArrayValuesToInstance.Tests
             Assert.AreEqual(new DateTime(1988, 10, 11), mater2[0].Birthday);
             Assert.AreEqual("Lincon2", mater2[1].Name);
         }
-       
+        
         [TestMethod()]
         [ExpectedException(typeof(ValuesCountNotMatch))]
         public void PropertiesCountNotMatchValues()
@@ -92,8 +93,20 @@ namespace PHLibrary.Reflection.ArrayValuesToInstance.Tests
             var convertor = new ArrayValuesToInstance.Parser<ClassMate4, string>( new PropertyAttributeDeterminer<ClassMate4>(
                 new string []{ "Lincon", "1988-10-11", "21" }));
              convertor.ParseList(values);
-            
-            
+
+
+
+        }
+        [TestMethod()]
+        [ExpectedException(typeof(ConvertFailure<string>))]
+        public void ConvertFailure()
+        {
+            var values = new string[,] { { "Lincon", "23a","1988-10-11", "21" }, { "Lincon2", "23", "1988-10-11", "21" } };
+            var convertor = new ArrayValuesToInstance.Parser<ClassMate2, string>(new PropertyAttributeDeterminer<ClassMate2>(
+                new string[] { "Lincon", "231", "1988-10-11", "21" }));
+            convertor.ParseList(values);
+
+
 
         }
     }

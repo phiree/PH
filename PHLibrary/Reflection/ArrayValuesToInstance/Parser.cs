@@ -47,6 +47,7 @@ namespace PHLibrary.Reflection.ArrayValuesToInstance
 
                 ValueT currentValue = values[valueOrder];
                 object value;
+                try{
                 switch (p.PropertyType.Name)
                 {
                     case "String":
@@ -67,6 +68,11 @@ namespace PHLibrary.Reflection.ArrayValuesToInstance
                     default: throw new TypeConverterNotImplemented(typeof(T), p);
 
                 }
+                }
+                catch(Exception ex)
+                { 
+                    throw new ConvertFailure<ValueT>(typeof(T),p,currentValue);
+                    }
                 try
                 {
                     //p.PropertyType
@@ -104,107 +110,6 @@ namespace PHLibrary.Reflection.ArrayValuesToInstance
 
             }
             return result;
-        }
-    }
-
-    /// <summary>
-    /// property - value array order match.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public abstract class AbsValueOrderDeterminer<T>
-    {
-        protected IDictionary<int, PropertyInfo> PropertyOrder = new Dictionary<int, PropertyInfo>();
-        public IEnumerable<PropertyInfo> Properties { get; private set; }
-        protected string[] FirstArray { get;private set;}
-        protected AbsValueOrderDeterminer(string[] firstArray)
-        {
-            Properties = typeof(T).GetTypeInfo().DeclaredProperties;
-            FirstArray=firstArray;
-            if(firstArray.Length!=Properties.Count())
-            { 
-                throw new ValuesCountNotMatch(typeof(T).Name,firstArray.Length);
-                }
-
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="t"></param>
-        /// <returns>key-value pares of propertyname and order in value list.</returns>
-        public abstract IDictionary<int, PropertyInfo> DeterminePropertyOrder();
-    }
-    /// <summary>
-    /// match using property attribute
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class PropertyAttributeDeterminer<T> : AbsValueOrderDeterminer<T>
-    {
-        public PropertyAttributeDeterminer(string[] firstArray):base(firstArray)
-        { }
-        public override IDictionary<int, PropertyInfo> DeterminePropertyOrder()
-        {
-            int order = 0;
-            IList<bool> orderAttributes = new List<bool>();
-          
-            foreach (var p in Properties)
-            {
-
-                if (p.GetCustomAttributes(false).Any(x => x.GetType() == typeof(PropertyOrderAttribute)))
-                {
-                    orderAttributes.Add(true);
-                    order = ((PropertyOrderAttribute)(p.GetCustomAttributes(false).First(x => x.GetType() == typeof(PropertyOrderAttribute)))).Order;
-                    if(order>=Properties.Count())
-                    { 
-                        throw new OrderOutOfValuesRange(p,typeof(T),order);
-                        }
-                  
-                   
-                    }
-                else
-                {
-                    orderAttributes.Add(false);
-                   
-                }
-                if (orderAttributes.Distinct().Count() > 1)
-                {
-                    throw new PartlyOrderAttribute(typeof(T));
-                }
-
-                PropertyOrder.Add(order, p);
-                order++;
-
-            }
-            return PropertyOrder;
-        }
-    }
-    /// <summary>
-    /// match with first array in value list.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class FirstArrayDeterminer<T> : AbsValueOrderDeterminer<T>
-    {
-      
-        public FirstArrayDeterminer(string[] firstArray) : base(firstArray)
-        {
-           
-        }
-        public override IDictionary<int, PropertyInfo> DeterminePropertyOrder()
-        {
-             
-
-            for (int i = 0; i < FirstArray.Length; i++)
-            {
-                try
-                {
-                    var p = Properties.First(x => x.Name.ToLower() == FirstArray[i].ToLower());
-                    PropertyOrder.Add(i, p);
-                }
-                catch (InvalidOperationException)
-                {
-                    throw new PropertyNotFound(FirstArray[i], typeof(T));
-                }
-            }
-            return PropertyOrder;
         }
     }
 

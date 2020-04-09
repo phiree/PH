@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Drawing;
+
 namespace PHLibrary.Arithmetic.TreeToRectangle.Tests
 {
     [TestClass()]
@@ -17,55 +19,68 @@ namespace PHLibrary.Arithmetic.TreeToRectangle.Tests
                 Roots = new List<TreeNode> {
                     TestNode }
             };
-            var retangle=tree.CalculateWholeRetangle();
-            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(retangle));
-            Assert.AreEqual(5, retangle.Width);
-            
-            //    Assert.AreEqual(3, tree.CalculateWholeRetangle().Height);
+            var retangles = tree.CalculateWholeRetangle();
+            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(retangles));
+           
+
+              Assert.AreEqual(11, retangles.Count);
         }
         [TestMethod()]
         public void CalculateMaxDeptTest()
         {
-            var node=TestNode;
+            var node = TestNode;
             Assert.AreEqual(4, node.MaxDepth);
 
             Console.Write(Newtonsoft.Json.JsonConvert.SerializeObject(node.AllPathDepths));
-           
+
         }
 
         [TestMethod()]
         public void CalculateRetangleTest()
-        {var node=TestNode;
-          var retangle= node.CalculateRetangle(0, node.MaxDepth);
-            Console.Write(Newtonsoft.Json.JsonConvert.SerializeObject(retangle));
-          
+        {
+            var node = TestNode;
+         var retangles=  node.CalculateRetangles(0, node.MaxDepth);
+            Console.Write(Newtonsoft.Json.JsonConvert.SerializeObject(retangles));
+            Assert.AreEqual(11,retangles.Count);
+           
+
 
         }
 
-        private TreeNode TestNode {
-            get {
+        private TreeNode TestNode
+        {
+            get
+            {
                 return new TreeNode
                 {
                     Children = new List<TreeNode> {
-                    new TreeNode{   
-                            Children=new List<TreeNode>{ 
+                    new TreeNode{
+                            Children=new List<TreeNode>{
                                 new TreeNode()} },
                     new TreeNode{
                             Children=new List<TreeNode>{
                                 new TreeNode(),
-                            
                                 new TreeNode(),
                                 new TreeNode{
-                                Children=new List<TreeNode>{
-                                    new TreeNode(),
-                                    new TreeNode(), 
-                                    new TreeNode(), 
-                                    new TreeNode()
-                                    } }
+                                    Children=new List<TreeNode>{
+                                        new TreeNode(),
+                                        new TreeNode(),
+                                        new TreeNode(),
+                                        new TreeNode()
+                                        } }
                              } }
                 }
                 };
             }
-            }
+        }
+
+        [TestMethod()]
+        public void CalculateLeaesCountTest()
+        {
+           var node=TestNode;
+         Assert.AreEqual(7, node.CalculateLeaesCount());
+            Assert.AreEqual(4,node.Children[1].Children[2].CalculateLeaesCount());
+            Assert.AreEqual(6, node.Children[1]. CalculateLeaesCount());
+        }
     }
 }

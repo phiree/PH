@@ -14,7 +14,11 @@ namespace PHLibrary.Arithmetic.TreeToRectangle
 
         public RetanglePosition RetanglePosition { get; protected set; }
         public RetangleSize RetangleSize { get; protected set; }
-      
+        public override string ToString()
+        {
+            return $"{RetanglePosition.X},{RetanglePosition.Y},{RetangleSize.Width},{RetangleSize.Height}";
+        }
+
     }
     public class RetanglePosition {
         public RetanglePosition(int x, int y)

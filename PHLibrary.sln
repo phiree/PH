@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PHLibrary", "PHLibrary\PHLibrary.csproj", "{A67802A1-0F9C-463F-9C57-15C68FE47301}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PHLibrary", "PHLibrary\PHLibrary.csproj", "{A67802A1-0F9C-463F-9C57-15C68FE47301}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PHLibraryTests", "PHLibraryTests\PHLibraryTests.csproj", "{8AA93703-A2F7-451F-93D1-024CDECB6F7B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PHLibraryTests", "PHLibraryTests\PHLibraryTests.csproj", "{8AA93703-A2F7-451F-93D1-024CDECB6F7B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PHLibraryIntergrationTest", "PHLibraryIntergrationTest\PHLibraryIntergrationTest.csproj", "{4E95C7C2-A00D-4A3A-84A3-9685E68507A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{8AA93703-A2F7-451F-93D1-024CDECB6F7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8AA93703-A2F7-451F-93D1-024CDECB6F7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8AA93703-A2F7-451F-93D1-024CDECB6F7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E95C7C2-A00D-4A3A-84A3-9685E68507A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E95C7C2-A00D-4A3A-84A3-9685E68507A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E95C7C2-A00D-4A3A-84A3-9685E68507A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E95C7C2-A00D-4A3A-84A3-9685E68507A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

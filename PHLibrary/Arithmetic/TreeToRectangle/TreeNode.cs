@@ -11,18 +11,21 @@ namespace PHLibrary.Arithmetic.TreeToRectangle
         /// 整棵树占用的矩形
         /// </summary>
         /// <returns></returns>
-        public RetangleSize CalculateWholeRetangle()
+        public IList<Retangle> CalculateWholeRetangle()
         {
-            var maxDepth =  Roots.Max(n => n.MaxDepth);
+            var maxDepth = Roots.Max(n => n.MaxDepth);
+            var allRetangles = new List<Retangle>();
+
             int x = 0;
             foreach (var node in Roots)
             {
-                var nodeRetangle = node.CalculateRetangle(x, node.MaxDepth);
-                x = x + nodeRetangle.RetangleSize.Width;
+
+                allRetangles.AddRange(node.CalculateRetangles(x, maxDepth));
+                x = x + node.CalculateLeaesCount();
 
             }
             var width = x;
-            return new RetangleSize(width, maxDepth);
+            return allRetangles;
 
         }
 
@@ -30,77 +33,128 @@ namespace PHLibrary.Arithmetic.TreeToRectangle
 
     public class TreeNode
     {
+        public string Text { get;set;}
         public IList<TreeNode> Children { get; set; }
-        public int? RowSpan { get; set; } = 1;
 
-        int currentRetangleIndex = 1;
-        
+        IList<Retangle> retangles = new List<Retangle>();
+        public bool CanSpanRows { get;set;}
+
+
+        int bigRetangleHeight;
+         
         /// <summary>
         /// 该节点占用的矩形
         /// </summary>
         /// <returns></returns>
-        public Retangle CalculateRetangle(int initialX, int bigRetangleHeight)
+        public IList<Retangle> CalculateRetangles(int initialX, int bigRetangleHeight)
         {
-            var nodeMaxDepth = AllPathDepths[currentRetangleIndex];
-
-            var retangleSize = new RetangleSize(1, 1);
-            if (Children == null || Children.Count == 0)
+            this.bigRetangleHeight=bigRetangleHeight;
+            
+            int height=GetHeight(this);
+            int width=CalculateLeaesCount();
+            int initialY=0;
+            retangles.Add(new Retangle(new RetanglePosition(initialX,initialY), new RetangleSize(width,height )));
+            if (Children != null)
             {
-                return new Retangle(new RetanglePosition(initialX, 0), new RetangleSize(1, bigRetangleHeight));
+                initialY += height;
+                foreach (var c in Children)
+                {
+                  
+                    _CalculateRetangle(c,initialX,initialY);
+                    initialX+=c.CalculateLeaesCount();
+                    
+                }
+              
             }
-            foreach (var c in Children)
-            {
-                retangleSize.InitHeight();
-                _CalculateRetangle(c, retangleSize, bigRetangleHeight);
-            }
-            return new Retangle(null, retangleSize);
+            return retangles;
         }
 
-
-        public void _CalculateRetangle(TreeNode columnDefine, RetangleSize retangleSize, int bigRetangleHeight)
+         
+        int currentRetangleIndex = 1;
+        
+        private int GetHeight(TreeNode node)
         {
-            int heightToExtent = 1;
-            if (MaxDepth < bigRetangleHeight)
+            
+            var maxDepth = AllPathDepths[currentRetangleIndex];
+            int height = 1;
+            if ( maxDepth < bigRetangleHeight)
             {
-                if (RowSpan != null)
+                if (node.CanSpanRows)
                 {
-                    heightToExtent = RowSpan.Value;
+                 
+                    height = bigRetangleHeight - maxDepth + 1;
                 }
-                else
+            }
+            return height;
+
+        }
+        public void _CalculateRetangle(TreeNode node,int initialX,int initialY)
+        {
+            int height = GetHeight(node);
+            int width = node.CalculateLeaesCount();
+             int currentX=initialX;
+            retangles.Add(new Retangle(new RetanglePosition(initialX, initialY), new RetangleSize(width, height)));
+            if (node.Children != null)
+            {
+                initialY += height;
+                foreach (var c in node.Children)
                 {
-                    heightToExtent = bigRetangleHeight - MaxDepth + 1;
+                   
+                    _CalculateRetangle(c, currentX, initialY);
+                    currentX+=c.CalculateLeaesCount();
                 }
+              
+            }
+        }
+        /// <summary>
+        /// 树叶数量
+        /// </summary>
+        /// <returns></returns>
+        public int CalculateLeaesCount()
+        {
+            int count = 0;
+            if (Children == null) { return count + 1; }
+            else
+            {
+                foreach (var c in Children)
+                {
+                    _CalculateLeaesCount(c, ref count);
+                }
+            }
+            return count;
+        }
+
+        public void _CalculateLeaesCount(TreeNode child, ref int count)
+        {
+            if (child.Children == null) { count += 1; }
+            else
+            {
+                foreach (var cc in child.Children) { _CalculateLeaesCount(cc, ref count); }
             }
 
-            retangleSize.ExtentHeight(heightToExtent);
-            if (columnDefine.Children == null || columnDefine.Children.Count == 0)
-            {
-                retangleSize.ExtentWidth(1);
-                currentRetangleIndex += 1;
-                return;
-            }
-            foreach (var col in columnDefine.Children)
-            {
-                _CalculateRetangle(col, retangleSize, bigRetangleHeight);
-            }
         }
         /// <summary>
         /// 获取最大路径长度
         /// </summary>
-        public int MaxDepth { get  { 
-                if(AllPathDepths.Count==0)
-                { 
+        public int MaxDepth
+        {
+            get
+            {
+                if (AllPathDepths.Count == 0)
+                {
                     CalculateAllPathDepths();
-                    }
-                return AllPathDepths.Max(x=>x.Value);} }
+                }
+                return AllPathDepths.Max(x => x.Value);
+            }
+        }
         /// <summary>
         /// 计算出所有路径的长度
         /// </summary>
         /// <returns></returns>
         public void CalculateAllPathDepths()
         {
-
-            int depth = 1;
+            int initDepth=0;
+            int depth = initDepth+1;
 
             if (Children == null)
             {
@@ -109,28 +163,26 @@ namespace PHLibrary.Arithmetic.TreeToRectangle
             }
 
             foreach (var c in Children)
-            {
-                _CalculateDept(c, ref depth);
+            { 
+                _CalculateDept(c,  depth+1);
             }
-            
+
         }
         int currentPathIndex = 1;
-        public IDictionary<int, int> AllPathDepths { get;protected set;} =new Dictionary<int,int>();
+        public IDictionary<int, int> AllPathDepths { get; protected set; } = new Dictionary<int, int>();
         //IList<int> allDepts = new List<int>();
-        public void _CalculateDept(TreeNode node, ref int depth)
+        public void _CalculateDept(TreeNode node,   int depth)
         {
-            depth += 1;
+          
             if (node.Children == null)
             {
-                depth -= 1;
-                // allDepts.Add( depth);
                 AllPathDepths.Add(currentPathIndex, depth);
                 currentPathIndex += 1;
                 return;
             }
             foreach (var c in node.Children)
             {
-                _CalculateDept(c, ref depth);
+                _CalculateDept(c, depth+1);
             }
         }
     }

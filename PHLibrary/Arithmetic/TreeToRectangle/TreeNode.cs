@@ -58,11 +58,12 @@ namespace PHLibrary.Arithmetic.TreeToRectangle
         public IList<Retangle> CalculateRetangles(int initialX, int bigRetangleHeight)
         {
             this.bigRetangleHeight = bigRetangleHeight;
-
+            
             int height = GetHeight(this);
             int width = CalculateLeaesCount();
             int initialY = 0;
-            retangles.Add(new Retangle(new RetanglePosition(initialX, initialY), new RetangleSize(width, height)));
+            retangles.Add(new Retangle(new RetanglePosition(initialX, initialY)
+                , new RetangleSize(width, height),Text));
             if (Children != null)
             {
                 initialY += height;
@@ -102,7 +103,10 @@ namespace PHLibrary.Arithmetic.TreeToRectangle
             int height = GetHeight(node);
             int width = node.CalculateLeaesCount();
             int currentX = initialX;
-            retangles.Add(new Retangle(new RetanglePosition(initialX, initialY), new RetangleSize(width, height)));
+            retangles.Add(new Retangle(new RetanglePosition(initialX, initialY),
+                new RetangleSize(width, height)
+                ,node.Text
+                ));
             if (node.Children != null)
             {
                 initialY += height;

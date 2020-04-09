@@ -53,20 +53,24 @@ namespace PHLibrary.Arithmetic.TreeToRectangle.Tests
             {
                 return new TreeNode
                 {
+                    Text="基本信息",
                     Children = new List<TreeNode> {
                     new TreeNode{
+                        Text="人员信息",
                             Children=new List<TreeNode>{
-                                new TreeNode()} },
+                                new TreeNode{ Text="姓名"} } },
                     new TreeNode{
+                        Text="环境信息",
                             Children=new List<TreeNode>{
-                                new TreeNode(),
-                                new TreeNode(),
+                                new TreeNode{ Text="气压",},
+                                new TreeNode{  Text="湿度",},
                                 new TreeNode{
+                                     Text="污染信息",
                                     Children=new List<TreeNode>{
-                                        new TreeNode(),
-                                        new TreeNode(),
-                                        new TreeNode(),
-                                        new TreeNode()
+                                        new TreeNode{  Text="pm2.5",},
+                                        new TreeNode{  Text="二氧化硫",},
+                                        new TreeNode{  Text="pm10",},
+                                        new TreeNode{  Text="臭氧",}
                                         } }
                              } }
                 }

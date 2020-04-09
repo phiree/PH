@@ -6,17 +6,18 @@ namespace PHLibrary.Arithmetic.TreeToRectangle
 {
    public class Retangle
     {
-        public Retangle(RetanglePosition retanglePosition, RetangleSize retangleSize)
+        public Retangle(RetanglePosition retanglePosition, RetangleSize retangleSize,string text)
         {
             RetanglePosition = retanglePosition;
             RetangleSize = retangleSize;
+            this.Text=text;
         }
-
+        public string Text { get;protected set;}
         public RetanglePosition RetanglePosition { get; protected set; }
         public RetangleSize RetangleSize { get; protected set; }
         public override string ToString()
         {
-            return $"{RetanglePosition.X},{RetanglePosition.Y},{RetangleSize.Width},{RetangleSize.Height}";
+            return $"{RetanglePosition.X},{RetanglePosition.Y},{RetangleSize.Width},{RetangleSize.Height},{Text}";
         }
 
     }

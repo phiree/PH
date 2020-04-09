@@ -6,19 +6,22 @@
     <Description>common library for future usage, maybe for others .</Description>
     <PackageId>PHLibrary</PackageId>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <PackageReleaseNotes>1.0.8
+    <PackageReleaseNotes>1.0.9
+add feature: convert tree to retangle
+
+1.0.8
 improvement,
 1.0.7
 first array's order can be diffrent with properties
 1.0.6
 support properties that dont have orderattribute</PackageReleaseNotes>
-    <Version>1.0.8</Version>
+    <Version>1.0.9</Version>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <Company>PHLibrary</Company>
     <Authors>PHLibrary</Authors>
     <PackageLicenseUrl>MIT</PackageLicenseUrl>
-    <FileVersion>1.0.8</FileVersion>
-    <AssemblyVersion>1.0.8</AssemblyVersion>
+    <FileVersion>1.0.9</FileVersion>
+    <AssemblyVersion>1.0.9</AssemblyVersion>
     <PackageProjectUrl>https://github.com/phiree/PHLibrary</PackageProjectUrl>
   </PropertyGroup>
 

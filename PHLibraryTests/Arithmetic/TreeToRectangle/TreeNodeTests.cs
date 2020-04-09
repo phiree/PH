@@ -19,7 +19,7 @@ namespace PHLibrary.Arithmetic.TreeToRectangle.Tests
                 Roots = new List<TreeNode> {
                     TestNode }
             };
-            var retangles = tree.CalculateWholeRetangle();
+            var retangles = tree.CalculateRetangles();
             Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(retangles));
            
 

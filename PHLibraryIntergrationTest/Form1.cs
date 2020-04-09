@@ -39,7 +39,7 @@ namespace PHLibraryIntergrationTest
             var node2=TestData.TestNode;
             var tree=new Tree { Roots=new List<PHLibrary.Arithmetic.TreeToRectangle.TreeNode> { node,node2} };
            // var retangles = node.CalculateRetangles(0, node.MaxDepth);
-           var  retangles=tree.CalculateWholeRetangle();
+           var  retangles=tree.CalculateRetangles();
             
             foreach (var c in retangles)
             {

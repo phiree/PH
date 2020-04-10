@@ -28,21 +28,18 @@ namespace PHLibrary.Arithmetic.TreeToRectangle
             var totalWidth = 0;
             foreach (var node in Roots)
             {
-
                 allRetangles.AddRange(node.CalculateRetangles(totalWidth, maxDepth));
                 totalWidth = totalWidth + node.CalculateLeaesCount();
-
             }
-
             return allRetangles;
-
         }
-
     }
 
     public class TreeNode
     {
-        public string Text { get; set; }
+
+        public string Title { get; set; }
+        public string Format { get; set; }
         public IList<TreeNode> Children { get; set; }
 
         IList<Retangle> retangles = new List<Retangle>();
@@ -58,12 +55,12 @@ namespace PHLibrary.Arithmetic.TreeToRectangle
         public IList<Retangle> CalculateRetangles(int initialX, int bigRetangleHeight)
         {
             this.bigRetangleHeight = bigRetangleHeight;
-            
+
             int height = GetHeight(this);
             int width = CalculateLeaesCount();
             int initialY = 0;
             retangles.Add(new Retangle(new RetanglePosition(initialX, initialY)
-                , new RetangleSize(width, height),Text));
+                , new RetangleSize(width, height), Title, Format));
             if (Children != null)
             {
                 initialY += height;
@@ -105,7 +102,7 @@ namespace PHLibrary.Arithmetic.TreeToRectangle
             int currentX = initialX;
             retangles.Add(new Retangle(new RetanglePosition(initialX, initialY),
                 new RetangleSize(width, height)
-                ,node.Text
+                , node.Title, node.Format
                 ));
             if (node.Children != null)
             {
@@ -119,84 +116,119 @@ namespace PHLibrary.Arithmetic.TreeToRectangle
 
             }
         }
-        /// <summary>
-        /// 树叶数量
-        /// </summary>
-        /// <returns></returns>
-        public int CalculateLeaesCount()
+
+        public IList<TreeNode> CalculateLeaves()
         {
-            int count = 0;
-            if (Children == null) { return count + 1; }
+            var leaves = new List<TreeNode>();
+            if (Children == null)
+            {
+                leaves.Add(this);
+            }
             else
             {
                 foreach (var c in Children)
                 {
-                    _CalculateLeaesCount(c, ref count);
+                    _CalculateLeaves(c, leaves);
                 }
             }
-            return count;
+            return leaves;
         }
-
-        public void _CalculateLeaesCount(TreeNode child, ref int count)
+        public void _CalculateLeaves(TreeNode treeNode, IList<TreeNode> leaves)
         {
-            if (child.Children == null) { count += 1; }
+            if (treeNode.Children == null) { leaves.Add(treeNode); }
             else
             {
-                foreach (var cc in child.Children) { _CalculateLeaesCount(cc, ref count); }
-            }
-
-        }
-        /// <summary>
-        /// 获取最大路径长度
-        /// </summary>
-        public int MaxDepth
-        {
-            get
-            {
-                if (AllPathDepths.Count == 0)
+                foreach (var c in treeNode.Children)
                 {
-                    CalculateAllPathDepths();
+
+                    _CalculateLeaves(c, leaves);
                 }
-                return AllPathDepths.Max(x => x.Value);
             }
         }
-        /// <summary>
-        /// 计算出所有路径的长度
-        /// </summary>
-        /// <returns></returns>
-        public void CalculateAllPathDepths()
+   
+    /// <summary>
+    /// 树叶数量
+    /// </summary>
+    /// <returns></returns>
+    public int CalculateLeaesCount()
+    {
+            
+            var leaves=CalculateLeaves();
+            
+        int count = 0;
+        if (Children == null) { return count + 1; }
+        else
         {
-            int initDepth = 0;
-            int depth = initDepth + 1;
-
-            if (Children == null)
-            {
-                AllPathDepths.Add(currentPathIndex, depth);
-                return;
-            }
-
             foreach (var c in Children)
             {
-                _CalculateDept(c, depth + 1);
+                _CalculateLeaesCount(c, ref count);
             }
-
         }
-        int currentPathIndex = 1;
-        public IDictionary<int, int> AllPathDepths { get; protected set; } = new Dictionary<int, int>();
-        //IList<int> allDepts = new List<int>();
-        public void _CalculateDept(TreeNode node, int depth)
+        return count;
+    }
+    public void _CalculateLeaesCount(TreeNode child, ref int count)
+    {
+        if (child.Children == null) { count += 1; }
+        else
         {
+            foreach (var cc in child.Children) { _CalculateLeaesCount(cc, ref count); }
+        }
 
-            if (node.Children == null)
+    }
+    /// <summary>
+    /// 获取最大路径长度
+    /// </summary>
+    public int MaxDepth
+    {
+        get
+        {
+            if (AllPathDepths.Count == 0)
             {
-                AllPathDepths.Add(currentPathIndex, depth);
-                currentPathIndex += 1;
-                return;
+                CalculateAllPathDepths();
             }
-            foreach (var c in node.Children)
-            {
-                _CalculateDept(c, depth + 1);
-            }
+            return AllPathDepths.Max(x => x.Value);
         }
     }
+    /// <summary>
+    /// 计算出所有路径的长度
+    /// </summary>
+    /// <returns></returns>
+    public void CalculateAllPathDepths()
+    {
+        int initDepth = 0;
+        int depth = initDepth + 1;
+
+        if (Children == null)
+        {
+            AllPathDepths.Add(currentPathIndex, depth);
+            return;
+        }
+
+        foreach (var c in Children)
+        {
+            _CalculateDept(c, depth + 1);
+        }
+
+    }
+    int currentPathIndex = 1;
+
+
+
+    public IDictionary<int, int> AllPathDepths { get; protected set; } = new Dictionary<int, int>();
+    //IList<int> allDepts = new List<int>();
+    public void _CalculateDept(TreeNode node, int depth)
+    {
+
+        if (node.Children == null)
+        {
+            AllPathDepths.Add(currentPathIndex, depth);
+            currentPathIndex += 1;
+            return;
+        }
+        foreach (var c in node.Children)
+        {
+            _CalculateDept(c, depth + 1);
+        }
+    }
+}
 }

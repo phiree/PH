@@ -11,12 +11,12 @@ using System.Windows.Forms;
 
 namespace PHLibraryIntergrationTest
 {
-    public partial class Form1 : Form
+    public partial class ColumnTreeToRetangle : Form
     {
 
         Label label1= new Label { AutoSize = true,Dock= DockStyle.Right };
         Panel panel=new Panel { Dock= DockStyle.Fill};
-        public Form1()
+        public ColumnTreeToRetangle()
         {
             InitializeComponent();
            
@@ -37,7 +37,7 @@ namespace PHLibraryIntergrationTest
         {
             var node = TestData.TestNode;
             var node2=TestData.TestNode;
-            var tree=new Tree { Roots=new List<PHLibrary.Arithmetic.TreeToRectangle.TreeNode> { node,node2} };
+            var tree=new ColumnTree { Roots=new List<PHLibrary.Arithmetic.TreeToRectangle.ColumnTreeNode> { node,node2} };
            // var retangles = node.CalculateRetangles(0, node.MaxDepth);
            var  retangles=tree.CalculateRetangles();
             

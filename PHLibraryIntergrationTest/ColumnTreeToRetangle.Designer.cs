@@ -1,6 +1,6 @@
 ﻿namespace PHLibraryIntergrationTest
 {
-    partial class Form1
+    partial class ColumnTreeToRetangle
     {
         /// <summary>
         ///  Required designer variable.

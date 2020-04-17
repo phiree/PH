@@ -7,31 +7,31 @@ namespace PHLibraryIntergrationTest
 {
     public class TestData
     {
-        public static TreeNode TestNode
+        public static ColumnTreeNode TestNode
         {
             get
             {
-                return new TreeNode
+                return new ColumnTreeNode
                 {
                    
-                    Children = new List<TreeNode> {
-                    new TreeNode{
+                    Children = new List<ColumnTreeNode> {
+                    new ColumnTreeNode{
                             CanSpanRows=true,
-                            Children=new List<TreeNode>{
-                                new TreeNode() ,new TreeNode()
+                            Children=new List<ColumnTreeNode>{
+                                new ColumnTreeNode() ,new ColumnTreeNode()
                                 }
                             },
-                    new TreeNode{
+                    new ColumnTreeNode{
 
-                            Children=new List<TreeNode>{
-                                new TreeNode(),
-                                new TreeNode(),
-                                new TreeNode{
-                                    Children=new List<TreeNode>{
-                                        new TreeNode(),
-                                        new TreeNode(),
-                                        new TreeNode(),
-                                        new TreeNode()
+                            Children=new List<ColumnTreeNode>{
+                                new ColumnTreeNode(),
+                                new ColumnTreeNode(),
+                                new ColumnTreeNode{
+                                    Children=new List<ColumnTreeNode>{
+                                        new ColumnTreeNode(),
+                                        new ColumnTreeNode(),
+                                        new ColumnTreeNode(),
+                                        new ColumnTreeNode()
                                         } }
                              } }
                 }

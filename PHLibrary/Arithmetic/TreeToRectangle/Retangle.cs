@@ -4,22 +4,32 @@ using System.Text;
 
 namespace PHLibrary.Arithmetic.TreeToRectangle
 {
-   public class Retangle
+    /// <summary>
+    /// 合并单元格对应的长方形(坐标,长宽)
+    /// </summary>
+   public class MergedCellRetangle
     {
-        public Retangle(RetanglePosition retanglePosition, RetangleSize retangleSize, string text)
+        public MergedCellRetangle(RetanglePosition retanglePosition, RetangleSize retangleSize, string text)
             :this(retanglePosition,retangleSize,text,string.Empty)
         {
            
         }
-        public Retangle(RetanglePosition retanglePosition, RetangleSize retangleSize,string text,string format)
+        public MergedCellRetangle(RetanglePosition retanglePosition, RetangleSize retangleSize,string text,string format)
         {
             RetanglePosition = retanglePosition;
             RetangleSize = retangleSize;
             this.Title=text;
             Format=format;
         }
+        /// <summary>
+        /// 单元格标题
+        /// </summary>
         public string Title { get;protected set;}
+        /// <summary>
+        /// excel数值格式化表达式
+        /// </summary>
         public string Format { get;protected set;}
+
         public RetanglePosition RetanglePosition { get; protected set; }
         public RetangleSize RetangleSize { get; protected set; }
         public override string ToString()

@@ -14,9 +14,9 @@ namespace PHLibrary.Arithmetic.TreeToRectangle.Tests
         [TestMethod()]
         public void TreeNodeTest()
         {
-            var tree = new Tree
+            var tree = new ColumnTree
             {
-                Roots = new List<TreeNode> {
+                Roots = new List<ColumnTreeNode> {
                     TestNode }
             };
             var retangles = tree.CalculateRetangles();
@@ -47,30 +47,30 @@ namespace PHLibrary.Arithmetic.TreeToRectangle.Tests
 
         }
 
-        private TreeNode TestNode
+        private ColumnTreeNode TestNode
         {
             get
             {
-                return new TreeNode
+                return new ColumnTreeNode
                 {
                     Title = "基本信息",
-                    Children = new List<TreeNode> {
-                    new TreeNode{
+                    Children = new List<ColumnTreeNode> {
+                    new ColumnTreeNode{
                         Title="人员信息",
-                            Children=new List<TreeNode>{
-                                new TreeNode{ Title="姓名"} } },
-                    new TreeNode{
+                            Children=new List<ColumnTreeNode>{
+                                new ColumnTreeNode{ Title="姓名"} } },
+                    new ColumnTreeNode{
                         Title="环境信息",
-                            Children=new List<TreeNode>{
-                                new TreeNode{ Title="气压",},
-                                new TreeNode{  Title="湿度",},
-                                new TreeNode{
+                            Children=new List<ColumnTreeNode>{
+                                new ColumnTreeNode{ Title="气压",},
+                                new ColumnTreeNode{  Title="湿度",},
+                                new ColumnTreeNode{
                                      Title="污染信息",
-                                    Children=new List<TreeNode>{
-                                        new TreeNode{  Title="pm2.5",},
-                                        new TreeNode{  Title="二氧化硫",},
-                                        new TreeNode{  Title="pm10",},
-                                        new TreeNode{  Title="臭氧",}
+                                    Children=new List<ColumnTreeNode>{
+                                        new ColumnTreeNode{  Title="pm2.5",},
+                                        new ColumnTreeNode{  Title="二氧化硫",},
+                                        new ColumnTreeNode{  Title="pm10",},
+                                        new ColumnTreeNode{  Title="臭氧",}
                                         } }
                              } }
                 }

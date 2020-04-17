@@ -1,65 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Linq;
 namespace PHLibrary.Arithmetic.TreeToRectangle
 {
-    public class Tree
-    {
-        public IList<TreeNode> Roots { get; set; }
-        /// <summary>
-        /// 创建树内所有的矩形
-        /// </summary>
-        /// <returns></returns>
-        /// 
-
-        public RetangleSize CalculateWholeRetangle()
-        {
-            int height = Roots.Max(x => x.MaxDepth);
-            int width = Roots.Sum(x => x.CalculateLeaesCount());
-            return new RetangleSize(width, height);
-        }
-        public IList<Retangle> CalculateRetangles()
-        {
-            var maxDepth = Roots.Max(n => n.MaxDepth);
-
-            var allRetangles = new List<Retangle>();
-
-            var totalWidth = 0;
-            foreach (var node in Roots)
-            {
-                allRetangles.AddRange(node.CalculateRetangles(totalWidth, maxDepth));
-                totalWidth = totalWidth + node.CalculateLeaesCount();
-            }
-            return allRetangles;
-        }
-    }
-
-    public class TreeNode
+    /// <summary>
+    /// 树形列定义的节点
+    /// </summary>
+    public class  ColumnTreeNode
     {
 
         public string Title { get; set; }
         public string Format { get; set; }
-        public IList<TreeNode> Children { get; set; }
+        public IList<ColumnTreeNode> Children { get; set; }
 
-        IList<Retangle> retangles = new List<Retangle>();
+        IList<MergedCellRetangle> retangles = new List<MergedCellRetangle>();
         public bool CanSpanRows { get; set; }
 
 
         int bigRetangleHeight;
 
         /// <summary>
-        /// 该节点占用的矩形
+        /// 计算该几点占用的矩形
         /// </summary>
         /// <returns></returns>
-        public IList<Retangle> CalculateRetangles(int initialX, int bigRetangleHeight)
+        public IList<MergedCellRetangle> CalculateRetangles(int initialX, int bigRetangleHeight)
         {
             this.bigRetangleHeight = bigRetangleHeight;
 
             int height = GetHeight(this);
             int width = CalculateLeaesCount();
             int initialY = 0;
-            retangles.Add(new Retangle(new RetanglePosition(initialX, initialY)
+            retangles.Add(new MergedCellRetangle(new RetanglePosition(initialX, initialY)
                 , new RetangleSize(width, height), Title, Format));
             if (Children != null)
             {
@@ -79,7 +49,7 @@ namespace PHLibrary.Arithmetic.TreeToRectangle
 
         int currentRetangleIndex = 1;
 
-        private int GetHeight(TreeNode node)
+        private int GetHeight(ColumnTreeNode node)
         {
 
             var maxDepth = AllPathDepths[currentRetangleIndex];
@@ -95,12 +65,12 @@ namespace PHLibrary.Arithmetic.TreeToRectangle
             return height;
 
         }
-        public void _CalculateRetangle(TreeNode node, int initialX, int initialY)
+        public void _CalculateRetangle(ColumnTreeNode node, int initialX, int initialY)
         {
             int height = GetHeight(node);
             int width = node.CalculateLeaesCount();
             int currentX = initialX;
-            retangles.Add(new Retangle(new RetanglePosition(initialX, initialY),
+            retangles.Add(new MergedCellRetangle(new RetanglePosition(initialX, initialY),
                 new RetangleSize(width, height)
                 , node.Title, node.Format
                 ));
@@ -117,9 +87,9 @@ namespace PHLibrary.Arithmetic.TreeToRectangle
             }
         }
 
-        public IList<TreeNode> CalculateLeaves()
+        public IList<ColumnTreeNode> CalculateLeaves()
         {
-            var leaves = new List<TreeNode>();
+            var leaves = new List<ColumnTreeNode>();
             if (Children == null)
             {
                 leaves.Add(this);
@@ -133,7 +103,7 @@ namespace PHLibrary.Arithmetic.TreeToRectangle
             }
             return leaves;
         }
-        public void _CalculateLeaves(TreeNode treeNode, IList<TreeNode> leaves)
+        public void _CalculateLeaves(ColumnTreeNode treeNode, IList<ColumnTreeNode> leaves)
         {
             if (treeNode.Children == null) { leaves.Add(treeNode); }
             else
@@ -166,7 +136,7 @@ namespace PHLibrary.Arithmetic.TreeToRectangle
         }
         return count;
     }
-    public void _CalculateLeaesCount(TreeNode child, ref int count)
+    public void _CalculateLeaesCount(ColumnTreeNode child, ref int count)
     {
         if (child.Children == null) { count += 1; }
         else
@@ -216,7 +186,7 @@ namespace PHLibrary.Arithmetic.TreeToRectangle
 
     public IDictionary<int, int> AllPathDepths { get; protected set; } = new Dictionary<int, int>();
     //IList<int> allDepts = new List<int>();
-    public void _CalculateDept(TreeNode node, int depth)
+    public void _CalculateDept(ColumnTreeNode node, int depth)
     {
 
         if (node.Children == null)

@@ -12,4 +12,4 @@
 ```excel导出组件```
 - 支持多种数据源(dataset,datatable,ilist<T>,ilsit<anonymous>)
 - 支持多层表头及合并
- https://user-images.githubusercontent.com/277597/90484228-78ef0480-e168-11ea-8950-1b15f7849d73.png
+ ![image](https://user-images.githubusercontent.com/277597/90484228-78ef0480-e168-11ea-8950-1b15f7849d73.png)

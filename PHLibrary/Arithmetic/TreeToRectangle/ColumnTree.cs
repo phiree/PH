@@ -11,7 +11,8 @@ namespace PHLibrary.Arithmetic.TreeToRectangle
     {
         public IList<ColumnTreeNode> Roots { get; set; }
         /// <summary>
-        /// 创建树内所有的矩形
+        /// 根据树形结构 创建对应的矩形
+        ///     目前应用: 创建合并单元格的表头
         /// </summary>
         /// <returns></returns>
         /// 

@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Description>excel导出组件.
+     支持多数据源(dataset,datatable,IList&lt;T&gt;,IList&lt;dynamic&gt;)
+     支持多层表头及合并</Description>
+    <PackageLicenseExpression></PackageLicenseExpression>
+    <PackageIcon>icon.png</PackageIcon>
+    <RepositoryUrl>https://github.com/phiree/PHLibrary</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/phiree/PHLibrary</PackageProjectUrl>
+    <PackageReleaseNotes>1.0.0
+初始化.</PackageReleaseNotes>
+    <Product>PHLibrary.ExcelExport</Product>
+    <PackageId>PHLibrary.ExcelExport</PackageId>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <Version>1.0.0</Version>
+    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+    <Company>PHLibrary.ExcelExport</Company>
+    <Authors>PHLibrary.ExcelExport</Authors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dynamitey" Version="2.0.10.189" />
+    <PackageReference Include="EPPlus" Version="5.2.1" />
+    <PackageReference Include="PHLibrary" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PHLibrary\PHLibrary.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>

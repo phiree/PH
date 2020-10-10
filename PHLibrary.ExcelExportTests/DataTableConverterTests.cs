@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PHLibrary.ExcelExportExcelCreator;
+using PHLibrary.Reflection.ArrayValuesToInstance;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,17 +11,22 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
     public class DataTableConverterTests
     {
         [TestMethod()]
-        public void ConvertTest()
+        public void ConvertTestWithDescription()
         {
             var studentList = new List<Student> { new Student { Name = "yf" } };
             DataTableConverter<Student> converter = new DataTableConverter<Student>();
-          var dataTable=  converter.Convert(studentList, null);
-            Assert.AreEqual("姓名", dataTable.Columns[0].ColumnName);
+            var dataTable = converter.Convert(studentList, null);
+            Assert.AreEqual("姓名", dataTable.Columns[1].ColumnName);
+            Assert.AreEqual("Age", dataTable.Columns[0].ColumnName);
         }
-        public class Student { 
 
-        [System.ComponentModel.Description("姓名")]
-        public string Name { get; set; }
+        public class Student
+        {
+            [PropertyOrder(2)]
+            [System.ComponentModel.Description("姓名")]
+            public string Name { get; set; }
+            [PropertyOrder(1)]
+            public int Age { get; set; }
         }
     }
 }

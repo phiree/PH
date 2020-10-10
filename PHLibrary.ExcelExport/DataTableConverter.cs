@@ -7,6 +7,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using PHLibrary.Reflection.DisplayAttribute;
+using System.Data.Common;
+using PHLibrary.Reflection.ArrayValuesToInstance;
+using System.Collections.Specialized;
+
 namespace PHLibrary.ExcelExportExcelCreator
 {
     /// <summary> 
@@ -15,7 +19,7 @@ namespace PHLibrary.ExcelExportExcelCreator
     public class DataTableConverter<T> //where T : class
     {
 
-          private IDictionary<string, string> GetPropertyMaps<T>() //where T : class
+        private IDictionary<string, string> GetPropertyMaps<T>() //where T : class
         {
             var propertyInfos = typeof(T).GetProperties();
             var map = new Dictionary<string, string>();
@@ -33,7 +37,7 @@ namespace PHLibrary.ExcelExportExcelCreator
         {
             if (propertyNameMaps == null)
             {
-               
+
                 propertyNameMaps = PHLibrary.Reflection.DisplayAttribute.ReflectHelper.GetPropertyMaps<T>();
             }
             if (data.Count == 0)
@@ -43,9 +47,11 @@ namespace PHLibrary.ExcelExportExcelCreator
             var firstData = data[0];
             var memberNames = Dynamitey.Dynamic.GetMemberNames(firstData);
             var dataTable = new DataTable("Sheet1");
-            foreach (var name in memberNames)
+            var unOrderedColumns = new Dictionary<DataColumn,int>();
+            for (int i = 0; i < memberNames.Count(); i++)// var name in memberNames)
             {
-               
+                int orderNo = i+1;
+                string name = memberNames.ElementAt(i);
                 string columnName = name;
                 var description = typeof(T).GetProperty(name).GetAttribute<DescriptionAttribute>(false);
                 if (description != null && !string.IsNullOrEmpty(description.Description))
@@ -53,21 +59,34 @@ namespace PHLibrary.ExcelExportExcelCreator
                     columnName = description.Description;
                 }
                 else
-                { 
-                try
                 {
-                    
-                    columnName = propertyNameMaps[name];
+                    try
+                    {
+
+                        columnName = propertyNameMaps[name];
+                    }
+                    catch
+                    {
+                        throw new PropertyMapMatchNotFound(name);
+                    }
                 }
-                catch
+                var order = typeof(T).GetProperty(name).GetAttribute<PropertyOrderAttribute>(false);
                 {
-                    throw new PropertyMapMatchNotFound(name);
+                    if (order != null)
+                    {
+                        orderNo = order.Order;
+                    }
                 }
-                }
+
 
                 var column = new DataColumn(columnName);
                 column.Caption = name;
-                dataTable.Columns.Add(column);
+                unOrderedColumns.Add(column,orderNo);
+
+            }
+            foreach (var column in unOrderedColumns.OrderBy(x=>x.Value))
+            {
+                dataTable.Columns.Add(column.Key);
             }
             Debug.Assert(memberNames.Count() == dataTable.Columns.Count, "数据列和属性数量应该相等");
             foreach (T t in data)

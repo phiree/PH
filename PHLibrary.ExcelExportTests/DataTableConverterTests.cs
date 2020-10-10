@@ -23,7 +23,7 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
         public class Student
         {
             [PropertyOrder(2)]
-            [System.ComponentModel.Description("姓名")]
+            [System.ComponentModel.DisplayName("姓名")]
             public string Name { get; set; }
             [PropertyOrder(1)]
             public int Age { get; set; }

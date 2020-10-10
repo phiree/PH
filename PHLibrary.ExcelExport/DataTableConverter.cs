@@ -47,44 +47,38 @@ namespace PHLibrary.ExcelExportExcelCreator
             var firstData = data[0];
             var memberNames = Dynamitey.Dynamic.GetMemberNames(firstData);
             var dataTable = new DataTable("Sheet1");
-            var unOrderedColumns = new Dictionary<DataColumn,int>();
+            var unOrderedColumns = new Dictionary<DataColumn, int>();
             for (int i = 0; i < memberNames.Count(); i++)// var name in memberNames)
             {
-                int orderNo = i+1;
+                int orderNo = i + 1;
                 string name = memberNames.ElementAt(i);
                 string columnName = name;
-                var description = typeof(T).GetProperty(name).GetAttribute<DescriptionAttribute>(false);
-                if (description != null && !string.IsNullOrEmpty(description.Description))
-                {
-                    columnName = description.Description;
-                }
-                else
-                {
-                    try
-                    {
 
-                        columnName = propertyNameMaps[name];
-                    }
-                    catch
-                    {
-                        throw new PropertyMapMatchNotFound(name);
-                    }
-                }
-                var order = typeof(T).GetProperty(name).GetAttribute<PropertyOrderAttribute>(false);
+                try
                 {
-                    if (order != null)
-                    {
-                        orderNo = order.Order;
-                    }
+
+                    columnName = propertyNameMaps[name];
                 }
+                catch
+                {
+                    throw new PropertyMapMatchNotFound(name);
+                }
+
+                //var order = typeof(T).GetProperty(name).GetAttribute<PropertyOrderAttribute>(false);
+                //{
+                //    if (order != null)
+                //    {
+                //        orderNo = order.Order;
+                //    }
+                //}
 
 
                 var column = new DataColumn(columnName);
                 column.Caption = name;
-                unOrderedColumns.Add(column,orderNo);
+                unOrderedColumns.Add(column, orderNo);
 
             }
-            foreach (var column in unOrderedColumns.OrderBy(x=>x.Value))
+            foreach (var column in unOrderedColumns.OrderBy(x => x.Value))
             {
                 dataTable.Columns.Add(column.Key);
             }

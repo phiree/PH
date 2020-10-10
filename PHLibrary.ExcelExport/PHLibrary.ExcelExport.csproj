@@ -9,7 +9,11 @@
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/phiree/PHLibrary</RepositoryUrl>
     <PackageProjectUrl>https://github.com/phiree/PHLibrary</PackageProjectUrl>
-    <PackageReleaseNotes>1.1.2
+    <PackageReleaseNotes>1.1.4
+ 删除重复逻辑
+1.1.3
+  支持读取OrderProperty,用于列排序
+1.1.2
  支持读取description作为列名
 1.1
 降低依赖以兼容netcoreApp2.x
@@ -19,12 +23,12 @@
     <Product>PHLibrary.ExcelExport</Product>
     <PackageId>PHLibrary.ExcelExport</PackageId>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Version>1.1.2</Version>
+    <Version>1.1.4</Version>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <Company>PHLibrary.ExcelExport</Company>
     <Authors>PHLibrary.ExcelExport</Authors>
-    <FileVersion>1.1.2</FileVersion>
-    <AssemblyVersion>1.1.2</AssemblyVersion>
+    <FileVersion>1.1.4</FileVersion>
+    <AssemblyVersion>1.1.4</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

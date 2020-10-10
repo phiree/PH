@@ -9,20 +9,25 @@
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/phiree/PHLibrary</RepositoryUrl>
     <PackageProjectUrl>https://github.com/phiree/PHLibrary</PackageProjectUrl>
-    <PackageReleaseNotes>1.0.0
+    <PackageReleaseNotes>1.1
+降低依赖以兼容netcoreApp2.x
+   epplus降为4.5.2.3
+1.0.0
 初始化.</PackageReleaseNotes>
     <Product>PHLibrary.ExcelExport</Product>
     <PackageId>PHLibrary.ExcelExport</PackageId>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Version>1.0.0</Version>
+    <Version>1.1.0</Version>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <Company>PHLibrary.ExcelExport</Company>
     <Authors>PHLibrary.ExcelExport</Authors>
+    <FileVersion>1.1</FileVersion>
+    <AssemblyVersion>1.1</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Dynamitey" Version="2.0.10.189" />
-    <PackageReference Include="EPPlus" Version="5.2.1" />
+    <PackageReference Include="EPPlus" Version="4.5.3.2" />
     <PackageReference Include="PHLibrary" Version="2.0.0" />
   </ItemGroup>
 

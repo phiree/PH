@@ -45,8 +45,15 @@ namespace PHLibrary.ExcelExportExcelCreator
             var dataTable = new DataTable("Sheet1");
             foreach (var name in memberNames)
             {
+               
                 string columnName = name;
-
+                var description = typeof(T).GetProperty(name).GetAttribute<DescriptionAttribute>(false);
+                if (description != null && !string.IsNullOrEmpty(description.Description))
+                {
+                    columnName = description.Description;
+                }
+                else
+                { 
                 try
                 {
                     
@@ -56,7 +63,7 @@ namespace PHLibrary.ExcelExportExcelCreator
                 {
                     throw new PropertyMapMatchNotFound(name);
                 }
-
+                }
 
                 var column = new DataColumn(columnName);
                 column.Caption = name;

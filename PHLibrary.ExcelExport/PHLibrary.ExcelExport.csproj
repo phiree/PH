@@ -9,7 +9,9 @@
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/phiree/PHLibrary</RepositoryUrl>
     <PackageProjectUrl>https://github.com/phiree/PHLibrary</PackageProjectUrl>
-    <PackageReleaseNotes>1.1.4
+    <PackageReleaseNotes>1.1.5
+删除引发attempt-by-method-x-to-access-method-y-failed异常的代码
+1.1.4
  删除重复逻辑
 1.1.3
   支持读取OrderProperty,用于列排序
@@ -23,12 +25,12 @@
     <Product>PHLibrary.ExcelExport</Product>
     <PackageId>PHLibrary.ExcelExport</PackageId>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Version>1.1.4</Version>
+    <Version>1.1.5</Version>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <Company>PHLibrary.ExcelExport</Company>
     <Authors>PHLibrary.ExcelExport</Authors>
-    <FileVersion>1.1.4</FileVersion>
-    <AssemblyVersion>1.1.4</AssemblyVersion>
+    <FileVersion>1.1.5</FileVersion>
+    <AssemblyVersion>1.1.5</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

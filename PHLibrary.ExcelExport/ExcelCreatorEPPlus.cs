@@ -112,8 +112,10 @@ namespace PHLibrary.ExcelExport
             int columns = dataTable.Columns.Count;
 
             //fill data
-            var cell = sheet.Cells[startRow + 1, 1, rows, columns];
-            cell.LoadFromDataTable(dataTable, false);
+            var cells = sheet.Cells[startRow + 1, 1, rows, columns];
+           
+           
+            var cellRange=  cells.LoadFromDataTable(dataTable, false);
             //format
             for (int i = 0; i < columnFormats.Count; i++)// format in columnFormats)
             {
@@ -127,7 +129,12 @@ namespace PHLibrary.ExcelExport
 
                 }
             }
-
+            //style
+            var bodyCells= sheet.Cells[startRow + 1, 1, startRow+rows, columns];
+            foreach (var cell in bodyCells)
+            {
+                cell.Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+            }
 
         }
 

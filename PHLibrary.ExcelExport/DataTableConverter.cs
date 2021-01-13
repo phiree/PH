@@ -64,13 +64,13 @@ namespace PHLibrary.ExcelExportExcelCreator
                     throw new PropertyMapMatchNotFound(name);
                 }
 
-                //var order = typeof(T).GetProperty(name).GetAttribute<PropertyOrderAttribute>(false);
-                //{
-                //    if (order != null)
-                //    {
-                //        orderNo = order.Order;
-                //    }
-                //}
+                var order = typeof(T).GetProperty(name).GetAttribute<PropertyOrderAttribute>(false);
+                {
+                    if (order != null)
+                    {
+                        orderNo = order.Order;
+                    }
+                }
 
 
                 var column = new DataColumn(columnName);

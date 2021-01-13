@@ -58,10 +58,8 @@ namespace PHLibrary.ExcelExport
                 mergedCell.Merge=true;
                 mergedCell.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                 mergedCell.Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
-                mergedCell.Style.Border.Top.Style = OfficeOpenXml.Style.ExcelBorderStyle.Medium;
-                mergedCell.Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Medium;
-                mergedCell.Style.Border.Left.Style = OfficeOpenXml.Style.ExcelBorderStyle.Medium;
-                mergedCell.Style.Border.Right.Style = OfficeOpenXml.Style.ExcelBorderStyle.Medium;
+               
+                mergedCell.Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
                 mergedCell.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                 mergedCell.Style.Fill.BackgroundColor.SetColor(Color.LightYellow);
                 mergedCell.Value=retangle.Title;

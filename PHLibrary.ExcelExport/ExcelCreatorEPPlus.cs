@@ -15,31 +15,31 @@ namespace PHLibrary.ExcelExport
     /// </summary>
     public class ExcelCreatorEPPlus : IExcelCreator
     {
-        public Stream Create<T>(IList<T> data,IDictionary<string,string> propertyNameMaps=null) 
-           
+        public Stream Create<T>(IList<T> data, IDictionary<string, string> propertyNameMaps = null, CellStyleSettings cellStyleSettings = null)
+
         {
-            var dataTable = new DataTableConverter<T>().Convert(data,propertyNameMaps);
+            var dataTable = new DataTableConverter<T>().Convert(data, propertyNameMaps);
             return Create(dataTable);
 
 
         }
-        public System.IO.Stream Create(DataTable dataTable)
+        public System.IO.Stream Create(DataTable dataTable, CellStyleSettings cellStyleSettings = null)
         {
             return Create(dataTable, CreateColumnTree(dataTable));
         }
-        public System.IO.Stream Create(DataSet dataset, ColumnTree columnTree)
+        public System.IO.Stream Create(DataSet dataset, ColumnTree columnTree, CellStyleSettings cellStyleSettings = null)
         {
             return Create(FetchFrom(dataset), new List<ColumnTree> { columnTree });
         }
-        public System.IO.Stream Create(DataTable dataTable, ColumnTree columnTree)
+        public System.IO.Stream Create(DataTable dataTable, ColumnTree columnTree, CellStyleSettings cellStyleSettings = null)
         {
             return Create(new List<DataTable> { dataTable }, new List<ColumnTree> { columnTree });
         }
-        public Stream Create(DataSet dataToExport)
+        public Stream Create(DataSet dataToExport, CellStyleSettings cellStyleSettings = null)
         {
             return Create(dataToExport, CreateColumnTrees(dataToExport));
         }
-        public Stream Create(DataSet dataToExport, IList<ColumnTree> columnTrees)
+        public Stream Create(DataSet dataToExport, IList<ColumnTree> columnTrees, CellStyleSettings cellStyleSettings = null)
         {
             return Create(FetchFrom(dataToExport), columnTrees);
 
@@ -53,7 +53,7 @@ namespace PHLibrary.ExcelExport
             }
             return tables;
         }
-        private Stream Create(IList<DataTable> datatables, IList<ColumnTree> columnTrees)
+        private Stream Create(IList<DataTable> datatables, IList<ColumnTree> columnTrees,CellStyleSettings cellStyleSettings=null)
         {
             if (datatables.Count != columnTrees.Count)
             {
@@ -71,7 +71,7 @@ namespace PHLibrary.ExcelExport
                     IList<string> columnFormats;
                     int headerHeight = headerCreateor.CreateHeader(out columnFormats);
                     //create body 
-                    FillSheetEpplusWithLoadRange(sheet, datatables[i], headerHeight, columnFormats);
+                    FillSheetEpplusWithLoadRange(sheet, datatables[i], headerHeight, columnFormats,cellStyleSettings);
                 }
                 Stream stream = new MemoryStream();
                 excelPackage.SaveAs(stream);
@@ -105,6 +105,12 @@ namespace PHLibrary.ExcelExport
         }
         private void FillSheetEpplusWithLoadRange(ExcelWorksheet sheet, DataTable dataTable, int startRow, IList<string> columnFormats)
         {
+            FillSheetEpplusWithLoadRange(sheet, dataTable, startRow, columnFormats, null);
+        }
+
+
+        private void FillSheetEpplusWithLoadRange(ExcelWorksheet sheet, DataTable dataTable, int startRow, IList<string> columnFormats, CellStyleSettings cellStyleSettings)
+        {
 
             //A workbook must have at least on cell, so lets add one... 
 
@@ -113,9 +119,9 @@ namespace PHLibrary.ExcelExport
 
             //fill data
             var cells = sheet.Cells[startRow + 1, 1, rows, columns];
-           
-           
-            var cellRange=  cells.LoadFromDataTable(dataTable, false);
+
+
+            cells.LoadFromDataTable(dataTable, false);
             //format
             for (int i = 0; i < columnFormats.Count; i++)// format in columnFormats)
             {
@@ -123,19 +129,22 @@ namespace PHLibrary.ExcelExport
                 if (!string.IsNullOrEmpty(format))
                 {
 
-                    var columnCells = sheet.Cells[startRow + 1, i + 1, rows, i + 1];
+                    var columnCells = sheet.Cells[startRow + 1, i + 1,startRow+ rows, i + 1];
                     //columnCells
                     columnCells.Style.Numberformat.Format = format;
 
                 }
             }
             //style
-            var bodyCells= sheet.Cells[startRow + 1, 1, startRow+rows, columns];
-            foreach (var cell in bodyCells)
-            {
-                cell.Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin);
-            }
 
+            var bodyCells = sheet.Cells[startRow + 1, 1, startRow + rows, columns];
+            if (cellStyleSettings != null)
+            {
+                foreach (var cell in bodyCells)
+                {
+                    cell.Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+                }
+            }
         }
 
 

@@ -9,7 +9,12 @@
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/phiree/PHLibrary</RepositoryUrl>
     <PackageProjectUrl>https://github.com/phiree/PHLibrary</PackageProjectUrl>
-    <PackageReleaseNotes>1.1.5
+    <PackageReleaseNotes>1.1.7
+fix: 格式化没有应用到最后一行数据
+1.1.6
+恢复 OrderAttribute
+表格单元格增加边框
+1.1.5
 删除引发attempt-by-method-x-to-access-method-y-failed异常的代码
 1.1.4
  删除重复逻辑
@@ -25,12 +30,12 @@
     <Product>PHLibrary.ExcelExport</Product>
     <PackageId>PHLibrary.ExcelExport</PackageId>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Version>1.1.5</Version>
+    <Version>1.1.7</Version>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <Company>PHLibrary.ExcelExport</Company>
     <Authors>PHLibrary.ExcelExport</Authors>
-    <FileVersion>1.1.5</FileVersion>
-    <AssemblyVersion>1.1.5</AssemblyVersion>
+    <FileVersion>1.1.7</FileVersion>
+    <AssemblyVersion>1.1.7</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

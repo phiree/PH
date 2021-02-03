@@ -64,8 +64,9 @@ namespace PHLibrary.ExcelExport
                 for (int i = 0; i < datatables.Count; i++)// ar dataTable in dataToExport.Tables)
                 {
                     var dataTable = datatables[i];
+                    string tablename = string.IsNullOrEmpty(dataTable.TableName) ? "sheet1" : dataTable.TableName;
                     var columnTree = columnTrees[i];
-                    var sheet = excelPackage.Workbook.Worksheets.Add(dataTable.TableName);
+                    var sheet = excelPackage.Workbook.Worksheets.Add(tablename);
                     //create merged header cells
                     var headerCreateor = new ExceHeaderCreatorEPPlus(columnTree, sheet);
                     IList<string> columnFormats;

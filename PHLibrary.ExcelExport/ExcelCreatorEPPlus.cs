@@ -25,23 +25,23 @@ namespace PHLibrary.ExcelExport
         }
         public System.IO.Stream Create(DataTable dataTable, CellStyleSettings cellStyleSettings = null)
         {
-            return Create(dataTable, CreateColumnTree(dataTable));
+            return Create(dataTable, CreateColumnTree(dataTable), cellStyleSettings);
         }
         public System.IO.Stream Create(DataSet dataset, ColumnTree columnTree, CellStyleSettings cellStyleSettings = null)
         {
-            return Create(FetchFrom(dataset), new List<ColumnTree> { columnTree });
+            return Create(FetchFrom(dataset), new List<ColumnTree> { columnTree }, cellStyleSettings);
         }
         public System.IO.Stream Create(DataTable dataTable, ColumnTree columnTree, CellStyleSettings cellStyleSettings = null)
         {
-            return Create(new List<DataTable> { dataTable }, new List<ColumnTree> { columnTree });
+            return Create(new List<DataTable> { dataTable }, new List<ColumnTree> { columnTree },cellStyleSettings);
         }
         public Stream Create(DataSet dataToExport, CellStyleSettings cellStyleSettings = null)
         {
-            return Create(dataToExport, CreateColumnTrees(dataToExport));
+             return Create(dataToExport, CreateColumnTrees(dataToExport),cellStyleSettings);
         }
         public Stream Create(DataSet dataToExport, IList<ColumnTree> columnTrees, CellStyleSettings cellStyleSettings = null)
         {
-            return Create(FetchFrom(dataToExport), columnTrees);
+            return Create(FetchFrom(dataToExport), columnTrees,cellStyleSettings);
 
         }
         private IList<DataTable> FetchFrom(DataSet ds)
@@ -55,6 +55,11 @@ namespace PHLibrary.ExcelExport
         }
         private Stream Create(IList<DataTable> datatables, IList<ColumnTree> columnTrees,CellStyleSettings cellStyleSettings=null)
         {
+            if (cellStyleSettings == null)
+            {
+                cellStyleSettings = new CellStyleSettings { BorderStyle = OfficeOpenXml.Style.ExcelBorderStyle.Thin };
+            }
+
             if (datatables.Count != columnTrees.Count)
             {
                 throw new Exception($"表头数量[{columnTrees.Count}]和表格数量[{datatables.Count}]不一致.");

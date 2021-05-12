@@ -45,6 +45,7 @@ fix: 格式化没有应用到最后一行数据
   <ItemGroup>
     <PackageReference Include="Dynamitey" Version="2.0.10.189" />
     <PackageReference Include="EPPlus" Version="4.5.3.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
     <PackageReference Include="PHLibrary" Version="2.0.0" />
   </ItemGroup>
 

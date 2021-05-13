@@ -10,43 +10,61 @@ using PHLibrary.Reflection.DisplayAttribute;
 using System.Data.Common;
 using PHLibrary.Reflection.ArrayValuesToInstance;
 using System.Collections.Specialized;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace PHLibrary.ExcelExportExcelCreator
 {
     /// <summary> 
     /// convert T to datatable
     /// </summary>
-    public class DataTableConverter<T> //where T : class
+    public class DataTableConverter<T> : IDataTableConverter<T>
+    //where T : class
     {
-
-        private IDictionary<string, string> GetPropertyMaps<T>() //where T : class
+        ILogger logger;
+        public DataTableConverter(ILoggerFactory loggerFactory = null)
         {
-            var propertyInfos = typeof(T).GetProperties();
-            var map = new Dictionary<string, string>();
-            foreach (var p in propertyInfos)
+            if (loggerFactory == null) { logger = NullLogger.Instance; }
+            else
             {
-                var attr = p.GetAttribute<DisplayNameAttribute>(false);
-                string display = attr == null ? p.Name : attr.DisplayName;
-                map.Add(p.Name, display);
+                logger = loggerFactory.CreateLogger<DataTableConverter<T>>();
             }
-            return map;
-
         }
+
 
         public DataTable Convert(IList<T> data, IDictionary<string, string> propertyNameMaps = null)
         {
+
             if (propertyNameMaps == null)
             {
 
-                propertyNameMaps = PHLibrary.Reflection.DisplayAttribute.ReflectHelper.GetPropertyMaps<T>();
+                propertyNameMaps = ReflectHelper.GetPropertyMaps<T>();
             }
-            if (data.Count == 0)
+            IEnumerable<string> memberNames;
+            // no dynamics
+            memberNames = typeof(T).GetProperties().Select(x => x.Name);
+            if (memberNames == null || memberNames.Count() == 0)
             {
-                throw new Exception("没有数据,不能导出");
+                if (data.Count == 0)
+                {
+                    string errMsg = "数据类型为 dynamic, 且没有数据,无法推断出列名,无法导出";
+                    logger.LogError(errMsg);
+                    throw new Exception(errMsg);
+                }
+                var firstData = data[0];
+              memberNames = Dynamitey.Dynamic.GetMemberNames(firstData);
             }
-            var firstData = data[0];
-            var memberNames = Dynamitey.Dynamic.GetMemberNames(firstData);
-            var dataTable = new DataTable("Sheet1");
+            if (memberNames == null || memberNames.Count() == 0)
+            {
+                string errMsg = $"无法计算列名信息,无法导出.T:{typeof(T).Name}";
+                logger.LogError(errMsg);
+                throw new Exception(errMsg);
+            }
+
+
+
+
+                var dataTable = new DataTable("Sheet1");
             var unOrderedColumns = new Dictionary<DataColumn, int>();
             for (int i = 0; i < memberNames.Count(); i++)// var name in memberNames)
             {
@@ -63,13 +81,27 @@ namespace PHLibrary.ExcelExportExcelCreator
                 {
                     throw new PropertyMapMatchNotFound(name);
                 }
-
-                var order = typeof(T).GetProperty(name).GetAttribute<PropertyOrderAttribute>(false);
+                try
                 {
-                    if (order != null)
+                    var orderProperty = typeof(T).GetProperty(name);
+                    if (orderProperty == null)
                     {
-                        orderNo = order.Order;
+                        logger.LogWarning("OrderProperty is null");
                     }
+                    else
+                    {
+                        var order = orderProperty.GetAttribute<PropertyOrderAttribute>(false);
+                        {
+                            if (order != null)
+                            {
+                                orderNo = order.Order;
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError("Get OrderPropertyError :" + ex.ToString());
                 }
 
 

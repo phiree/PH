@@ -9,7 +9,9 @@
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/phiree/PHLibrary</RepositoryUrl>
     <PackageProjectUrl>https://github.com/phiree/PHLibrary</PackageProjectUrl>
-    <PackageReleaseNotes>1.1.9
+    <PackageReleaseNotes>1.2.0
+fix:  get order property exception
+1.1.9
  improve: 导出的excel默认带 格式为 thin的边框
 1.1.8
 fix: datatable的tablename为空时抛出worksheet name can't be empty.
@@ -34,12 +36,12 @@ fix: 格式化没有应用到最后一行数据
     <Product>PHLibrary.ExcelExport</Product>
     <PackageId>PHLibrary.ExcelExport</PackageId>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Version>1.1.9</Version>
+    <Version>1.2.0</Version>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <Company>PHLibrary.ExcelExport</Company>
     <Authors>PHLibrary.ExcelExport</Authors>
-    <FileVersion>1.1.9</FileVersion>
-    <AssemblyVersion>1.1.9</AssemblyVersion>
+    <FileVersion>1.2.0</FileVersion>
+    <AssemblyVersion>1.2.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

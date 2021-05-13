@@ -44,7 +44,7 @@ support properties that dont have orderattribute</PackageReleaseNotes>
     <AssemblyVersion>2.0.1</AssemblyVersion>
     <PackageProjectUrl>https://github.com/phiree/PHLibrary</PackageProjectUrl>
     <PackageIcon>icon.png</PackageIcon>
-    <PackageLicenseExpression>LGPL</PackageLicenseExpression>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
@@ -52,12 +52,14 @@ support properties that dont have orderattribute</PackageReleaseNotes>
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dynamitey" Version="2.0.10.189" />
     <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Reflection" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Excel\CreaterWithMergedHeader\" />
+    <Folder Include="Reflection\DisplayAttribute\" />
   </ItemGroup>
 
   <ItemGroup>

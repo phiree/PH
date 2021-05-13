@@ -6,7 +6,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using PHLibrary.Reflection.DisplayAttribute;
+using PHLibrary.Reflection;
 using System.Data.Common;
 using PHLibrary.Reflection.ArrayValuesToInstance;
 using System.Collections.Specialized;
@@ -34,53 +34,21 @@ namespace PHLibrary.ExcelExportExcelCreator
 
         public DataTable Convert(IList<T> data, IDictionary<string, string> propertyNameMaps = null)
         {
+            
 
             if (propertyNameMaps == null)
             {
 
-                propertyNameMaps = ReflectHelper.GetPropertyMaps<T>();
+                propertyNameMaps = ColumnMapCreator.CreateColumnMap<T>(data);
             }
-            IEnumerable<string> memberNames;
-            // no dynamics
-            memberNames = typeof(T).GetProperties().Select(x => x.Name);
-            if (memberNames == null || memberNames.Count() == 0)
-            {
-                if (data.Count == 0)
-                {
-                    string errMsg = "数据类型为 dynamic, 且没有数据,无法推断出列名,无法导出";
-                    logger.LogError(errMsg);
-                    throw new Exception(errMsg);
-                }
-                var firstData = data[0];
-              memberNames = Dynamitey.Dynamic.GetMemberNames(firstData);
-            }
-            if (memberNames == null || memberNames.Count() == 0)
-            {
-                string errMsg = $"无法计算列名信息,无法导出.T:{typeof(T).Name}";
-                logger.LogError(errMsg);
-                throw new Exception(errMsg);
-            }
-
-
-
-
+            
                 var dataTable = new DataTable("Sheet1");
             var unOrderedColumns = new Dictionary<DataColumn, int>();
-            for (int i = 0; i < memberNames.Count(); i++)// var name in memberNames)
+            for (int i = 0; i < propertyNameMaps.Count(); i++)// var name in memberNames)
             {
                 int orderNo = i + 1;
-                string name = memberNames.ElementAt(i);
-                string columnName = name;
-
-                try
-                {
-
-                    columnName = propertyNameMaps[name];
-                }
-                catch
-                {
-                    throw new PropertyMapMatchNotFound(name);
-                }
+                string name = propertyNameMaps.ElementAt(i).Key;
+                string columnName = propertyNameMaps.ElementAt(i).Value;
                 try
                 {
                     var orderProperty = typeof(T).GetProperty(name);
@@ -114,8 +82,7 @@ namespace PHLibrary.ExcelExportExcelCreator
             {
                 dataTable.Columns.Add(column.Key);
             }
-            Debug.Assert(memberNames.Count() == dataTable.Columns.Count, "数据列和属性数量应该相等");
-            foreach (T t in data)
+             foreach (T t in data)
             {
                 var row = dataTable.NewRow();
                 foreach (DataColumn column in dataTable.Columns)

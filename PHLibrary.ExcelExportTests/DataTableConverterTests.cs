@@ -42,14 +42,32 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
             Assert.AreEqual("年龄", dataTable.Columns[1].ColumnName);
         }
         [TestMethod()]
-        [ExpectedException(typeof(Exception), "数据类型为 dynamic, 且没有数据,无法推断出列名,无法导出")]
-        public void ConvertTestForDynamicNoRows()
+        public void ConvertTestForDynamicNoMapping()
+        {
+            var studentList = new List<dynamic> { new { Name = "name1", Age = 18 } };
+            DataTableConverter<dynamic> converter = new DataTableConverter<dynamic>();
+            var dataTable = converter.Convert(studentList);
+            Assert.AreEqual("Name", dataTable.Columns[0].ColumnName);
+            Assert.AreEqual("name1", dataTable.Rows[0][0].ToString());
+            Assert.AreEqual("Age", dataTable.Columns[1].ColumnName);
+        }
+        [TestMethod()]
+           public void ConvertTestForDynamicNoRowsWithColumnsMap()
         {
             var studentList = new List<dynamic>();// { new { Name = "name1", Age = 18 } };
             DataTableConverter<dynamic> converter = new DataTableConverter<dynamic>();
             var dataTable = converter.Convert(studentList, new Dictionary<string, string> { { "Name", "姓名" }, { "Age", "年龄" } });
-            Assert.AreEqual("姓名", dataTable.Columns[0].ColumnName);
-            Assert.AreEqual("年龄", dataTable.Columns[1].ColumnName);
+            Assert.AreEqual(2, dataTable.Columns.Count);
+            Assert.AreEqual(0, dataTable.Rows.Count);
+        }
+        [TestMethod()]
+        public void ConvertTestForDynamicNoRowsNoColumnsMap()
+        {
+            var studentList = new List<dynamic>();// { new { Name = "name1", Age = 18 } };
+            DataTableConverter<dynamic> converter = new DataTableConverter<dynamic>();
+            var dataTable = converter.Convert(studentList);
+            Assert.AreEqual(0, dataTable.Columns.Count);
+            Assert.AreEqual(0, dataTable.Rows.Count);
         }
         [TestMethod()]
         public void ConvertTestForTypedListWith0Rows()

@@ -9,7 +9,9 @@
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/phiree/PHLibrary</RepositoryUrl>
     <PackageProjectUrl>https://github.com/phiree/PHLibrary</PackageProjectUrl>
-    <PackageReleaseNotes>1.2.1
+    <PackageReleaseNotes>1.2.2
+feat: 增加配置: excel头部背景图片
+1.2.1
 logging扩展降级至2.2 以支持netcoreapp 2.2
 1.2.0
 fix:  get order property exception

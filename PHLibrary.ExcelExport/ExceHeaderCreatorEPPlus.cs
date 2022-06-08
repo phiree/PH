@@ -10,10 +10,13 @@ namespace PHLibrary.ExcelExport
     {
         public ColumnTree Tree { get;set;}
         ExcelWorksheet sheet;
-        public ExceHeaderCreatorEPPlus(ColumnTree tree, ExcelWorksheet sheet)
+        Color headerColor;
+        public ExceHeaderCreatorEPPlus(ColumnTree tree, ExcelWorksheet sheet,Color? headerColor=null )
         {
             this.sheet=sheet;
+            this.headerColor = headerColor==null?Color.LightYellow:headerColor.Value;
             this.Tree = tree;
+
         }
 
         

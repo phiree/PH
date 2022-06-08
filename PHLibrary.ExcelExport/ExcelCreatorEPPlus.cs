@@ -73,7 +73,7 @@ namespace PHLibrary.ExcelExport
                     var columnTree = columnTrees[i];
                     var sheet = excelPackage.Workbook.Worksheets.Add(tablename);
                     //create merged header cells
-                    var headerCreateor = new ExceHeaderCreatorEPPlus(columnTree, sheet);
+                    var headerCreateor = new ExceHeaderCreatorEPPlus(columnTree, sheet,cellStyleSettings.HeaderBackgroundColor);
                     IList<string> columnFormats;
                     int headerHeight = headerCreateor.CreateHeader(out columnFormats);
                     //create body 

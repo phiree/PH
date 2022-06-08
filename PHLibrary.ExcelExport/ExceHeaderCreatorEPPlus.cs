@@ -64,7 +64,7 @@ namespace PHLibrary.ExcelExport
                
                 mergedCell.Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
                 mergedCell.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                mergedCell.Style.Fill.BackgroundColor.SetColor(Color.LightYellow);
+                mergedCell.Style.Fill.BackgroundColor.SetColor(headerColor);
                 mergedCell.Value=retangle.Title;
 
             }

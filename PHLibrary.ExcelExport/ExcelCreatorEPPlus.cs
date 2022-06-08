@@ -19,7 +19,7 @@ namespace PHLibrary.ExcelExport
 
         {
             var dataTable = new DataTableConverter<T>().Convert(data, propertyNameMaps);
-            return Create(dataTable);
+            return Create(dataTable,cellStyleSettings);
 
 
         }

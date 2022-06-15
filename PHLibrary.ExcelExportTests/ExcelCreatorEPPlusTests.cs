@@ -13,6 +13,70 @@ namespace PHLibrary.ExcelExport.Tests
     [TestClass()]
     public class ExcelCreatorEPPlusTests
     {
+        public class TestItem { 
+            public string Name { get; set; }
+            public int Age { get;set;}
+            }
+        [TestMethod()]
+        public void CreateForEmptyList()
+        { 
+            var list=new List<TestItem>();
+            ExcelCreatorEPPlus excelCreator
+               = new ExcelCreatorEPPlus();
+           var stream  =  excelCreator.Create(list);
+            using (var file = new FileStream("CreateForEmptyList" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
+            {
+                // stream.Seek(0, SeekOrigin.Begin);
+                CopyStream(stream, file);
+
+            }
+
+        }
+        [TestMethod()]
+        public void CreateForNotEmptyDynamicList()
+        {
+            var list = new List<dynamic>{ new{Age=1,Name="name1" },new{ Age=2,Name="name2"} };
+            ExcelCreatorEPPlus excelCreator
+               = new ExcelCreatorEPPlus();
+            var stream = excelCreator.Create(list);
+            using (var file = new FileStream("CreateForNotEmptyDynamicList" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
+            {
+                // stream.Seek(0, SeekOrigin.Begin);
+                CopyStream(stream, file);
+
+            }
+
+        }
+        [TestMethod()]
+        public void CreateForEmptyDynamicList()
+        {
+            var list = new List<dynamic> {  };
+            ExcelCreatorEPPlus excelCreator
+               = new ExcelCreatorEPPlus();
+            var stream = excelCreator.Create(list);
+            using (var file = new FileStream("CreateForEmptyDynamicList" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
+            {
+                // stream.Seek(0, SeekOrigin.Begin);
+                CopyStream(stream, file);
+
+            }
+
+        }
+        [TestMethod()]
+        public void CreateForNotEmptyList()
+        {
+            var list = new List<TestItem> {new TestItem{ Age=1,Name="name1" },new TestItem{ Age=2,Name="name2"} };
+            ExcelCreatorEPPlus excelCreator
+               = new ExcelCreatorEPPlus();
+            var stream = excelCreator.Create(list);
+            using (var file = new FileStream("CreateForNotEmptyList" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
+            {
+                // stream.Seek(0, SeekOrigin.Begin);
+                CopyStream(stream, file);
+
+            }
+
+        }
         [TestMethod()]
         public void CreateFromDataSetTest()
         {

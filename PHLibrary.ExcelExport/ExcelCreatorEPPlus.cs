@@ -122,7 +122,9 @@ namespace PHLibrary.ExcelExport
 
             int rows = dataTable.Rows.Count;
             int columns = dataTable.Columns.Count;
-
+            if (rows == 0) { 
+                rows=1;
+                }
             //fill data
             var cells = sheet.Cells[startRow + 1, 1, rows, columns];
 

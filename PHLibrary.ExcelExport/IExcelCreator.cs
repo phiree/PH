@@ -39,11 +39,6 @@ namespace PHLibrary.ExcelExport
         /// <returns></returns>
         System.IO.Stream Create(System.Data.DataSet dataToExport,IList<ColumnTree> headerTrees, CellStyleSettings cellStyleSettings = null);
     }
-
-    public interface IDataSetExcelCreator
-    {
-      
-        System.IO.Stream Create( );
-    }
+ 
 
 }

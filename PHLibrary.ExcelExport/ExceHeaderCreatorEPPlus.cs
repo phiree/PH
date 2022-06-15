@@ -10,11 +10,11 @@ namespace PHLibrary.ExcelExport
     {
         public ColumnTree Tree { get;set;}
         ExcelWorksheet sheet;
-        Color headerColor;
+        Color? headerColor;
         public ExceHeaderCreatorEPPlus(ColumnTree tree, ExcelWorksheet sheet,Color? headerColor=null )
         {
             this.sheet=sheet;
-            this.headerColor = headerColor==null?Color.LightYellow:headerColor.Value;
+            this.headerColor =  headerColor;
             this.Tree = tree;
 
         }
@@ -64,7 +64,10 @@ namespace PHLibrary.ExcelExport
                
                 mergedCell.Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
                 mergedCell.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                mergedCell.Style.Fill.BackgroundColor.SetColor(headerColor);
+                if(headerColor.HasValue)
+                { 
+                mergedCell.Style.Fill.BackgroundColor.SetColor(headerColor.Value);
+                }
                 mergedCell.Value=retangle.Title;
 
             }

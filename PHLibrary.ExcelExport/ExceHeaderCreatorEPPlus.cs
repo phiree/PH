@@ -22,8 +22,15 @@ namespace PHLibrary.ExcelExport
         
         public int CreateHeader( out IList<string> formats)
         {
-            int width = Tree.Roots.Sum(x => x.CalculateLeaesCount());
-            int height = Tree.Roots.Max(x => x.MaxDepth);
+            int width =1; 
+            int height =1;
+            try{
+                height=Tree.Roots.Max(x => x.MaxDepth);
+                width= Tree.Roots.Sum(x => x.CalculateLeaesCount());
+            }
+            catch(System.InvalidOperationException ex) { 
+                //空列
+                }
             var allRetangles = Tree.CalculateRetangles();
             formats = Tree.Roots.SelectMany(x => x.CalculateLeaves()).Select(x => x.Format).ToList();
             //创建原子单元格

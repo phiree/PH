@@ -60,8 +60,38 @@ namespace PHLibrary.ExcelExport.Tests
                 CopyStream(stream, file);
 
             }
-
         }
+
+        [TestMethod()]
+        public void CreateForWithFormat()
+        {
+            var list = new List<dynamic> {
+                new { Price = 1, Name = "name1" }
+            , new { Price = 10, Name = "name2" }
+             , new { Price = 101, Name = "name3" }
+              , new { Price = 1000, Name = "name4" },
+                 new { Price = 10000, Name = "name5" }
+            , new { Price = 100000, Name = "name6" }
+           
+              };
+
+            ExcelCreatorEPPlus excelCreator
+               = new ExcelCreatorEPPlus();
+            ColumnTree tree=new ColumnTree { 
+                 Roots=new List<ColumnTreeNode> { 
+                      new ColumnTreeNode{ Title="价格1", Format="¥#,##0.00;¥-#,##0.00" },
+                      new ColumnTreeNode{ Title="名称1" }
+                     }
+                };
+            var stream = excelCreator.Create(list,tree,new CellStyleSettings {  });
+            using (var file = new FileStream("CreateForWithFormat" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
+            {
+                // stream.Seek(0, SeekOrigin.Begin);
+                CopyStream(stream, file);
+
+            }
+        }
+
         [TestMethod()]
         public void CreateForNotEmptyList()
         {

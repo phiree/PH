@@ -19,7 +19,7 @@ namespace PHLibrary.ExcelExport
 
         {
             var dataTable = new DataTableConverter<T>().Convert(data, propertyNameMaps);
-            return Create(dataTable,cellStyleSettings);
+            return Create(dataTable, cellStyleSettings);
 
 
         }
@@ -33,15 +33,15 @@ namespace PHLibrary.ExcelExport
         }
         public System.IO.Stream Create(DataTable dataTable, ColumnTree columnTree, CellStyleSettings cellStyleSettings = null)
         {
-            return Create(new List<DataTable> { dataTable }, new List<ColumnTree> { columnTree },cellStyleSettings);
+            return Create(new List<DataTable> { dataTable }, new List<ColumnTree> { columnTree }, cellStyleSettings);
         }
         public Stream Create(DataSet dataToExport, CellStyleSettings cellStyleSettings = null)
         {
-             return Create(dataToExport, CreateColumnTrees(dataToExport),cellStyleSettings);
+            return Create(dataToExport, CreateColumnTrees(dataToExport), cellStyleSettings);
         }
         public Stream Create(DataSet dataToExport, IList<ColumnTree> columnTrees, CellStyleSettings cellStyleSettings = null)
         {
-            return Create(FetchFrom(dataToExport), columnTrees,cellStyleSettings);
+            return Create(FetchFrom(dataToExport), columnTrees, cellStyleSettings);
 
         }
         private IList<DataTable> FetchFrom(DataSet ds)
@@ -53,7 +53,7 @@ namespace PHLibrary.ExcelExport
             }
             return tables;
         }
-        private Stream Create(IList<DataTable> datatables, IList<ColumnTree> columnTrees,CellStyleSettings cellStyleSettings=null)
+        private Stream Create(IList<DataTable> datatables, IList<ColumnTree> columnTrees, CellStyleSettings cellStyleSettings = null)
         {
             if (cellStyleSettings == null)
             {
@@ -73,11 +73,11 @@ namespace PHLibrary.ExcelExport
                     var columnTree = columnTrees[i];
                     var sheet = excelPackage.Workbook.Worksheets.Add(tablename);
                     //create merged header cells
-                    var headerCreateor = new ExceHeaderCreatorEPPlus(columnTree, sheet,cellStyleSettings.HeaderBackgroundColor);
+                    var headerCreateor = new ExceHeaderCreatorEPPlus(columnTree, sheet, cellStyleSettings.HeaderBackgroundColor);
                     IList<string> columnFormats;
                     int headerHeight = headerCreateor.CreateHeader(out columnFormats);
                     //create body 
-                    FillSheetEpplusWithLoadRange(sheet, datatables[i], headerHeight, columnFormats,cellStyleSettings);
+                    FillSheetEpplusWithLoadRange(sheet, datatables[i], headerHeight, columnFormats, cellStyleSettings);
                 }
                 Stream stream = new MemoryStream();
                 excelPackage.SaveAs(stream);
@@ -122,9 +122,10 @@ namespace PHLibrary.ExcelExport
 
             int rows = dataTable.Rows.Count;
             int columns = dataTable.Columns.Count;
-            if (rows == 0) { 
-                rows=1;
-                }
+            if (rows == 0)
+            {
+                rows = 1;
+            }
             //fill data
             var cells = sheet.Cells[startRow + 1, 1, rows, columns];
 
@@ -137,7 +138,7 @@ namespace PHLibrary.ExcelExport
                 if (!string.IsNullOrEmpty(format))
                 {
 
-                    var columnCells = sheet.Cells[startRow + 1, i + 1,startRow+ rows, i + 1];
+                    var columnCells = sheet.Cells[startRow + 1, i + 1, startRow + rows, i + 1];
                     //columnCells
                     columnCells.Style.Numberformat.Format = format;
 
@@ -151,11 +152,17 @@ namespace PHLibrary.ExcelExport
                 foreach (var cell in bodyCells)
                 {
                     cell.Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+
+                    
                 }
             }
         }
 
-
+        public Stream Create<T>(IList<T> data, ColumnTree tree, CellStyleSettings cellStyleSettings = null)
+        {
+            var dataTable = new DataTableConverter<T>().Convert(data);
+            return Create(dataTable, tree, cellStyleSettings);
+        }
     }
 
 }

@@ -12,6 +12,8 @@ using PHLibrary.Reflection.ArrayValuesToInstance;
 using System.Collections.Specialized;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using System.Xml.Linq;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 
 namespace PHLibrary.ExcelExportExcelCreator
 {
@@ -72,8 +74,9 @@ namespace PHLibrary.ExcelExportExcelCreator
                     logger.LogError("Get OrderPropertyError :" + ex.ToString());
                 }
 
-
-                var column = new DataColumn(columnName);
+                var columnType=new ColumnDataTypeDetermine<T>().GetPropertyType(data,columnName);
+               //guess column type using first row of data
+               var column = new DataColumn(columnName,columnType);
                 column.Caption = name;
                 unOrderedColumns.Add(column, orderNo);
 
@@ -98,4 +101,30 @@ namespace PHLibrary.ExcelExportExcelCreator
         }
 
     }
+
+    //列的数据类型定义
+    /// <summary>
+    /// t 有可能是匿名类。
+    /// 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class ColumnDataTypeDetermine<T> { 
+        
+         public Type GetPropertyType(IList<T> data,string propertyName){
+
+         var property=    typeof(T).GetProperty(propertyName);
+            if(property==null){
+                //匿名类
+                if (data.Count > 0) {
+var firstData = data[0];
+                 var propertyValue=   Dynamic.InvokeGet(firstData, propertyName);
+                    return propertyValue.GetType();
+                }
+                }
+            else { 
+                return property.GetType();
+                }
+            return typeof(string);
+        }
+        }
 }

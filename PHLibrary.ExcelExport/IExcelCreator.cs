@@ -30,6 +30,7 @@ namespace PHLibrary.ExcelExport
         /// <param name="propertyNameMaps"></param>
         /// <returns></returns>
          System.IO.Stream Create<T>(IList<T> data, IDictionary<string, string> propertyNameMaps=null, CellStyleSettings cellStyleSettings = null);
+         System.IO.Stream Create<T>(IList<T> data, ColumnTree tree, CellStyleSettings cellStyleSettings = null);
         System.IO.Stream Create(DataTable dataTable,ColumnTree columnTree, CellStyleSettings cellStyleSettings = null);
         /// <summary>
         /// 

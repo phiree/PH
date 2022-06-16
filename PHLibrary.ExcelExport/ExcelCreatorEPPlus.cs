@@ -131,6 +131,7 @@ namespace PHLibrary.ExcelExport
 
 
             cells.LoadFromDataTable(dataTable, false);
+            
             //format
             for (int i = 0; i < columnFormats.Count; i++)// format in columnFormats)
             {
@@ -149,12 +150,10 @@ namespace PHLibrary.ExcelExport
             var bodyCells = sheet.Cells[startRow + 1, 1, startRow + rows, columns];
             if (cellStyleSettings != null)
             {
-                foreach (var cell in bodyCells)
-                {
-                    cell.Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin);
 
-                    
-                }
+                bodyCells.Style.Border.BorderAround(cellStyleSettings.BorderStyle);
+                bodyCells.Style.HorizontalAlignment=cellStyleSettings.HorizontalAlignment;
+                bodyCells.AutoFitColumns();
             }
         }
 

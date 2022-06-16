@@ -9,7 +9,9 @@
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/phiree/PHLibrary</RepositoryUrl>
     <PackageProjectUrl>https://github.com/phiree/PHLibrary</PackageProjectUrl>
-    <PackageReleaseNotes>1.4.0
+    <PackageReleaseNotes>2。0
+列类型自动识别
+1.4.0
 支持空数组（非匿名对象）
 1.3.4
 fix: excel头部背景颜色没有生效
@@ -47,12 +49,12 @@ fix: 格式化没有应用到最后一行数据
     <Product>PHLibrary.ExcelExport</Product>
     <PackageId>PHLibrary.ExcelExport</PackageId>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Version>1.4.0</Version>
+    <Version>2.0</Version>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <Company>PHLibrary.ExcelExport</Company>
     <Authors>PHLibrary.ExcelExport</Authors>
-    <FileVersion>1.4.0</FileVersion>
-    <AssemblyVersion>1.4.0</AssemblyVersion>
+    <FileVersion>2.0</FileVersion>
+    <AssemblyVersion>2.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

@@ -83,7 +83,7 @@ namespace PHLibrary.ExcelExport.Tests
                       new ColumnTreeNode{ Title="名称1" }
                      }
                 };
-            var stream = excelCreator.Create(list,tree,new CellStyleSettings {  });
+            var stream = excelCreator.Create(list,tree,new CellStyleSettings { HeaderBackgroundColor= System.Drawing.Color.AliceBlue,  BorderStyle= OfficeOpenXml.Style.ExcelBorderStyle.Dotted, HorizontalAlignment= OfficeOpenXml.Style.ExcelHorizontalAlignment.Left });
             using (var file = new FileStream("CreateForWithFormat" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
             {
                 // stream.Seek(0, SeekOrigin.Begin);

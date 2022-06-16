@@ -12,5 +12,7 @@ namespace PHLibrary.ExcelExport
     {
         public OfficeOpenXml.Style.ExcelBorderStyle BorderStyle { get; set; } = OfficeOpenXml.Style.ExcelBorderStyle.None;
         public Color? HeaderBackgroundColor { get;set;}
+        public OfficeOpenXml.Style.ExcelHorizontalAlignment HorizontalAlignment { get; set; }
+        
     }
 }

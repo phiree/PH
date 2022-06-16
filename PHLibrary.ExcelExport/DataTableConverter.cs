@@ -74,7 +74,7 @@ namespace PHLibrary.ExcelExportExcelCreator
                     logger.LogError("Get OrderPropertyError :" + ex.ToString());
                 }
 
-                var columnType=new ColumnDataTypeDetermine<T>().GetPropertyType(data,columnName);
+                var columnType=new ColumnDataTypeDetermine<T>().GetPropertyType(data,name);
                //guess column type using first row of data
                var column = new DataColumn(columnName,columnType);
                 column.Caption = name;

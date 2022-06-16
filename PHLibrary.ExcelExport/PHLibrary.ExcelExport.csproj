@@ -9,7 +9,9 @@
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/phiree/PHLibrary</RepositoryUrl>
     <PackageProjectUrl>https://github.com/phiree/PHLibrary</PackageProjectUrl>
-    <PackageReleaseNotes>2.1.1
+    <PackageReleaseNotes>2.1.2
+fix: 列类型取值错误
+2.1.1
 fix: 获取属性类型失败.
 2.1
 增加格式化设置：水平对齐
@@ -53,12 +55,12 @@ fix: 格式化没有应用到最后一行数据
     <Product>PHLibrary.ExcelExport</Product>
     <PackageId>PHLibrary.ExcelExport</PackageId>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Version>2.1.1</Version>
+    <Version>2.1.2</Version>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <Company>PHLibrary.ExcelExport</Company>
     <Authors>PHLibrary.ExcelExport</Authors>
-    <FileVersion>2.1.1</FileVersion>
-    <AssemblyVersion>2.1.1</AssemblyVersion>
+    <FileVersion>2.1.2</FileVersion>
+    <AssemblyVersion>2.1.2</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

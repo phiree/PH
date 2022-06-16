@@ -122,7 +122,7 @@ var firstData = data[0];
                 }
                 }
             else { 
-                return property.GetType();
+                return property.PropertyType;
                 }
             return typeof(string);
         }

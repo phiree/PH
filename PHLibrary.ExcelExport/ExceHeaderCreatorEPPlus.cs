@@ -69,8 +69,8 @@ namespace PHLibrary.ExcelExport
                 mergedCell.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                 mergedCell.Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
                
-                mergedCell.Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
-                mergedCell.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                mergedCell.Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+                //mergedCell.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                 if(headerColor.HasValue)
                 { 
                 mergedCell.Style.Fill.BackgroundColor.SetColor(headerColor.Value);

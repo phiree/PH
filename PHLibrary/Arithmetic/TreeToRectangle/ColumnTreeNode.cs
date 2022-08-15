@@ -10,6 +10,7 @@ namespace PHLibrary.Arithmetic.TreeToRectangle
 
         public string Title { get; set; }
         public string Format { get; set; }
+        public int ColumnWidth { get;set;}
         public IList<ColumnTreeNode> Children { get; set; }
 
         IList<MergedCellRetangle> retangles = new List<MergedCellRetangle>();
@@ -30,7 +31,7 @@ namespace PHLibrary.Arithmetic.TreeToRectangle
             int width = CalculateLeaesCount();
             int initialY = 0;
             retangles.Add(new MergedCellRetangle(new RetanglePosition(initialX, initialY)
-                , new RetangleSize(width, height), Title, Format));
+                , new RetangleSize(width, height), Title, Format,ColumnWidth));
             if (Children != null)
             {
                 initialY += height;

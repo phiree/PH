@@ -10,21 +10,31 @@ namespace PHLibrary.Arithmetic.TreeToRectangle
    public class MergedCellRetangle
     {
         public MergedCellRetangle(RetanglePosition retanglePosition, RetangleSize retangleSize, string text)
-            :this(retanglePosition,retangleSize,text,string.Empty)
+            :this(retanglePosition,retangleSize,text,string.Empty,0)
         {
            
         }
-        public MergedCellRetangle(RetanglePosition retanglePosition, RetangleSize retangleSize,string text,string format)
+        public MergedCellRetangle(RetanglePosition retanglePosition, RetangleSize retangleSize, string text,string format)
+           : this(retanglePosition, retangleSize, text,format, 0)
+        {
+
+        }
+        public MergedCellRetangle(RetanglePosition retanglePosition, RetangleSize retangleSize,string text,string format,int columnWidth)
         {
             RetanglePosition = retanglePosition;
             RetangleSize = retangleSize;
             this.Title=text;
             Format=format;
+            this.ColumnWidth= columnWidth;
         }
         /// <summary>
         /// 单元格标题
         /// </summary>
         public string Title { get;protected set;}
+        /// <summary>
+        /// 宽度
+        /// </summary>
+        public int ColumnWidth { get;set;}
         /// <summary>
         /// excel数值格式化表达式
         /// </summary>

@@ -35,22 +35,25 @@ namespace PHLibrary.ExcelExport
             formats = Tree.Roots.SelectMany(x => x.CalculateLeaves()).Select(x => x.Format).ToList();
             //创建原子单元格
 
-            for (int i = 0; i < height; i++)
+            //columns
+            for (int column = 0; column < width; column++)
             {
-                
-
-                for (int j = 0; j < width; j++)
+                 //rows
+                for (int row = 0; row < height; row++)
                 {
-                    var cell = sheet.Cells[i+1,j+1];
+                    var cell = sheet.Cells[row+1,column+1];
                     
                      
-                    var retangle = allRetangles.FirstOrDefault(x => x.RetanglePosition.X == j && x.RetanglePosition.Y == i);
+                    var retangle = allRetangles.FirstOrDefault(x => x.RetanglePosition.X == column && x.RetanglePosition.Y == row);
                     if (retangle != null)
                     {
                        
-                        
+                         
                         cell.Value=retangle.Title;
-                        cell.AutoFitColumns();
+                        sheet.Column(column+1).Width=retangle.ColumnWidth;
+                        //cell.AutoFitColumns();
+                        
+                        
                     }
 
                 }
@@ -73,6 +76,8 @@ namespace PHLibrary.ExcelExport
                 //mergedCell.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                 if(headerColor.HasValue)
                 { 
+                
+                mergedCell.Style.Fill.PatternType= OfficeOpenXml.Style.ExcelFillStyle.Solid;
                 mergedCell.Style.Fill.BackgroundColor.SetColor(headerColor.Value);
                 }
                 mergedCell.Value=retangle.Title;

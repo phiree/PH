@@ -131,7 +131,7 @@ namespace PHLibrary.ExcelExport
 
 
             cells.LoadFromDataTable(dataTable, false);
-            
+
             //format
             for (int i = 0; i < columnFormats.Count; i++)// format in columnFormats)
             {
@@ -142,7 +142,10 @@ namespace PHLibrary.ExcelExport
                     var columnCells = sheet.Cells[startRow + 1, i + 1, startRow + rows, i + 1];
                     //columnCells
                     columnCells.Style.Numberformat.Format = format;
-
+                    if (0 == sheet.Column(i + 1).Width)
+                    {
+                        columnCells.AutoFitColumns();
+                    }
                 }
             }
             //style
@@ -152,8 +155,9 @@ namespace PHLibrary.ExcelExport
             {
 
                 bodyCells.Style.Border.BorderAround(cellStyleSettings.BorderStyle);
-                bodyCells.Style.HorizontalAlignment=cellStyleSettings.HorizontalAlignment;
-                bodyCells.AutoFitColumns();
+                bodyCells.Style.HorizontalAlignment = cellStyleSettings.HorizontalAlignment;
+
+                //  bodyCells.AutoFitColumns();
             }
         }
 

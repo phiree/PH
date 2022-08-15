@@ -9,7 +9,9 @@
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/phiree/PHLibrary</RepositoryUrl>
     <PackageProjectUrl>https://github.com/phiree/PHLibrary</PackageProjectUrl>
-    <PackageReleaseNotes>2.1.3
+    <PackageReleaseNotes>2.2.0
+new: 支持设置Excel列宽度
+2.1.3
 feat: 移除首行默认样式(黄底黑边)
 2.1.2
 fix: 列类型取值错误
@@ -57,12 +59,12 @@ fix: 格式化没有应用到最后一行数据
     <Product>PHLibrary.ExcelExport</Product>
     <PackageId>PHLibrary.ExcelExport</PackageId>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Version>2.1.3</Version>
+    <Version>2.2.0</Version>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <Company>PHLibrary.ExcelExport</Company>
     <Authors>PHLibrary.ExcelExport</Authors>
-    <FileVersion>2.1.3</FileVersion>
-    <AssemblyVersion>2.1.3</AssemblyVersion>
+    <FileVersion>2.2.0</FileVersion>
+    <AssemblyVersion>2.2.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -78,6 +80,10 @@ fix: 格式化没有应用到最后一行数据
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PHLibrary\PHLibrary.csproj" />
   </ItemGroup>
 
 </Project>

@@ -10,16 +10,16 @@ namespace PHLibrary.Arithmetic.TreeToRectangle
    public class MergedCellRetangle
     {
         public MergedCellRetangle(RetanglePosition retanglePosition, RetangleSize retangleSize, string text)
-            :this(retanglePosition,retangleSize,text,string.Empty,0)
+            :this(retanglePosition,retangleSize,text,string.Empty,null)
         {
            
         }
         public MergedCellRetangle(RetanglePosition retanglePosition, RetangleSize retangleSize, string text,string format)
-           : this(retanglePosition, retangleSize, text,format, 0)
+           : this(retanglePosition, retangleSize, text,format, null)
         {
 
         }
-        public MergedCellRetangle(RetanglePosition retanglePosition, RetangleSize retangleSize,string text,string format,int columnWidth)
+        public MergedCellRetangle(RetanglePosition retanglePosition, RetangleSize retangleSize,string text,string format,int? columnWidth)
         {
             RetanglePosition = retanglePosition;
             RetangleSize = retangleSize;
@@ -34,7 +34,7 @@ namespace PHLibrary.Arithmetic.TreeToRectangle
         /// <summary>
         /// 宽度
         /// </summary>
-        public int ColumnWidth { get;set;}
+        public int? ColumnWidth { get;set;}
         /// <summary>
         /// excel数值格式化表达式
         /// </summary>

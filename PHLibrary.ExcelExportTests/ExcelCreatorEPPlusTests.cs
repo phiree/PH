@@ -114,7 +114,7 @@ namespace PHLibrary.ExcelExport.Tests
             ColumnTree tree = new ColumnTree
             {
                 Roots = new List<ColumnTreeNode> {
-                      new ColumnTreeNode{ Title="价格1", Format="¥#,##0.00;¥-#,##0.00" },
+                      new ColumnTreeNode{ Title="价格1" },
                       new ColumnTreeNode{ Title="名称1", ColumnWidth=100}
                      }
             };

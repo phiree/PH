@@ -10,7 +10,7 @@ namespace PHLibrary.Arithmetic.TreeToRectangle
 
         public string Title { get; set; }
         public string Format { get; set; }
-        public int ColumnWidth { get;set;}
+        public int? ColumnWidth { get;set;}
         public IList<ColumnTreeNode> Children { get; set; }
 
         IList<MergedCellRetangle> retangles = new List<MergedCellRetangle>();

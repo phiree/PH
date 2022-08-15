@@ -50,10 +50,13 @@ namespace PHLibrary.ExcelExport
                        
                          
                         cell.Value=retangle.Title;
-                        sheet.Column(column+1).Width=retangle.ColumnWidth;
-                        //cell.AutoFitColumns();
-                        
-                        
+                        if (retangle.ColumnWidth.HasValue) { 
+                        sheet.Column(column+1).Width=retangle.ColumnWidth.Value;
+                        }
+                        else {
+                            cell.AutoFitColumns();
+                        }
+
                     }
 
                 }

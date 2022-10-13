@@ -3,6 +3,7 @@ using System.Linq;
 using PHLibrary.Arithmetic.TreeToRectangle;
 using OfficeOpenXml;
 using System.Drawing;
+using static PHLibrary.ExcelExport.ExcelCreatorEPPlus;
 
 namespace PHLibrary.ExcelExport
 {
@@ -50,6 +51,8 @@ namespace PHLibrary.ExcelExport
                        
                          
                         cell.Value=retangle.Title;
+                        SetDataValications(sheet,column+1,retangle.Title,retangle.Candidates);
+
                         if (retangle.ColumnWidth.HasValue) { 
                         sheet.Column(column+1).Width=retangle.ColumnWidth.Value;
                         }
@@ -111,6 +114,28 @@ namespace PHLibrary.ExcelExport
             public int StartColumn { get; protected set; }
             public int EndColumn { get; protected set; }
 
+        }
+
+        private void SetDataValications( ExcelWorksheet sheet, int columnIndex, string title,  IList<string > data) {
+            
+            var cellsExceptHeader = ExcelCellBase.GetAddress(2, columnIndex, ExcelPackage.MaxRows, columnIndex);
+            /*
+                var val = ws.DataValidations.AddListValidation("A1");
+    val.Formula.ExcelFormula = "B1:B5";
+             */
+            if (data?.Count > 0)
+            {
+                //数据引用sheet
+                var refSheet = sheet.Workbook.Worksheets.Add(title);
+                refSheet.Cells.LoadFromCollection(data);
+                refSheet.Hidden= eWorkSheetHidden.Hidden;
+                var dataValidationList = sheet.DataValidations.AddListValidation(cellsExceptHeader);
+                dataValidationList.Formula.ExcelFormula = $"{title}!$A:$A";
+                //for (int i = 0; i < columnWithDdlData.Data.Count; i++)
+                //{
+                //    unitmeasure.Formula.Values.Add(columnWithDdlData.Data[i]);
+                //}
+            }
         }
     }
 }

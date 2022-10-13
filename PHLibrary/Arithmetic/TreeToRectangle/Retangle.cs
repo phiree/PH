@@ -19,18 +19,26 @@ namespace PHLibrary.Arithmetic.TreeToRectangle
         {
 
         }
-        public MergedCellRetangle(RetanglePosition retanglePosition, RetangleSize retangleSize,string text,string format,int? columnWidth)
+        public MergedCellRetangle(RetanglePosition retanglePosition, RetangleSize retangleSize,string text,string format,int? columnWidth):
+            this(retanglePosition, retangleSize, text, format, columnWidth,null)
+        {
+      
+        }
+        public MergedCellRetangle(RetanglePosition retanglePosition, RetangleSize retangleSize, string text, string format, int? columnWidth, IList<string> candidates)
         {
             RetanglePosition = retanglePosition;
             RetangleSize = retangleSize;
-            this.Title=text;
-            Format=format;
-            this.ColumnWidth= columnWidth;
+            this.Title = text;
+            Format = format;
+            this.ColumnWidth = columnWidth;
+            this.Candidates=candidates;
         }
         /// <summary>
         /// 单元格标题
         /// </summary>
         public string Title { get;protected set;}
+
+        public IList<string> Candidates { get; set; }
         /// <summary>
         /// 宽度
         /// </summary>

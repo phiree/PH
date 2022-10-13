@@ -7,23 +7,25 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using static PHLibrary.ExcelExport.ExcelCreatorEPPlus;
 
 namespace PHLibrary.ExcelExport.Tests
 {
     [TestClass()]
     public class ExcelCreatorEPPlusTests
     {
-        public class TestItem { 
+        public class TestItem
+        {
             public string Name { get; set; }
-            public int Age { get;set;}
-            }
+            public int Age { get; set; }
+        }
         [TestMethod()]
         public void CreateForEmptyList()
-        { 
-            var list=new List<TestItem>();
+        {
+            var list = new List<TestItem>();
             ExcelCreatorEPPlus excelCreator
                = new ExcelCreatorEPPlus();
-           var stream  =  excelCreator.Create(list);
+            var stream = excelCreator.Create(list);
             using (var file = new FileStream("CreateForEmptyList" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
             {
                 // stream.Seek(0, SeekOrigin.Begin);
@@ -35,7 +37,7 @@ namespace PHLibrary.ExcelExport.Tests
         [TestMethod()]
         public void CreateForNotEmptyDynamicList()
         {
-            var list = new List<dynamic>{ new{Age=1,Name="name1" },new{ Age=2,Name="name2"} };
+            var list = new List<dynamic> { new { Age = 1, Name = "name1" }, new { Age = 2, Name = "name2" } };
             ExcelCreatorEPPlus excelCreator
                = new ExcelCreatorEPPlus();
             var stream = excelCreator.Create(list);
@@ -52,7 +54,7 @@ namespace PHLibrary.ExcelExport.Tests
         {
             Assert.IsTrue(true);
             return;
-            var list = new List<dynamic> {  };
+            var list = new List<dynamic> { };
             ExcelCreatorEPPlus excelCreator
                = new ExcelCreatorEPPlus();
             var stream = excelCreator.Create(list);
@@ -74,18 +76,19 @@ namespace PHLibrary.ExcelExport.Tests
               , new { Price = 1000, Name = "name4" },
                  new { Price = 10000, Name = "name5" }
             , new { Price = 100000, Name = "name6" }
-           
+
               };
 
             ExcelCreatorEPPlus excelCreator
                = new ExcelCreatorEPPlus();
-            ColumnTree tree=new ColumnTree { 
-                 Roots=new List<ColumnTreeNode> { 
+            ColumnTree tree = new ColumnTree
+            {
+                Roots = new List<ColumnTreeNode> {
                       new ColumnTreeNode{ Title="价格1", Format="¥#,##0.00;¥-#,##0.00" },
                       new ColumnTreeNode{ Title="名称1" }
                      }
-                };
-            var stream = excelCreator.Create(list,tree,new CellStyleSettings { HeaderBackgroundColor= System.Drawing.Color.AliceBlue,  BorderStyle= OfficeOpenXml.Style.ExcelBorderStyle.Dotted, HorizontalAlignment= OfficeOpenXml.Style.ExcelHorizontalAlignment.Left });
+            };
+            var stream = excelCreator.Create(list, tree, new CellStyleSettings { HeaderBackgroundColor = System.Drawing.Color.AliceBlue, BorderStyle = OfficeOpenXml.Style.ExcelBorderStyle.Dotted, HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left });
             using (var file = new FileStream("CreateForWithFormat" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
             {
                 // stream.Seek(0, SeekOrigin.Begin);
@@ -132,7 +135,7 @@ namespace PHLibrary.ExcelExport.Tests
         [TestMethod()]
         public void CreateForNotEmptyList()
         {
-            var list = new List<TestItem> {new TestItem{ Age=1,Name="name1" },new TestItem{ Age=2,Name="name2"} };
+            var list = new List<TestItem> { new TestItem { Age = 1, Name = "name1" }, new TestItem { Age = 2, Name = "name2" } };
             ExcelCreatorEPPlus excelCreator
                = new ExcelCreatorEPPlus();
             var stream = excelCreator.Create(list);
@@ -150,9 +153,9 @@ namespace PHLibrary.ExcelExport.Tests
             ExcelCreatorEPPlus excelCreator
                 = new ExcelCreatorEPPlus();
             Stopwatch watch = Stopwatch.StartNew();
-            
+
             var stream = excelCreator.Create(CreateDemoDataSet(2, 130, 100));
-         
+
             using (var file = new FileStream("createdexcel_from_dataset" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
             {
                 // stream.Seek(0, SeekOrigin.Begin);
@@ -161,9 +164,9 @@ namespace PHLibrary.ExcelExport.Tests
             }
             Console.WriteLine("单元格不画框用时:" + watch.Elapsed);
             watch.Restart();
-          
-            var   stream2 = excelCreator.Create(CreateDemoDataSet(2, 130, 100),    new CellStyleSettings {  BorderStyle = OfficeOpenXml.Style.ExcelBorderStyle.Thin});
-            
+
+            var stream2 = excelCreator.Create(CreateDemoDataSet(2, 130, 100), new CellStyleSettings { BorderStyle = OfficeOpenXml.Style.ExcelBorderStyle.Thin });
+
 
             using (var file = new FileStream("createdexcel_from_dataset_with_border_" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
             {
@@ -172,8 +175,8 @@ namespace PHLibrary.ExcelExport.Tests
 
             }
             Console.WriteLine("  单元格画框用时:" + watch.Elapsed);
-           
-           
+
+
 
 
         }
@@ -187,13 +190,13 @@ namespace PHLibrary.ExcelExport.Tests
             ExcelCreatorEPPlus excelCreator
                = new ExcelCreatorEPPlus();
             var config = FluentExcel.Excel.Setting.For<数值沙盘新栅格报表>();
-           
+
             Stream stream = excelCreator.Create(CreateDemoDataSet(2, 130, 100));
             FluentExcel.Excel.Load<数值沙盘新栅格报表>(stream, 2);
         }
         public class 数值沙盘新栅格报表
-        { 
-        
+        {
+
         }
         private void CopyStream(Stream input, Stream output)
         {
@@ -209,14 +212,14 @@ namespace PHLibrary.ExcelExport.Tests
             DataSet dataSet = new DataSet();
             for (int i = 0; i < tableAmount; i++)
             {
-               
+
                 var table = new DataTable("table_" + i);
-               
+
                 for (int colIndex = 0; colIndex < columnAmount; colIndex++)
                 {
                     string title = "col_" + colIndex;
                     table.Columns.Add(new DataColumn(title));
-                   
+
                 }
                 for (int r = 0; r < rowAmount; r++)
                 {
@@ -232,6 +235,38 @@ namespace PHLibrary.ExcelExport.Tests
             }
             return dataSet;
 
+        }
+
+      
+        [TestMethod()]
+        public void CreateWithCandidates ()
+        {
+            //var list = new List<dynamic> {
+            //    new { Price = 1, Name = "name1" }
+            //, new { Price = 10, Name = "name2" }
+            // , new { Price = 101, Name = "name3" }
+            //  , new { Price = 1000, Name = "name4" },
+            //     new { Price = 10000, Name = "name5" }
+            //, new { Price = 100000, Name = "name6" }
+
+            //  };
+            var list = new List<TestItem>();
+            ExcelCreatorEPPlus excelCreator
+               = new ExcelCreatorEPPlus();
+            ColumnTree tree = new ColumnTree
+            {
+                Roots = new List<ColumnTreeNode> {
+                      new ColumnTreeNode{ Title="价格1", Candidates=new List<string>{"1","2","3","4" }, Format="¥#,##0.00;¥-#,##0.00" },
+                      new ColumnTreeNode{ Title="名称1" }
+                     }
+            };
+            var stream = excelCreator.Create(list, tree, new CellStyleSettings { HeaderBackgroundColor = System.Drawing.Color.AliceBlue, BorderStyle = OfficeOpenXml.Style.ExcelBorderStyle.Dotted, HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left });
+            using (var file = new FileStream("CreateWithCandidates" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
+            {
+                // stream.Seek(0, SeekOrigin.Begin);
+                CopyStream(stream, file);
+
+            }
         }
 
 

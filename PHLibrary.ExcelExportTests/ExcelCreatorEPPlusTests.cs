@@ -250,17 +250,37 @@ namespace PHLibrary.ExcelExport.Tests
             //, new { Price = 100000, Name = "name6" }
 
             //  };
-            var list = new List<TestItem>();
-            ExcelCreatorEPPlus excelCreator
-               = new ExcelCreatorEPPlus();
-            ColumnTree tree = new ColumnTree
+            var list = new List<string>();
+            ExcelCreatorEPPlus excelCreator= new ExcelCreatorEPPlus();
+            var tree = new ColumnTree
             {
-                Roots = new List<ColumnTreeNode> {
-                      new ColumnTreeNode{ Title="价格1", Candidates=new List<string>{"1","2","3","4" }, Format="¥#,##0.00;¥-#,##0.00" },
-                      new ColumnTreeNode{ Title="名称1" }
-                     }
+                Roots = new List<ColumnTreeNode>{
+                 new ColumnTreeNode{ Title="商品分类", Candidates=new List<string>{ "是","否"} },
+                 new ColumnTreeNode{ Title="供应商", Candidates=new List<string>{ "是","否"} },
+                 new ColumnTreeNode{ Title="商品名称"  },
+                 new ColumnTreeNode{ Title="品牌", Candidates=new List<string>{ "是","否"} },
+                 new ColumnTreeNode{ Title="计量单位", Candidates=new List<string>{ "是","否"} },
+                 new ColumnTreeNode{ Title="规格型号",   },
+                 new ColumnTreeNode{ Title="商品类型", Candidates=new List<string>{ "是","否"} },
+                 new ColumnTreeNode{ Title="含税供货价",   },
+                 new ColumnTreeNode{ Title="含税运供货价" },
+                 new ColumnTreeNode{ Title="市场参考价"},
+                 new ColumnTreeNode{ Title="比价均值"},
+                 new ColumnTreeNode{ Title="商品广告"},
+                 new ColumnTreeNode{ Title="供货周期"},
+                 new ColumnTreeNode{ Title="样品到货周期"},
+                 new ColumnTreeNode{ Title="发货地点"},
+                 new ColumnTreeNode{ Title="其他平台链接"},
+                 new ColumnTreeNode{ Title="商品参数"},
+                 new ColumnTreeNode{ Title="功能特点"},
+                 new ColumnTreeNode{ Title="品牌介绍"},
+                 new ColumnTreeNode{ Title="是否3C商品",Candidates=new List<string>{ "是","否"} },
+                 new ColumnTreeNode{ Title="3C证书编号"},
+                 new ColumnTreeNode{ Title="3C认证时间"},
+                 new ColumnTreeNode{ Title="3C到期时间"},
+                }
             };
-            var stream = excelCreator.Create(list, tree, new CellStyleSettings { HeaderBackgroundColor = System.Drawing.Color.AliceBlue, BorderStyle = OfficeOpenXml.Style.ExcelBorderStyle.Dotted, HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left });
+            var stream = excelCreator.Create(list, tree);
             using (var file = new FileStream("CreateWithCandidates" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
             {
                 // stream.Seek(0, SeekOrigin.Begin);

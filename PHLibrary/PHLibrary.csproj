@@ -6,7 +6,12 @@
     <Description>common library for future usage, maybe for others .</Description>
     <PackageId>PHLibrary</PackageId>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <PackageReleaseNotes>2.2.0
+    <PackageReleaseNotes>2.3
+support for header dropdownlist data
+2.2.1
+fix: 0 width columns.
+
+2.2.0
 new: allow setting columnwidth
 
 2.0.1
@@ -38,13 +43,13 @@ improvement,
 first array's order can be diffrent with properties
 1.0.6
 support properties that dont have orderattribute</PackageReleaseNotes>
-    <Version>2.2.0</Version>
+    <Version>2.3</Version>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <Company>PHLibrary</Company>
     <Authors>PHLibrary</Authors>
     <PackageLicenseUrl></PackageLicenseUrl>
-    <FileVersion>2.2.0</FileVersion>
-    <AssemblyVersion>2.2.0</AssemblyVersion>
+    <FileVersion>2.3.0</FileVersion>
+    <AssemblyVersion>2.3.0</AssemblyVersion>
     <PackageProjectUrl>https://github.com/phiree/PHLibrary</PackageProjectUrl>
     <PackageIcon>icon.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

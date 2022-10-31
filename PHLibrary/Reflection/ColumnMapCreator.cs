@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 
@@ -28,8 +29,9 @@ namespace PHLibrary.Reflection
             var map = new Dictionary<string, string>();
             foreach (var p in propertyInfos)
             {
-                var attr = p.GetAttribute<DisplayNameAttribute>(false);
-                string display = attr == null ? p.Name : attr.DisplayName;
+                var attr = p.GetAttribute<ColumnAttribute>(false);
+                
+                string display = attr == null ? p.Name : attr.Name;
                 map.Add(p.Name, display);
             }
             return map;

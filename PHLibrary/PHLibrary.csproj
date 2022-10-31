@@ -61,6 +61,7 @@ support properties that dont have orderattribute</PackageReleaseNotes>
 
   <ItemGroup>
     <PackageReference Include="Dynamitey" Version="2.0.10.189" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Reflection" Version="4.3.0" />
   </ItemGroup>

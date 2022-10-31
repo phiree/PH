@@ -19,4 +19,10 @@
     <ProjectReference Include="..\PHLibrary.ExcelExport\PHLibrary.ExcelExport.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="testFiles\1.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

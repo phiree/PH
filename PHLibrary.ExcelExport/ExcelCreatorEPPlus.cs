@@ -78,6 +78,10 @@ namespace PHLibrary.ExcelExport
                     int headerHeight = headerCreateor.CreateHeader(out columnFormats);
                     //create body 
                     FillSheetEpplusWithLoadRange(sheet, datatables[i], headerHeight, columnFormats, cellStyleSettings);
+
+
+
+                    LoadPictures(sheet,dataTable,headerHeight);
                 }
                 Stream stream = new MemoryStream();
                 excelPackage.SaveAs(stream);
@@ -158,6 +162,30 @@ namespace PHLibrary.ExcelExport
                 bodyCells.Style.HorizontalAlignment = cellStyleSettings.HorizontalAlignment;
 
                 //  bodyCells.AutoFitColumns();
+            }
+            //image
+
+        }
+      
+        private void LoadPictures(ExcelWorksheet sheet, DataTable dataTable, int startRow)
+        {
+            for (int i = 0; i < dataTable.Rows.Count; i++)
+            {
+                var row = dataTable.Rows[i];
+                for (var j = 0; j < dataTable.Columns.Count; j++)
+                {
+                    var dataCell = row[j];
+                    if (dataCell is System.Drawing.Image)
+
+                    {
+                        var cell = sheet.Cells[startRow + i+1, j+1];
+                        cell.Value="";
+                        var picture = sheet.Drawings.AddPicture(String.Empty,  dataCell as System.Drawing.Image);
+                        picture.SetPosition(startRow + i, 5, j, 5);
+                        picture.SetSize(100,100);
+                    }
+
+                }
             }
         }
 

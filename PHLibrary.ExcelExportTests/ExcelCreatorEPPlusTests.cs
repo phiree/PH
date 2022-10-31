@@ -1,8 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PHLibrary.Arithmetic.TreeToRectangle;
 using PHLibrary.ExcelExport;
+using PHLibrary.ExcelExportExcelCreator;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -16,8 +20,13 @@ namespace PHLibrary.ExcelExport.Tests
     {
         public class TestItem
         {
+            [Column( "姓名")]
             public string Name { get; set; }
+            [Column("年龄")]
             public int Age { get; set; }
+            [ImageColumn]
+            [Column("图片")]
+            public string Picture { get;set;}
         }
         [TestMethod()]
         public void CreateForEmptyList()
@@ -27,6 +36,25 @@ namespace PHLibrary.ExcelExport.Tests
                = new ExcelCreatorEPPlus();
             var stream = excelCreator.Create(list);
             using (var file = new FileStream("CreateForEmptyList" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
+            {
+                // stream.Seek(0, SeekOrigin.Begin);
+                CopyStream(stream, file);
+
+            }
+
+        }
+        [TestMethod()]
+        public void CreateForImages()
+        {
+            var image=System.Drawing.Image.FromFile(Environment.CurrentDirectory+"\\testfiles\\1.jpg" );
+            var list = new List<TestItem>() { 
+                new TestItem{ Age=1, Name="name",Picture=
+                "https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135"  }
+                };
+            ExcelCreatorEPPlus excelCreator
+               = new ExcelCreatorEPPlus();
+            var stream = excelCreator.Create(list);
+            using (var file = new FileStream("CreateForImages" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
             {
                 // stream.Seek(0, SeekOrigin.Begin);
                 CopyStream(stream, file);

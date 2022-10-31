@@ -14,9 +14,20 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Xml.Linq;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
+using System.Drawing;
+using System.Net.Http;
+using System.IO;
 
 namespace PHLibrary.ExcelExportExcelCreator
 {
+
+    public class DataTableWithExtensions
+    {
+        public DataTable DataTable { get; set; }
+        public Dictionary<int, Image> Images { get; set; }
+
+    }
+
     /// <summary> 
     /// convert T to datatable
     /// </summary>
@@ -34,17 +45,18 @@ namespace PHLibrary.ExcelExportExcelCreator
         }
 
 
+
         public DataTable Convert(IList<T> data, IDictionary<string, string> propertyNameMaps = null)
         {
-            
+
 
             if (propertyNameMaps == null)
             {
 
                 propertyNameMaps = ColumnMapCreator.CreateColumnMap<T>(data);
             }
-            
-                var dataTable = new DataTable("Sheet1");
+
+            var dataTable = new DataTable("Sheet1");
             var unOrderedColumns = new Dictionary<DataColumn, int>();
             for (int i = 0; i < propertyNameMaps.Count(); i++)// var name in memberNames)
             {
@@ -60,13 +72,17 @@ namespace PHLibrary.ExcelExportExcelCreator
                     }
                     else
                     {
-                        var order = orderProperty.GetAttribute<PropertyOrderAttribute>(false);
+                        var attributes = orderProperty.GetCustomAttributes(false);
+
+                        foreach (var attribute in attributes)
                         {
-                            if (order != null)
+                            if (attribute is PropertyOrderAttribute)
                             {
-                                orderNo = order.Order;
+                                orderNo = ((PropertyOrderAttribute)attribute).Order;
                             }
+
                         }
+
                     }
                 }
                 catch (Exception ex)
@@ -74,9 +90,9 @@ namespace PHLibrary.ExcelExportExcelCreator
                     logger.LogError("Get OrderPropertyError :" + ex.ToString());
                 }
 
-                var columnType=new ColumnDataTypeDetermine<T>().GetPropertyType(data,name);
-               //guess column type using first row of data
-               var column = new DataColumn(columnName,columnType);
+                var columnType = new ColumnDataTypeDetermine<T>().GetPropertyType(data, name);
+                //guess column type using first row of data
+                var column = new DataColumn(columnName, columnType);
                 column.Caption = name;
                 unOrderedColumns.Add(column, orderNo);
 
@@ -85,7 +101,7 @@ namespace PHLibrary.ExcelExportExcelCreator
             {
                 dataTable.Columns.Add(column.Key);
             }
-             foreach (T t in data)
+            foreach (T t in data)
             {
                 var row = dataTable.NewRow();
                 foreach (DataColumn column in dataTable.Columns)
@@ -93,14 +109,42 @@ namespace PHLibrary.ExcelExportExcelCreator
                     string propertyName = column.Caption;
                     var value = Dynamic.InvokeGet(t, propertyName);
 
-                    row[column.ColumnName] = value;
+                    if (column.DataType == typeof(System.Drawing.Image))
+                    {
+                        row[column.ColumnName] = DownloadImageAsync(value);
+                    }
+                    else
+                    {
+
+                        row[column.ColumnName] = value;
+                    }
+
                 }
                 dataTable.Rows.Add(row);
             }
             return dataTable;
         }
+        private Image DownloadImageAsync(string uri)
+        {
+            var httpClient = new HttpClient();
 
+
+            // Download the image and write to the file
+            var imageBytes = httpClient.GetByteArrayAsync(uri).Result;
+           var ms = new MemoryStream(imageBytes) ;
+             
+               
+                
+                var image=new Bitmap( Image.FromStream(ms));
+         
+                image.Save("d:\\a.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+
+                return image;
+           
+
+        }
     }
+
 
     //列的数据类型定义
     /// <summary>
@@ -108,23 +152,38 @@ namespace PHLibrary.ExcelExportExcelCreator
     /// 
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class ColumnDataTypeDetermine<T> { 
-        
-         public Type GetPropertyType(IList<T> data,string propertyName){
+    public class ColumnDataTypeDetermine<T>
+    {
 
-         var property=    typeof(T).GetProperty(propertyName);
-            if(property==null){
+        public Type GetPropertyType(IList<T> data, string propertyName)
+        {
+
+            var property = typeof(T).GetProperty(propertyName);
+            if (property == null)
+            {
                 //匿名类
-                if (data.Count > 0) {
-var firstData = data[0];
-                 var propertyValue=   Dynamic.InvokeGet(firstData, propertyName);
+                if (data.Count > 0)
+                {
+                    var firstData = data[0];
+                    var propertyValue = Dynamic.InvokeGet(firstData, propertyName);
                     return propertyValue.GetType();
                 }
+            }
+            else
+            {
+                var imageAttribute = property.GetAttribute<ImageColumnAttribute>(false);
+                if (imageAttribute != null)
+                {
+                    return typeof(System.Drawing.Image);
                 }
-            else { 
+
                 return property.PropertyType;
-                }
+            }
             return typeof(string);
         }
-        }
+    }
+    [System.AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    public sealed class ImageColumnAttribute : Attribute
+    {
+    }
 }

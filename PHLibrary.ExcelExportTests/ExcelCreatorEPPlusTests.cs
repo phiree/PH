@@ -182,7 +182,7 @@ namespace PHLibrary.ExcelExport.Tests
                 = new ExcelCreatorEPPlus();
             Stopwatch watch = Stopwatch.StartNew();
 
-            var stream = excelCreator.Create(CreateDemoDataSet(2, 130, 100));
+            var stream = excelCreator.Create( CreateDemoDataSet(2, 130, 100));
 
             using (var file = new FileStream("createdexcel_from_dataset" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
             {

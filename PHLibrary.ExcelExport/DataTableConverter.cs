@@ -19,6 +19,7 @@ using System.Net.Http;
 using System.IO;
 using System.Dynamic;
 using System.Collections;
+using PHLibrary.ExcelExport;
 
 namespace PHLibrary.ExcelExportExcelCreator
 {
@@ -124,11 +125,9 @@ namespace PHLibrary.ExcelExportExcelCreator
         }
 
         IList<ExpandoObject> keyObjects = new List<ExpandoObject>();
+         
         private ExpandoObject GetGroupBy(IEnumerable<string> columns, DataRow row)
         {
-
-
-
 
             var dict = new Dictionary<string, object>();
             foreach (string c in columns)
@@ -147,7 +146,42 @@ namespace PHLibrary.ExcelExportExcelCreator
             return eo;
 
         }
+        public static Tuple<string, string> GetTwoDimensionalColumns<T>() //where T : class
+        {
 
+            string twoDimensionalColumn_X = string.Empty, twoDimensionalColumn_Y = string.Empty;
+            var propertyInfos = typeof(T).GetProperties();
+
+            foreach (var p in propertyInfos)
+            {
+                var attrs = p.GetCustomAttributes(false);
+
+                foreach (var attr in attrs)
+                {
+
+                    if (attr is TwoDimensionalAttribute twoDimensionalAttribute)
+                    {
+                        if (twoDimensionalAttribute.IsX)
+                        {
+                            twoDimensionalColumn_X = p.Name;
+                        }
+                        else
+                        {
+                            twoDimensionalColumn_Y = p.Name;
+                        }
+                    }
+                }
+
+            }
+            if (string.IsNullOrEmpty(twoDimensionalColumn_X) || string.IsNullOrEmpty(twoDimensionalColumn_Y))
+            {
+                return null;
+            }
+            return new Tuple<string, string>(twoDimensionalColumn_X, twoDimensionalColumn_Y);
+
+
+
+        }
         public static bool AreExpandosEquals(ExpandoObject obj1, ExpandoObject obj2)
         {
             var obj1AsColl = (ICollection<KeyValuePair<string, object>>)obj1;
@@ -254,16 +288,19 @@ namespace PHLibrary.ExcelExportExcelCreator
                 dataTable.Rows.Add(row);
             }
 
-            var twoDimensionalColumns = ColumnMapCreator.GetTwoDimensionalColumns<T>();
+            var twoDimensionalColumns = GetTwoDimensionalColumns<T>();
             if (twoDimensionalColumns != null) { 
             dataTable=ConvertToTwoDimentioanl(dataTable,twoDimensionalColumns);
             }
 
             return dataTable;
         }
-        
+        Dictionary<string,Image> imageDict=new Dictionary<string, Image>();
         private Image DownloadImageAsync(string uri)
         {
+            if (imageDict.ContainsKey(uri)) { 
+                return imageDict[uri];
+                }
             var httpClient = new HttpClient();
 
 
@@ -277,6 +314,7 @@ namespace PHLibrary.ExcelExportExcelCreator
 
             image.Save("d:\\a.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
 
+            imageDict.Add(uri,image);
             return image;
 
 

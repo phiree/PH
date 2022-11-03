@@ -2,6 +2,7 @@
 using PHLibrary.Arithmetic.TreeToRectangle;
 using PHLibrary.ExcelExport;
 using PHLibrary.ExcelExportExcelCreator;
+using PHLibrary.Reflection;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -55,6 +56,49 @@ namespace PHLibrary.ExcelExport.Tests
                = new ExcelCreatorEPPlus();
             var stream = excelCreator.Create(list);
             using (var file = new FileStream("CreateForImages" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
+            {
+                // stream.Seek(0, SeekOrigin.Begin);
+                CopyStream(stream, file);
+
+            }
+
+        }
+
+        public class Order1103
+        {
+            [Column("品名")]
+
+            public string Name { get; set; }
+            [Column("货号")]
+            public string Code { get; set; }
+            [Column("图片")]
+            [ImageColumn]
+            public string Picture { get; set; }
+            [Column("颜色")]
+            public string Color { get; set; }
+            [TwoDimensional(true)]
+            public string Size { get; set; }
+            [TwoDimensional]
+            public int Amount { get; set; }
+
+        }
+        [TestMethod()]
+        public void CreateForImagesAndTwoDimetionalData()
+        {
+     
+            var list = new List<Order1103>() { 
+                new Order1103{ Name="春装001", Code="CZ001", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135", Size="M", Amount=1 },
+                new Order1103{ Name="春装001", Code="CZ002", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135", Size="L", Amount=2 },
+                new Order1103{ Name="春装001", Code="CZ003", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135", Size="XL", Amount=3 },
+                new Order1103{ Name="春装001", Code="CZ004", Color="蓝色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135", Size="M", Amount=4 },
+                new Order1103{ Name="春装001", Code="CZ005", Color="蓝色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135", Size="L", Amount=5 },
+                new Order1103{ Name="春装001", Code="CZ006", Color="蓝色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135", Size="XXL", Amount=6 },
+                new Order1103{ Name="春装002", Code="CZ007", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135", Size="XXXL", Amount=7 },
+                };
+            ExcelCreatorEPPlus excelCreator
+               = new ExcelCreatorEPPlus();
+            var stream = excelCreator.Create(list);
+            using (var file = new FileStream("CreateForImagesAndTwoDimetional" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
             {
                 // stream.Seek(0, SeekOrigin.Begin);
                 CopyStream(stream, file);

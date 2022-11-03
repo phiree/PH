@@ -15,10 +15,13 @@ namespace PHLibrary.ExcelExport
     /// </summary>
     public class ExcelCreatorEPPlus : IExcelCreator
     {
-        public Stream Create<T>(IList<T> data, IDictionary<string, string> propertyNameMaps = null, CellStyleSettings cellStyleSettings = null)
+        
+        public Stream Create<T>(IList<T> data, IDictionary<string, string> propertyNameMaps = null, CellStyleSettings cellStyleSettings = null )
 
         {
-            var dataTable = new DataTableConverter<T>().Convert(data, propertyNameMaps);
+            var tableConvertor = new DataTableConverter<T>();
+            var dataTable = tableConvertor.Convert(data, propertyNameMaps);
+            
             return Create(dataTable, cellStyleSettings);
 
 
@@ -81,7 +84,7 @@ namespace PHLibrary.ExcelExport
 
 
 
-                    LoadPictures(sheet,dataTable,headerHeight);
+                    LoadPictures(sheet, dataTable, headerHeight);
                 }
                 Stream stream = new MemoryStream();
                 excelPackage.SaveAs(stream);
@@ -166,7 +169,7 @@ namespace PHLibrary.ExcelExport
             //image
 
         }
-      
+
         private void LoadPictures(ExcelWorksheet sheet, DataTable dataTable, int startRow)
         {
             for (int i = 0; i < dataTable.Rows.Count; i++)
@@ -178,11 +181,11 @@ namespace PHLibrary.ExcelExport
                     if (dataCell is System.Drawing.Image)
 
                     {
-                        var cell = sheet.Cells[startRow + i+1, j+1];
-                        cell.Value="";
-                        var picture = sheet.Drawings.AddPicture(String.Empty,  dataCell as System.Drawing.Image);
+                        var cell = sheet.Cells[startRow + i + 1, j + 1];
+                        cell.Value = "";
+                        var picture = sheet.Drawings.AddPicture($"pic_{i}_{j}", dataCell as System.Drawing.Image);
                         picture.SetPosition(startRow + i, 5, j, 5);
-                        picture.SetSize(100,100);
+                        picture.SetSize(100, 100);
                     }
 
                 }

@@ -253,8 +253,15 @@ namespace PHLibrary.ExcelExportExcelCreator
                 }
                 dataTable.Rows.Add(row);
             }
+
+            var twoDimensionalColumns = ColumnMapCreator.GetTwoDimensionalColumns<T>();
+            if (twoDimensionalColumns != null) { 
+            dataTable=ConvertToTwoDimentioanl(dataTable,twoDimensionalColumns);
+            }
+
             return dataTable;
         }
+        
         private Image DownloadImageAsync(string uri)
         {
             var httpClient = new HttpClient();

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Text;
 
 namespace PHLibrary.ExcelExport
@@ -11,6 +12,7 @@ namespace PHLibrary.ExcelExport
     /// </summary>
    public  interface IExcelCreator
     {
+        Stream Create<T>(IList<T> data, IDictionary<string, string> propertyNameMaps = null, CellStyleSettings cellStyleSettings = null);
         System.IO.Stream Create(DataSet dataset, ColumnTree columnTree, CellStyleSettings cellStyleSettings = null);
         /// <summary>
         /// 
@@ -29,7 +31,7 @@ namespace PHLibrary.ExcelExport
         /// <param name="data"></param>
         /// <param name="propertyNameMaps"></param>
         /// <returns></returns>
-         System.IO.Stream Create<T>(IList<T> data, IDictionary<string, string> propertyNameMaps=null, CellStyleSettings cellStyleSettings = null);
+ 
          System.IO.Stream Create<T>(IList<T> data, ColumnTree tree, CellStyleSettings cellStyleSettings = null);
         System.IO.Stream Create(DataTable dataTable,ColumnTree columnTree, CellStyleSettings cellStyleSettings = null);
         /// <summary>

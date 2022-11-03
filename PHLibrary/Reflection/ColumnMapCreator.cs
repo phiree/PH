@@ -106,7 +106,7 @@ namespace PHLibrary.Reflection
 
         public bool IsX
         {
-            get { return IsX; }
+            get { return isX; }
         }
 
      

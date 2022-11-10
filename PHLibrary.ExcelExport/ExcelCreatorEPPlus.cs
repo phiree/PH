@@ -172,7 +172,7 @@ namespace PHLibrary.ExcelExport
 
         private void LoadPictures(ExcelWorksheet sheet, DataTable dataTable, int startRow)
         {
-            for (int i = 0; i < dataTable.Rows.Count; i++)
+            for (int i = startRow; i < dataTable.Rows.Count; i++)
             {
                 var row = dataTable.Rows[i];
                 for (var j = 0; j < dataTable.Columns.Count; j++)
@@ -181,16 +181,22 @@ namespace PHLibrary.ExcelExport
                     if (dataCell is System.Drawing.Image)
 
                     {
-                        var cell = sheet.Cells[startRow + i + 1, j + 1];
+                        SetRowHeight(sheet,i);
+                        var cell = sheet.Cells[ i + 1, j + 1];
                         cell.Value = "";
+                        
                         var picture = sheet.Drawings.AddPicture($"pic_{i}_{j}", dataCell as System.Drawing.Image);
-                        picture.SetPosition(startRow + i, 5, j, 5);
+                        picture.SetPosition( i, 5, j, 5);
                         picture.SetSize(100, 100);
                     }
 
                 }
             }
         }
+        private void SetRowHeight(ExcelWorksheet sheet,int rowIndex) { 
+            var row=sheet.Row(rowIndex);
+            row.Height=105;
+            }
 
         public Stream Create<T>(IList<T> data, ColumnTree tree, CellStyleSettings cellStyleSettings = null)
         {

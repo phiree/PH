@@ -7,6 +7,7 @@ using System.Text;
 using OfficeOpenXml;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
 using PHLibrary.ExcelExportExcelCreator;
+using System.Drawing;
 
 namespace PHLibrary.ExcelExport
 {
@@ -15,13 +16,13 @@ namespace PHLibrary.ExcelExport
     /// </summary>
     public class ExcelCreatorEPPlus : IExcelCreator
     {
-        
-        public Stream Create<T>(IList<T> data, IDictionary<string, string> propertyNameMaps = null, CellStyleSettings cellStyleSettings = null )
+
+        public Stream Create<T>(IList<T> data, IDictionary<string, string> propertyNameMaps = null, CellStyleSettings cellStyleSettings = null)
 
         {
             var tableConvertor = new DataTableConverter<T>();
             var dataTable = tableConvertor.Convert(data, propertyNameMaps);
-            
+
             return Create(dataTable, cellStyleSettings);
 
 
@@ -170,9 +171,11 @@ namespace PHLibrary.ExcelExport
 
         }
 
+        const int ImageWidth=100;
+        const int ImageHeight=100;
         private void LoadPictures(ExcelWorksheet sheet, DataTable dataTable, int startRow)
         {
-            for (int i = startRow; i < dataTable.Rows.Count; i++)
+            for (int i = 0; i < dataTable.Rows.Count; i++)
             {
                 var row = dataTable.Rows[i];
                 for (var j = 0; j < dataTable.Columns.Count; j++)
@@ -181,22 +184,93 @@ namespace PHLibrary.ExcelExport
                     if (dataCell is System.Drawing.Image)
 
                     {
-                        SetRowHeight(sheet,i);
-                        var cell = sheet.Cells[ i + 1, j + 1];
+                        var cell = sheet.Cells[startRow + i + 1, j + 1];
                         cell.Value = "";
-                        
+
                         var picture = sheet.Drawings.AddPicture($"pic_{i}_{j}", dataCell as System.Drawing.Image);
-                        picture.SetPosition( i, 5, j, 5);
-                        picture.SetSize(100, 100);
+
+                        
+                        picture.SetSize(ImageWidth, ImageHeight);
+                        //picture.EditAs=OfficeOpenXml.Drawing.eEditAs.TwoCell;
+                        picture.SetPosition(startRow + i, 0, j, 0);
+                        SetRowHeight(sheet, startRow + i + 1);
+                        SetColumnWidth(sheet,j+1);
+
                     }
 
                 }
             }
         }
-        private void SetRowHeight(ExcelWorksheet sheet,int rowIndex) { 
-            var row=sheet.Row(rowIndex);
-            row.Height=105;
+        private static double GetMeasureFromPixels(int pixelSize)
+        {
+
+            using (Graphics graphics = Graphics.FromHwnd(IntPtr.Zero))
+            {
+                float dpiY = graphics.DpiY;
+                return pixelSize * (72.0 * (1 / dpiY));
             }
+
+        }
+        private static double GetMeasureFromPixels2(int pixelSize)
+        {
+
+            using (Graphics graphics = Graphics.FromHwnd(IntPtr.Zero))
+            {
+                float dpiY = graphics.DpiY;
+                return pixelSize * (1 / 72.0) * dpiY;
+            }
+
+        }
+        private static int GetHeightInPixels(ExcelRange cell)
+        {
+            using (Graphics graphics = Graphics.FromHwnd(IntPtr.Zero))
+            {
+                float dpiY = graphics.DpiY;
+                return (int)(cell.Worksheet.Row(cell.Start.Row).Height * (1 / 72.0) * dpiY);
+            }
+        }
+
+        public static float MeasureString(string s, Font font)
+        {
+            using (var g = Graphics.FromHwnd(IntPtr.Zero))
+            {
+                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+
+                return g.MeasureString(s, font, int.MaxValue, StringFormat.GenericTypographic).Width;
+            }
+        }
+
+        private static int GetWidthInPixels(ExcelRange cell)
+        {
+            double columnWidth = cell.Worksheet.Column(cell.Start.Column).Width;
+            Font font = new Font(cell.Style.Font.Name, cell.Style.Font.Size, FontStyle.Regular);
+
+            double pxBaseline = Math.Round(MeasureString("1234567890", font) / 10);
+
+            return (int)(columnWidth * pxBaseline);
+        }
+        private static double GetWidth(int pix)
+        {
+            return (pix - 12 + 5) / 7d + 1;
+        }
+
+        private static double GetHeight(int pix)
+        {
+            return pix * 72 / 96d;
+        }
+        private void SetRowHeight(ExcelWorksheet sheet, int rowIndex)
+        {
+            var row = sheet.Row(rowIndex);
+            row.Height = GetHeight(ImageHeight);
+
+        }
+        private void SetColumnWidth(ExcelWorksheet sheet, int columnIdex)
+        {
+            var column = sheet.Column(columnIdex);
+            column.Width = GetWidth(ImageWidth);
+            //https://stackoverflow.com/a/7902415/714883
+
+        }
 
         public Stream Create<T>(IList<T> data, ColumnTree tree, CellStyleSettings cellStyleSettings = null)
         {

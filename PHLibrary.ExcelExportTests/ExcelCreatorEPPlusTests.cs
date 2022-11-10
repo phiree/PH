@@ -47,7 +47,7 @@ namespace PHLibrary.ExcelExport.Tests
         [TestMethod()]
         public void CreateForImages()
         {
-            var image=System.Drawing.Image.FromFile(Environment.CurrentDirectory+"\\testfiles\\1.jpg" );
+           
             var list = new List<TestItem>() { 
                 new TestItem{ Age=1, Name="name",Picture=
                 "https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135"  }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data;
+ 
 
 namespace PHLibrary.ExcelExportExcelCreator
 {
@@ -11,6 +12,6 @@ namespace PHLibrary.ExcelExportExcelCreator
         /// <param name="data">数据集合,用于提取属性名称,数据</param>
         /// <param name="propertyNameMaps">属性名称对应关系.</param>
         /// <returns></returns>
-        DataTable Convert(IList<T> data, IDictionary<string, string> propertyNameMaps = null);
+        DataTable Convert(IList<T> data, IDictionary<string, string> propertyNameMaps = null,SortSize sortSize=null);
     }
 }

@@ -39,7 +39,7 @@ namespace PHLibrary.Arithmetic.TreeToRectangle.Tests
         public void CalculateRetangleTest()
         {
             var node = TestNode;
-            var retangles = node.CalculateRetangles(0, node.MaxDepth);
+            var retangles = node.CalculateRetangles(0, node.MaxDepth,5);
             Console.Write(Newtonsoft.Json.JsonConvert.SerializeObject(retangles));
             Assert.AreEqual(11, retangles.Count);
 

@@ -40,7 +40,7 @@ namespace PHLibrary.ExcelExport.Tests
                 };
             ExcelCreatorEPPlus excelCreator
                = new ExcelCreatorEPPlus();
-            var stream = excelCreator.Create(list,null,null,null);
+            var stream = excelCreator.Create(list,null,null,1, null);
             using (var file = new FileStream("CreateForImages" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
             {
                 // stream.Seek(0, SeekOrigin.Begin);
@@ -90,7 +90,7 @@ namespace PHLibrary.ExcelExport.Tests
                 };
             ExcelCreatorEPPlus excelCreator
                = new ExcelCreatorEPPlus();
-            var stream = excelCreator.Create(list,Sort,null,null);
+            var stream = excelCreator.Create(list,Sort,null,1, null);
             using (var file = new FileStream("CreateForImagesAndTwoDimetional" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
             {
                 // stream.Seek(0, SeekOrigin.Begin);
@@ -132,7 +132,7 @@ namespace PHLibrary.ExcelExport.Tests
                     ,new List<string>{ "总金额","1230"} 
                     ,new List<string>{ "备注","已付款"} 
                     }
-                
+                ,4
                 , null);
             using (var file = new FileStream("CreateForImages" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
             {

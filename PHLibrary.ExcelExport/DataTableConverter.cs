@@ -30,7 +30,7 @@ namespace PHLibrary.ExcelExportExcelCreator
         public Dictionary<int, Image> Images { get; set; }
 
     }
-
+    public delegate IList<string> SortSize(IList<string> sizes);
     /// <summary> 
     /// convert T to datatable
     /// </summary>
@@ -48,8 +48,8 @@ namespace PHLibrary.ExcelExportExcelCreator
         }
 
 
-
-        public DataTable ConvertToTwoDimentioanl(DataTable originalTable, Tuple<string, string> twoDimentinalColumnNames)
+       
+        public DataTable ConvertToTwoDimentioanl(DataTable originalTable, Tuple<string, string> twoDimentinalColumnNames, SortSize sortSize)
         {
 
             var newColumns = new List<DataColumn>();
@@ -88,7 +88,9 @@ namespace PHLibrary.ExcelExportExcelCreator
                              return g;
                          }).ToList();
 
-            var newColumns2 = newTable.SelectMany(x => x.ToList()).Select(x => x[twoDimentinalColumnNames.Item1]).Distinct().ToList();
+            IList<string> newColumns2 = newTable.SelectMany(x => x.ToList()).Select(x => x[twoDimentinalColumnNames.Item1].ToString()).Distinct().ToList();
+
+              newColumns2 = sortSize(newColumns2);
 
             foreach (var col2 in newColumns2)
             {
@@ -209,7 +211,7 @@ namespace PHLibrary.ExcelExportExcelCreator
         /// <summary>
         /// Extension method that turns a dictionary of string and object to an ExpandoObject
         /// </summary>
-        public DataTable Convert(IList<T> data, IDictionary<string, string> propertyNameMaps = null)
+        public DataTable Convert(IList<T> data, IDictionary<string, string> propertyNameMaps = null, SortSize sortSize=null)
         {
 
 
@@ -289,8 +291,11 @@ namespace PHLibrary.ExcelExportExcelCreator
             }
 
             var twoDimensionalColumns = GetTwoDimensionalColumns<T>();
-            if (twoDimensionalColumns != null) { 
-            dataTable=ConvertToTwoDimentioanl(dataTable,twoDimensionalColumns);
+            if (twoDimensionalColumns != null) {
+                if (sortSize == null) {
+                    throw new Exception("必须提供二维列排序委托");
+                }
+            dataTable=ConvertToTwoDimentioanl(dataTable, twoDimensionalColumns, sortSize);
             }
 
             return dataTable;

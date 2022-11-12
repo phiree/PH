@@ -103,7 +103,8 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
             var table=CreateTable();
           
             DataTableConverter<Student> converter = new DataTableConverter<Student>();
-            var newTable = converter.ConvertToTwoDimentioanl(table, new Tuple<string, string>("尺码","数量"));
+            SortSize sortSize
+            var newTable = converter.ConvertToTwoDimentioanl(table, new Tuple<string, string>("尺码","数量"),);
 
             Assert.AreEqual(6, newTable.Columns.Count);
             Assert.AreEqual("春装001", newTable.Rows[0][0]);
@@ -116,6 +117,7 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
             Assert.AreEqual("5", newTable.Rows[1][3]);
             Assert.AreEqual("6", newTable.Rows[1][5]);
         }
+        public IList<>
         private System.Data.DataTable CreateTable()
         {
             var dataTable = new DataTable();

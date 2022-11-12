@@ -17,16 +17,16 @@ namespace PHLibrary.Arithmetic.TreeToRectangle
         /// <returns></returns>
         /// 
        
-        public IList<MergedCellRetangle> CalculateRetangles()
+        public IList<MergedCellRetangle> CalculateRetangles(int startRowIndex)
         {
-            var maxDepth = Roots.Max(n => n.MaxDepth);
+            var maxDepth = Roots.Max(n => n.MaxDepth) ;
 
             var allRetangles = new List<MergedCellRetangle>();
 
             var totalWidth = 0;
             foreach (var node in Roots)
             {
-                allRetangles.AddRange(node.CalculateRetangles(totalWidth, maxDepth));
+                allRetangles.AddRange(node.CalculateRetangles(totalWidth, maxDepth,startRowIndex));
                 totalWidth = totalWidth + node.CalculateLeaesCount();
             }
             return allRetangles;

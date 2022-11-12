@@ -33,52 +33,10 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
             Assert.AreEqual("姓名", dataTable.Columns[0].ColumnName);
             Assert.AreEqual("Age", dataTable.Columns[1].ColumnName);
         }
-        [TestMethod()]
-        public void ConvertTestForDynamic()
-        {
-            var studentList = new List<dynamic> { new { Name = "name1", Age = 18 } };
-            DataTableConverter<dynamic> converter = new DataTableConverter<dynamic>();
-            var dataTable = converter.Convert(studentList, new Dictionary<string, string> { { "Name", "姓名" }, { "Age", "年龄" } });
-            Assert.AreEqual("姓名", dataTable.Columns[0].ColumnName);
-            Assert.AreEqual("年龄", dataTable.Columns[1].ColumnName);
-        }
-        [TestMethod()]
-        public void ConvertTestForDynamicNoMapping()
-        {
-            var studentList = new List<dynamic> { new { Name = "name1", Age = 18 } };
-            DataTableConverter<dynamic> converter = new DataTableConverter<dynamic>();
-            var dataTable = converter.Convert(studentList);
-            Assert.AreEqual("Name", dataTable.Columns[0].ColumnName);
-            Assert.AreEqual("name1", dataTable.Rows[0][0].ToString());
-            Assert.AreEqual("Age", dataTable.Columns[1].ColumnName);
-        }
-        [TestMethod()]
-        public void ConvertTestForDynamicNoRowsWithColumnsMap()
-        {
-            var studentList = new List<dynamic>();// { new { Name = "name1", Age = 18 } };
-            DataTableConverter<dynamic> converter = new DataTableConverter<dynamic>();
-            var dataTable = converter.Convert(studentList, new Dictionary<string, string> { { "Name", "姓名" }, { "Age", "年龄" } });
-            Assert.AreEqual(2, dataTable.Columns.Count);
-            Assert.AreEqual(0, dataTable.Rows.Count);
-        }
-        [TestMethod()]
-        public void ConvertTestForDynamicNoRowsNoColumnsMap()
-        {
-            var studentList = new List<dynamic>();// { new { Name = "name1", Age = 18 } };
-            DataTableConverter<dynamic> converter = new DataTableConverter<dynamic>();
-            var dataTable = converter.Convert(studentList);
-            Assert.AreEqual(0, dataTable.Columns.Count);
-            Assert.AreEqual(0, dataTable.Rows.Count);
-        }
-        [TestMethod()]
-        public void ConvertTestForTypedListWith0Rows()
-        {
-            var studentList = new List<Student>();// { new Student { Name = "name1", Age = 18 } };
-            DataTableConverter<Student> converter = new DataTableConverter<Student>();
-            var dataTable = converter.Convert(studentList);//, new Dictionary<string, string> { { "Name", "姓名" }, { "Age", "年龄" } });
-            Assert.AreEqual("Age", dataTable.Columns[0].ColumnName);
-            Assert.AreEqual("姓名", dataTable.Columns[1].ColumnName);
-        }
+        
+        
+         
+        
 
         public class Student
         {

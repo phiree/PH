@@ -27,13 +27,13 @@ namespace PHLibrary.Arithmetic.TreeToRectangle
         /// 计算该几点占用的矩形
         /// </summary>
         /// <returns></returns>
-        public IList<MergedCellRetangle> CalculateRetangles(int initialX, int bigRetangleHeight)
+        public IList<MergedCellRetangle> CalculateRetangles(int initialX, int bigRetangleHeight,int startRowIndex)
         {
             this.bigRetangleHeight = bigRetangleHeight;
 
             int height = GetHeight(this);
             int width = CalculateLeaesCount();
-            int initialY = 0;
+            int initialY = startRowIndex;
             retangles.Add(new MergedCellRetangle(new RetanglePosition(initialX, initialY)
                 , new RetangleSize(width, height), Title, Format,ColumnWidth,Candidates));
             if (Children != null)

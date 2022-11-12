@@ -17,47 +17,18 @@ namespace PHLibrary.ExcelExport
     public class ExcelCreatorEPPlus : IExcelCreator
     {
 
-        public Stream Create<T>(IList<T> data, IDictionary<string, string> propertyNameMaps = null, CellStyleSettings cellStyleSettings = null,SortSize sortSize=null)
+        public Stream Create<T>(IList<T> data, SortSize sortSize,IList<IList<string>> summaryData, int summaryTableBottomMargin, CellStyleSettings cellStyleSettings)
 
         {
             var tableConvertor = new DataTableConverter<T>();
-            var dataTable = tableConvertor.Convert(data, propertyNameMaps,sortSize:sortSize);
+            var dataTable = tableConvertor.Convert(data,sortSize);
 
-            return Create(dataTable, cellStyleSettings);
+            return Create(new List<DataTable>{dataTable},new List<ColumnTree>{ CreateColumnTree(dataTable) },summaryData, summaryTableBottomMargin, cellStyleSettings);
 
-
-        }
-        public System.IO.Stream Create(DataTable dataTable, CellStyleSettings cellStyleSettings = null)
-        {
-            return Create(dataTable, CreateColumnTree(dataTable), cellStyleSettings);
-        }
-        public System.IO.Stream Create(DataSet dataset, ColumnTree columnTree, CellStyleSettings cellStyleSettings = null)
-        {
-            return Create(FetchFrom(dataset), new List<ColumnTree> { columnTree }, cellStyleSettings);
-        }
-        public System.IO.Stream Create(DataTable dataTable, ColumnTree columnTree, CellStyleSettings cellStyleSettings = null)
-        {
-            return Create(new List<DataTable> { dataTable }, new List<ColumnTree> { columnTree }, cellStyleSettings);
-        }
-        public Stream Create(DataSet dataToExport, CellStyleSettings cellStyleSettings = null)
-        {
-            return Create(dataToExport, CreateColumnTrees(dataToExport), cellStyleSettings);
-        }
-        public Stream Create(DataSet dataToExport, IList<ColumnTree> columnTrees, CellStyleSettings cellStyleSettings = null)
-        {
-            return Create(FetchFrom(dataToExport), columnTrees, cellStyleSettings);
 
         }
-        private IList<DataTable> FetchFrom(DataSet ds)
-        {
-            var tables = new List<DataTable>();
-            for (int i = 0; i < ds.Tables.Count; i++)
-            {
-                tables.Add(ds.Tables[i]);
-            }
-            return tables;
-        }
-        private Stream Create(IList<DataTable> datatables, IList<ColumnTree> columnTrees, CellStyleSettings cellStyleSettings = null)
+       
+        private Stream Create(IList<DataTable> datatables, IList<ColumnTree> columnTrees, IList<IList<string>> summaryData,int summaryTableBottomMargin, CellStyleSettings cellStyleSettings)
         {
             if (cellStyleSettings == null)
             {
@@ -76,8 +47,11 @@ namespace PHLibrary.ExcelExport
                     string tablename = string.IsNullOrEmpty(dataTable.TableName) ? "sheet1" : dataTable.TableName;
                     var columnTree = columnTrees[i];
                     var sheet = excelPackage.Workbook.Worksheets.Add(tablename);
+
+                    var summaryTableCreator=new SummaryTableCreator(sheet, summaryTableBottomMargin);
+                    int summaryTableHeight=summaryTableCreator.Create(summaryData);
                     //create merged header cells
-                    var headerCreateor = new ExceHeaderCreatorEPPlus(columnTree, sheet, cellStyleSettings.HeaderBackgroundColor);
+                    var headerCreateor = new ExceHeaderCreatorEPPlus(columnTree, sheet, cellStyleSettings.HeaderBackgroundColor, summaryTableHeight);
                     IList<string> columnFormats;
                     int headerHeight = headerCreateor.CreateHeader(out columnFormats);
                     //create body 
@@ -108,21 +82,7 @@ namespace PHLibrary.ExcelExport
             columnTree.Roots = roots;
             return columnTree;
         }
-        private List<ColumnTree> CreateColumnTrees(DataSet dataSet)
-        {
-            var columnTrees = new List<ColumnTree>();
-            for (int ti = 0; ti < dataSet.Tables.Count; ti++)
-            {
-                columnTrees.Add(CreateColumnTree(dataSet.Tables[ti]));
-            }
-            return columnTrees;
-        }
-        private void FillSheetEpplusWithLoadRange(ExcelWorksheet sheet, DataTable dataTable, int startRow, IList<string> columnFormats)
-        {
-            FillSheetEpplusWithLoadRange(sheet, dataTable, startRow, columnFormats, null);
-        }
-
-
+       
         private void FillSheetEpplusWithLoadRange(ExcelWorksheet sheet, DataTable dataTable, int startRow, IList<string> columnFormats, CellStyleSettings cellStyleSettings)
         {
 
@@ -202,54 +162,9 @@ namespace PHLibrary.ExcelExport
                 }
             }
         }
-        private static double GetMeasureFromPixels(int pixelSize)
-        {
-
-            using (Graphics graphics = Graphics.FromHwnd(IntPtr.Zero))
-            {
-                float dpiY = graphics.DpiY;
-                return pixelSize * (72.0 * (1 / dpiY));
-            }
-
-        }
-        private static double GetMeasureFromPixels2(int pixelSize)
-        {
-
-            using (Graphics graphics = Graphics.FromHwnd(IntPtr.Zero))
-            {
-                float dpiY = graphics.DpiY;
-                return pixelSize * (1 / 72.0) * dpiY;
-            }
-
-        }
-        private static int GetHeightInPixels(ExcelRange cell)
-        {
-            using (Graphics graphics = Graphics.FromHwnd(IntPtr.Zero))
-            {
-                float dpiY = graphics.DpiY;
-                return (int)(cell.Worksheet.Row(cell.Start.Row).Height * (1 / 72.0) * dpiY);
-            }
-        }
-
-        public static float MeasureString(string s, Font font)
-        {
-            using (var g = Graphics.FromHwnd(IntPtr.Zero))
-            {
-                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-
-                return g.MeasureString(s, font, int.MaxValue, StringFormat.GenericTypographic).Width;
-            }
-        }
-
-        private static int GetWidthInPixels(ExcelRange cell)
-        {
-            double columnWidth = cell.Worksheet.Column(cell.Start.Column).Width;
-            Font font = new Font(cell.Style.Font.Name, cell.Style.Font.Size, FontStyle.Regular);
-
-            double pxBaseline = Math.Round(MeasureString("1234567890", font) / 10);
-
-            return (int)(columnWidth * pxBaseline);
-        }
+      
+ 
+       
         private static double GetWidth(int pix)
         {
             return (pix - 12 + 5) / 7d + 1;
@@ -273,11 +188,7 @@ namespace PHLibrary.ExcelExport
 
         }
 
-        public Stream Create<T>(IList<T> data, ColumnTree tree, CellStyleSettings cellStyleSettings = null,SortSize sortSize=null)
-        {
-            var dataTable = new DataTableConverter<T>().Convert(data,sortSize:sortSize);
-            return Create(dataTable, tree, cellStyleSettings);
-        }
+     
     }
 
 }

@@ -7,59 +7,99 @@ using static PHLibrary.ExcelExport.ExcelCreatorEPPlus;
 
 namespace PHLibrary.ExcelExport
 {
-
-    
-
-    public class ExceHeaderCreatorEPPlus : IExcelHeaderCreater
+    public class SummaryTableCreator 
     {
-        public ColumnTree Tree { get;set;}
-        ExcelWorksheet sheet;
-        Color? headerColor;
-        public ExceHeaderCreatorEPPlus(ColumnTree tree, ExcelWorksheet sheet,Color? headerColor=null )
-        {
-            this.sheet=sheet;
-            this.headerColor =  headerColor;
-            this.Tree = tree;
 
+        ExcelWorksheet worksheet;
+        int bottomMargin ;
+        public SummaryTableCreator(ExcelWorksheet worksheet, int bottomMargin = 1)
+        {
+            this.worksheet = worksheet;
+            this.bottomMargin = bottomMargin;
         }
 
-        
-        public int CreateHeader( out IList<string> formats)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="summaryData">顶部表格高度</param>
+        /// <returns></returns>
+        public int Create(IList<IList<string>> summaryData)
         {
-            int width =1; 
-            int height =1;
-            try{
-                height=Tree.Roots.Max(x => x.MaxDepth);
-                width= Tree.Roots.Sum(x => x.CalculateLeaesCount());
-            }
-            catch(System.InvalidOperationException ex) { 
-                //空列
+            int rowIndex = 0;
+            foreach (var list in summaryData)
+            {
+                
+                int colIndex = 0;
+                foreach (var cellData in list)
+                {
+
+                    worksheet.Cells[rowIndex + 1, colIndex + 1].Value = cellData;
+                    colIndex++;
                 }
-            var allRetangles = Tree.CalculateRetangles();
+                rowIndex++;
+            }
+            return rowIndex+bottomMargin;
+        }
+
+    }
+
+
+
+    public class ExceHeaderCreatorEPPlus  
+    {
+        public ColumnTree Tree { get; set; }
+        ExcelWorksheet sheet;
+        Color? headerColor;
+        int startRowIndex;
+        public ExceHeaderCreatorEPPlus(ColumnTree tree, ExcelWorksheet sheet, Color? headerColor = null, int startRowIndex = 0)
+        {
+            this.sheet = sheet;
+            this.headerColor = headerColor;
+            this.Tree = tree;
+            this.startRowIndex = startRowIndex;
+        }
+
+
+        public int CreateHeader(out IList<string> formats)
+        {
+            int width = 1;
+            int height = 1;
+            try
+            {
+                height = Tree.Roots.Max(x => x.MaxDepth);
+                width = Tree.Roots.Sum(x => x.CalculateLeaesCount());
+            }
+            catch (System.InvalidOperationException ex)
+            {
+                //空列
+            }
+            var allRetangles = Tree.CalculateRetangles(startRowIndex);
             formats = Tree.Roots.SelectMany(x => x.CalculateLeaves()).Select(x => x.Format).ToList();
             //创建原子单元格
-
+            height+=startRowIndex;
             //columns
             for (int column = 0; column < width; column++)
             {
-                 //rows
-                for (int row = 0; row < height; row++)
+                //rows
+                for (int row = startRowIndex; row < height; row++)
                 {
-                    var cell = sheet.Cells[row+1,column+1];
-                    
-                     
+                    var cell = sheet.Cells[row + 1, column + 1];
+
+
                     var retangle = allRetangles.FirstOrDefault(x => x.RetanglePosition.X == column && x.RetanglePosition.Y == row);
                     if (retangle != null)
                     {
-                       
-                         
-                        cell.Value=retangle.Title;
-                        SetDataValications(sheet,column+1,retangle.Title,retangle.Candidates);
 
-                        if (retangle.ColumnWidth.HasValue) { 
-                        sheet.Column(column+1).Width=retangle.ColumnWidth.Value;
+
+                        cell.Value = retangle.Title;
+                        SetDataValications(sheet, column + 1, retangle.Title, retangle.Candidates);
+
+                        if (retangle.ColumnWidth.HasValue)
+                        {
+                            sheet.Column(column + 1).Width = retangle.ColumnWidth.Value;
                         }
-                        else {
+                        else
+                        {
                             cell.AutoFitColumns();
                         }
 
@@ -68,34 +108,34 @@ namespace PHLibrary.ExcelExport
                 }
 
             }
-            
+
             //  计算合并
             foreach (var retangle in allRetangles)
             {
-                
+
                 var mergedCellDefine = new MergedCell(retangle);
-               var mergedCell= sheet.Cells[
-                    mergedCellDefine.StartRow,  mergedCellDefine.StartColumn, 
-                    mergedCellDefine.EndRow, mergedCellDefine.EndColumn];
-                mergedCell.Merge=true;
+                var mergedCell = sheet.Cells[
+                     mergedCellDefine.StartRow, mergedCellDefine.StartColumn,
+                     mergedCellDefine.EndRow, mergedCellDefine.EndColumn];
+                mergedCell.Merge = true;
                 mergedCell.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                 mergedCell.Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
-               
+
                 mergedCell.Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin);
                 //mergedCell.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                if(headerColor.HasValue)
-                { 
-                
-                mergedCell.Style.Fill.PatternType= OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                mergedCell.Style.Fill.BackgroundColor.SetColor(headerColor.Value);
+                if (headerColor.HasValue)
+                {
+
+                    mergedCell.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    mergedCell.Style.Fill.BackgroundColor.SetColor(headerColor.Value);
                 }
-                mergedCell.Value=retangle.Title;
+                mergedCell.Value = retangle.Title;
 
             }
             return height;
         }
 
-       
+
         public class MergedCell
         {
             public MergedCell(int startRow, int endRow, int startColumn, int endColumn)
@@ -107,10 +147,10 @@ namespace PHLibrary.ExcelExport
             }
             public MergedCell(MergedCellRetangle retangle)
             {
-                StartRow = retangle.RetanglePosition.Y+1;
-                EndRow = retangle.RetanglePosition.Y + retangle.RetangleSize.Height ;
-                StartColumn = retangle.RetanglePosition.X+1;
-                EndColumn = retangle.RetanglePosition.X + retangle.RetangleSize.Width ;
+                StartRow = retangle.RetanglePosition.Y + 1;
+                EndRow = retangle.RetanglePosition.Y + retangle.RetangleSize.Height;
+                StartColumn = retangle.RetanglePosition.X + 1;
+                EndColumn = retangle.RetanglePosition.X + retangle.RetangleSize.Width;
             }
             public int StartRow { get; protected set; }
             public int EndRow { get; protected set; }
@@ -119,8 +159,9 @@ namespace PHLibrary.ExcelExport
 
         }
 
-        private void SetDataValications( ExcelWorksheet sheet, int columnIndex, string title,  IList<string > data) {
-            
+        private void SetDataValications(ExcelWorksheet sheet, int columnIndex, string title, IList<string> data)
+        {
+
             var cellsExceptHeader = ExcelCellBase.GetAddress(2, columnIndex, ExcelPackage.MaxRows, columnIndex);
             /*
                 var val = ws.DataValidations.AddListValidation("A1");
@@ -131,7 +172,7 @@ namespace PHLibrary.ExcelExport
                 //数据引用sheet
                 var refSheet = sheet.Workbook.Worksheets.Add(title);
                 refSheet.Cells.LoadFromCollection(data);
-                refSheet.Hidden= eWorkSheetHidden.Hidden;
+                refSheet.Hidden = eWorkSheetHidden.Hidden;
                 var dataValidationList = sheet.DataValidations.AddListValidation(cellsExceptHeader);
                 dataValidationList.Formula.ExcelFormula = $"{title}!$A:$A";
                 //for (int i = 0; i < columnWithDdlData.Data.Count; i++)

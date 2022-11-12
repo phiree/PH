@@ -49,7 +49,7 @@ namespace PHLibraryIntergrationTest
         public void Draw(ColumnTree tree, System.Drawing.Graphics formGraphics)
         {
             // var retangles = node.CalculateRetangles(0, node.MaxDepth);
-           var  retangles=tree.CalculateRetangles();
+           var  retangles=tree.CalculateRetangles(0);
             
                   foreach (var c in retangles)
             {

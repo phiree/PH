@@ -211,16 +211,12 @@ namespace PHLibrary.ExcelExportExcelCreator
         /// <summary>
         /// Extension method that turns a dictionary of string and object to an ExpandoObject
         /// </summary>
-        public DataTable Convert(IList<T> data, IDictionary<string, string> propertyNameMaps = null, SortSize sortSize=null)
+        public DataTable Convert(IList<T> data,   SortSize sortSize)
         {
 
-
-            if (propertyNameMaps == null)
-            {
-
-                propertyNameMaps = ColumnMapCreator.CreateColumnMap<T>(data);
-            }
-
+ 
+              var  propertyNameMaps = ColumnMapCreator.CreateColumnMap<T>(data);
+            
             var dataTable = new DataTable("Sheet1");
             var unOrderedColumns = new Dictionary<DataColumn, int>();
             for (int i = 0; i < propertyNameMaps.Count(); i++)// var name in memberNames)

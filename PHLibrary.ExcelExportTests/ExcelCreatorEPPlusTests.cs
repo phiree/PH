@@ -87,17 +87,24 @@ namespace PHLibrary.ExcelExport.Tests
         {
      
             var list = new List<Order1103>() { 
-                new Order1103{ Name="春装001", Code="CZ001", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135", Size="M", Amount=1 },
-                new Order1103{ Name="春装001", Code="CZ001", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135", Size="L", Amount=2 },
-                new Order1103{ Name="春装001", Code="CZ001", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135", Size="XL", Amount=3 },
-                new Order1103{ Name="春装001", Code="CZ001", Color="蓝色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135", Size="M", Amount=4 },
-                new Order1103{ Name="春装001", Code="CZ001", Color="蓝色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135", Size="L", Amount=5 },
-                new Order1103{ Name="春装001", Code="CZ001", Color="蓝色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135", Size="XXL", Amount=6 },
-                new Order1103{ Name="春装002", Code="CZ002", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135", Size="XXXL", Amount=7 },
+                new Order1103{ Name="春装001", Code="CZ001", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135",
+                Size="M", Amount=1 },
+                new Order1103{ Name="春装001", Code="CZ001", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135", 
+                Size="L", Amount=2 },
+                new Order1103{ Name="春装001", Code="CZ001", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135", 
+                Size="XL", Amount=3 },
+                new Order1103{ Name="春装001", Code="CZ001", Color="蓝色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135",
+                Size="M", Amount=4 },
+                new Order1103{ Name="春装001", Code="CZ001", Color="蓝色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135",
+                Size="L", Amount=5 },
+                new Order1103{ Name="春装001", Code="CZ001", Color="蓝色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135", 
+                Size="XXL", Amount=6 },
+                new Order1103{ Name="春装002", Code="CZ002", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135",
+                Size="XXXL", Amount=7 },
                 };
             ExcelCreatorEPPlus excelCreator
                = new ExcelCreatorEPPlus();
-            var stream = excelCreator.Create(list);
+            var stream = excelCreator.Create(list,sortSize:Sort);
             using (var file = new FileStream("CreateForImagesAndTwoDimetional" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
             {
                 // stream.Seek(0, SeekOrigin.Begin);
@@ -105,6 +112,10 @@ namespace PHLibrary.ExcelExport.Tests
 
             }
 
+        }
+        private IList<string> Sort(IList<string> columns)
+        {
+            return new List<string> { "L", "XL", "M", "XXXL","XXL" };
         }
         [TestMethod()]
         public void CreateForNotEmptyDynamicList()

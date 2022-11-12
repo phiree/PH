@@ -17,11 +17,11 @@ namespace PHLibrary.ExcelExport
     public class ExcelCreatorEPPlus : IExcelCreator
     {
 
-        public Stream Create<T>(IList<T> data, IDictionary<string, string> propertyNameMaps = null, CellStyleSettings cellStyleSettings = null)
+        public Stream Create<T>(IList<T> data, IDictionary<string, string> propertyNameMaps = null, CellStyleSettings cellStyleSettings = null,SortSize sortSize=null)
 
         {
             var tableConvertor = new DataTableConverter<T>();
-            var dataTable = tableConvertor.Convert(data, propertyNameMaps);
+            var dataTable = tableConvertor.Convert(data, propertyNameMaps,sortSize:sortSize);
 
             return Create(dataTable, cellStyleSettings);
 
@@ -273,9 +273,9 @@ namespace PHLibrary.ExcelExport
 
         }
 
-        public Stream Create<T>(IList<T> data, ColumnTree tree, CellStyleSettings cellStyleSettings = null)
+        public Stream Create<T>(IList<T> data, ColumnTree tree, CellStyleSettings cellStyleSettings = null,SortSize sortSize=null)
         {
-            var dataTable = new DataTableConverter<T>().Convert(data);
+            var dataTable = new DataTableConverter<T>().Convert(data,sortSize:sortSize);
             return Create(dataTable, tree, cellStyleSettings);
         }
     }

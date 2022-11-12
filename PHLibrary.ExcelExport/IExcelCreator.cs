@@ -1,4 +1,5 @@
 ﻿using PHLibrary.Arithmetic.TreeToRectangle;
+using PHLibrary.ExcelExportExcelCreator;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -12,7 +13,7 @@ namespace PHLibrary.ExcelExport
     /// </summary>
    public  interface IExcelCreator
     {
-        Stream Create<T>(IList<T> data, IDictionary<string, string> propertyNameMaps = null, CellStyleSettings cellStyleSettings = null);
+        Stream Create<T>(IList<T> data, IDictionary<string, string> propertyNameMaps = null, CellStyleSettings cellStyleSettings = null, SortSize sortSize = null);
         System.IO.Stream Create(DataSet dataset, ColumnTree columnTree, CellStyleSettings cellStyleSettings = null);
         /// <summary>
         /// 
@@ -32,7 +33,7 @@ namespace PHLibrary.ExcelExport
         /// <param name="propertyNameMaps"></param>
         /// <returns></returns>
  
-         System.IO.Stream Create<T>(IList<T> data, ColumnTree tree, CellStyleSettings cellStyleSettings = null);
+         System.IO.Stream Create<T>(IList<T> data, ColumnTree tree, CellStyleSettings cellStyleSettings = null,SortSize sortSize=null);
         System.IO.Stream Create(DataTable dataTable,ColumnTree columnTree, CellStyleSettings cellStyleSettings = null);
         /// <summary>
         /// 

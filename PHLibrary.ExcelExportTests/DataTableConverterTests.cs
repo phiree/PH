@@ -103,21 +103,21 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
             var table=CreateTable();
           
             DataTableConverter<Student> converter = new DataTableConverter<Student>();
-            SortSize sortSize
-            var newTable = converter.ConvertToTwoDimentioanl(table, new Tuple<string, string>("尺码","数量"),);
+            
+            var newTable = converter.ConvertToTwoDimentioanl(table, new Tuple<string, string>("尺码","数量"),Sort);
 
             Assert.AreEqual(6, newTable.Columns.Count);
             Assert.AreEqual("春装001", newTable.Rows[0][0]);
             Assert.AreEqual("红色", newTable.Rows[0][1]);
-            Assert.AreEqual("1", newTable.Rows[0][2]);
-            Assert.AreEqual("2", newTable.Rows[0][3]);
+            Assert.AreEqual("2", newTable.Rows[0][2]);
+            Assert.AreEqual("1", newTable.Rows[0][3]);
             Assert.AreEqual("3", newTable.Rows[0][4]);
             Assert.AreEqual("蓝色", newTable.Rows[1][1]);
-            Assert.AreEqual("4", newTable.Rows[1][2]);
-            Assert.AreEqual("5", newTable.Rows[1][3]);
+            Assert.AreEqual("5", newTable.Rows[1][2]);
+            Assert.AreEqual("4", newTable.Rows[1][3]);
             Assert.AreEqual("6", newTable.Rows[1][5]);
         }
-        public IList<>
+      
         private System.Data.DataTable CreateTable()
         {
             var dataTable = new DataTable();
@@ -139,5 +139,8 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
             */
             return dataTable;
         }
+        private IList<string> Sort(IList<string> columns) { 
+            return new List<string> { "M", "L", "XL", "XXL" };
+            }
     }
 }

@@ -47,7 +47,7 @@ namespace PHLibrary.ExcelExportExcelCreator
             }
         }
 
-
+        
        
         public DataTable ConvertToTwoDimentioanl(DataTable originalTable, Tuple<string, string> twoDimentinalColumnNames, SortSize sortSize)
         {

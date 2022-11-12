@@ -173,6 +173,7 @@ namespace PHLibrary.ExcelExport
 
         const int ImageWidth=100;
         const int ImageHeight=100;
+        const int imageMargin=3;
         private void LoadPictures(ExcelWorksheet sheet, DataTable dataTable, int startRow)
         {
             for (int i = 0; i < dataTable.Rows.Count; i++)
@@ -192,7 +193,7 @@ namespace PHLibrary.ExcelExport
                         
                         picture.SetSize(ImageWidth, ImageHeight);
                         //picture.EditAs=OfficeOpenXml.Drawing.eEditAs.TwoCell;
-                        picture.SetPosition(startRow + i, 0, j, 0);
+                        picture.SetPosition(startRow + i,imageMargin, j,imageMargin);
                         SetRowHeight(sheet, startRow + i + 1);
                         SetColumnWidth(sheet,j+1);
 
@@ -261,13 +262,13 @@ namespace PHLibrary.ExcelExport
         private void SetRowHeight(ExcelWorksheet sheet, int rowIndex)
         {
             var row = sheet.Row(rowIndex);
-            row.Height = GetHeight(ImageHeight);
+            row.Height = GetHeight(ImageHeight+imageMargin*2);
 
         }
         private void SetColumnWidth(ExcelWorksheet sheet, int columnIdex)
         {
             var column = sheet.Column(columnIdex);
-            column.Width = GetWidth(ImageWidth);
+            column.Width = GetWidth(ImageWidth+imageMargin*2);
             //https://stackoverflow.com/a/7902415/714883
 
         }

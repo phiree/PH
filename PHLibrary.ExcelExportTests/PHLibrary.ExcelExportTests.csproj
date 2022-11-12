@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PHLibrary.ExcelExport\PHLibrary.ExcelExport.csproj" />
+    <ProjectReference Include="..\PHLibrary.ExcelExport\PHLibrary.LSExcelExport.csproj" />
   </ItemGroup>
 
   <ItemGroup>

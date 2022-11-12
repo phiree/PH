@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29613.14
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PHLibrary", "PHLibrary\PHLibrary.csproj", "{A67802A1-0F9C-463F-9C57-15C68FE47301}"
 EndProject
@@ -9,9 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PHLibraryTests", "PHLibrary
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PHLibraryIntergrationTest", "PHLibraryIntergrationTest\PHLibraryIntergrationTest.csproj", "{4E95C7C2-A00D-4A3A-84A3-9685E68507A0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PHLibrary.ExcelExport", "PHLibrary.ExcelExport\PHLibrary.ExcelExport.csproj", "{343E21F9-56AC-42E9-8451-B4A558CC2DA8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PHLibrary.LSExcelExport", "PHLibrary.ExcelExport\PHLibrary.LSExcelExport.csproj", "{343E21F9-56AC-42E9-8451-B4A558CC2DA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PHLibrary.ExcelExportTests", "PHLibrary.ExcelExportTests\PHLibrary.ExcelExportTests.csproj", "{8E865B81-962E-458E-AB69-FBD43D751B02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PHLibrary.ExcelExportTests", "PHLibrary.ExcelExportTests\PHLibrary.ExcelExportTests.csproj", "{8E865B81-962E-458E-AB69-FBD43D751B02}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

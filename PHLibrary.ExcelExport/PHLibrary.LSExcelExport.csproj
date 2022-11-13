@@ -65,11 +65,11 @@ fix: 格式化没有应用到最后一行数据
     <Product>lianshang</Product>
     <PackageId>PHLibrary.LSExcelExport</PackageId>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Version>1.1.1</Version>
+    <Version>1.1.6</Version>
     <Company>4yankeji</Company>
     <Authors>yf</Authors>
-    <FileVersion>1.1.1</FileVersion>
-    <AssemblyVersion>1.1.1</AssemblyVersion>
+    <FileVersion>1.1.6</FileVersion>
+    <AssemblyVersion>1.1.6</AssemblyVersion>
     <Copyright>无版权</Copyright>
   </PropertyGroup>
 

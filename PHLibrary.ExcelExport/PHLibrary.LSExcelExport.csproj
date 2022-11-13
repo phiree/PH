@@ -2,13 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Description>excel导出组件.
-     支持多数据源(dataset,datatable,IList&lt;T&gt;,IList&lt;dynamic&gt;)
-     支持多层表头及合并</Description>
+    <Description>LS导出，支持
+顶部概要表格
+二维表格
+图片</Description>
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/phiree/PHLibrary</RepositoryUrl>
     <PackageProjectUrl>https://github.com/phiree/PHLibrary</PackageProjectUrl>
-    <PackageReleaseNotes>1.1.7
+    <PackageReleaseNotes>1.1.8
+排序委托增加guid
+1.1.7
 dataset.extension降级到4.5，顶部表格数据允许为空
 1.1.0
 图片尺寸和excel单元格尺寸适配
@@ -67,11 +70,11 @@ fix: 格式化没有应用到最后一行数据
     <Product>lianshang</Product>
     <PackageId>PHLibrary.LSExcelExport</PackageId>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Version>1.1.7</Version>
+    <Version>1.1.8</Version>
     <Company>4yankeji</Company>
     <Authors>yf</Authors>
-    <FileVersion>1.1.7</FileVersion>
-    <AssemblyVersion>1.1.7</AssemblyVersion>
+    <FileVersion>1.1.8</FileVersion>
+    <AssemblyVersion>1.1.8</AssemblyVersion>
     <Copyright>无版权</Copyright>
   </PropertyGroup>
 

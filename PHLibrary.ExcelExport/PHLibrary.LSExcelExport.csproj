@@ -8,7 +8,9 @@
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/phiree/PHLibrary</RepositoryUrl>
     <PackageProjectUrl>https://github.com/phiree/PHLibrary</PackageProjectUrl>
-    <PackageReleaseNotes>1.1.0
+    <PackageReleaseNotes>1.1.7
+dataset.extension降级到4.5，顶部表格数据允许为空
+1.1.0
 图片尺寸和excel单元格尺寸适配
 1.0
 Lianshang 专用导出，支持图片，二维表
@@ -65,11 +67,11 @@ fix: 格式化没有应用到最后一行数据
     <Product>lianshang</Product>
     <PackageId>PHLibrary.LSExcelExport</PackageId>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Version>1.1.6</Version>
+    <Version>1.1.7</Version>
     <Company>4yankeji</Company>
     <Authors>yf</Authors>
-    <FileVersion>1.1.6</FileVersion>
-    <AssemblyVersion>1.1.6</AssemblyVersion>
+    <FileVersion>1.1.7</FileVersion>
+    <AssemblyVersion>1.1.7</AssemblyVersion>
     <Copyright>无版权</Copyright>
   </PropertyGroup>
 

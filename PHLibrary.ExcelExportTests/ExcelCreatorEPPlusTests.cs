@@ -3,6 +3,7 @@ using PHLibrary.Arithmetic.TreeToRectangle;
 using PHLibrary.ExcelExport;
 using PHLibrary.ExcelExportExcelCreator;
 using PHLibrary.Reflection;
+using PHLibrary.Reflection.ArrayValuesToInstance;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,6 +13,7 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Linq;
 using static PHLibrary.ExcelExport.ExcelCreatorEPPlus;
 
 namespace PHLibrary.ExcelExport.Tests
@@ -53,7 +55,7 @@ namespace PHLibrary.ExcelExport.Tests
         public class Order1103
         {
             [Column("品名")]
-
+            [PropertyOrder(1)]
             public string Name { get; set; }
             [Column("货号")]
             public string Code { get; set; }
@@ -74,21 +76,26 @@ namespace PHLibrary.ExcelExport.Tests
         public void CreateForImagesAndTwoDimetionalData()
         {
      
+            Guid guidM=Guid.NewGuid();
+            Guid guidL= Guid.NewGuid();
+            Guid guidXL= Guid.NewGuid();
+            Guid guidXXL= Guid.NewGuid();
+            Guid guidXXXL= Guid.NewGuid();
             var list = new List<Order1103>() { 
                 new Order1103{ Name="春装001", Code="CZ001", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135",
-                Size="M", Amount=1 },
+                    Size="M",SizeGuid=guidM ,  Amount=1 },
                 new Order1103{ Name="春装001", Code="CZ001", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135", 
-                Size="L", Amount=2 },
+                    Size="L",SizeGuid=guidL,  Amount=2 },
                 new Order1103{ Name="春装001", Code="CZ001", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135", 
-                Size="XL", Amount=3 },
+                    Size="XL",SizeGuid=guidXL,  Amount=3 },
                 new Order1103{ Name="春装001", Code="CZ001", Color="蓝色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135",
-                Size="M", Amount=4 },
+                    Size="M",SizeGuid=guidM,  Amount=4 },
                 new Order1103{ Name="春装001", Code="CZ001", Color="蓝色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135",
-                Size="L", Amount=5 },
+                    Size="L",SizeGuid=guidL ,  Amount=5 },
                 new Order1103{ Name="春装001", Code="CZ001", Color="蓝色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135", 
-                Size="XXL", Amount=6 },
+                     Size="XXL",SizeGuid=guidXXL,  Amount=6 },
                 new Order1103{ Name="春装002", Code="CZ002", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135",
-                Size="XXXL", Amount=7 },
+                     Size="XXXL",SizeGuid=guidXXXL,  Amount=7 },
                 };
             ExcelCreatorEPPlus excelCreator
                = new ExcelCreatorEPPlus();
@@ -101,9 +108,10 @@ namespace PHLibrary.ExcelExport.Tests
             }
 
         }
-        private IList<string> Sort(IList<string> columns)
+        private IList<string> Sort(IList<TwoDimensionalX> columns)
         {
-            return new List<string> { "L", "XL", "M", "XXXL","XXL" };
+            return columns.OrderBy(x=>x.Guid).Select(x=>x.Name).Distinct().ToList();
+            
         }
         
         private void CopyStream(Stream input, Stream output)

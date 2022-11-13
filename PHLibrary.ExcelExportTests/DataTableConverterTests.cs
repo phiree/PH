@@ -40,7 +40,7 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
 
         public class Student
         {
-            [PropertyOrder(2)]
+            [PropertyOrder(3)]
             [System.ComponentModel.DisplayName("姓名")]
             public string Name { get; set; }
             [PropertyOrder(1)]
@@ -97,7 +97,7 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
             */
             return dataTable;
         }
-        private IList<string> Sort(IList<string> columns) { 
+        private IList<string> Sort(IList<TwoDimensionalX> columns) { 
             return new List<string> { "M", "L", "XL", "XXL" };
             }
         private IList<string> Sort(IList<Tuple<string,string>> columnsWithGuid)

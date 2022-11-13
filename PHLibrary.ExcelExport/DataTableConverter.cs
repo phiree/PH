@@ -32,22 +32,33 @@ namespace PHLibrary.ExcelExportExcelCreator
     }
     public class TwoDimensionalDefine
     {
-        public string XName { get;set;}
-        public string XGuid { get;set;} 
-        public string YName { get;set;} 
+        public TwoDimensionalX TwoDimensionalX { get; set; }
+       
+        public string YName { get; set; }
 
         public TwoDimensionalDefine(string xName, string xGuid, string yName)
         {
+            TwoDimensionalX=new TwoDimensionalX(xName,xGuid);
             
-            XName = xName;
-            XGuid = xGuid;
             YName = yName;
         }
-        public bool Contains(string columnName) { 
-            return XName==columnName||XGuid==columnName||YName==columnName;
-            }
+        public bool Contains(string columnName)
+        {
+            return TwoDimensionalX.Name == columnName || TwoDimensionalX.Guid == columnName || YName == columnName;
+        }
     }
-    public delegate IList<string> SortSize(IList<string> sizes);
+    public class TwoDimensionalX
+    { 
+        public string Name;
+        public string Guid;
+
+        public TwoDimensionalX(string name, string guid)
+        {
+            Name = name;
+            Guid = guid;
+        }
+    }
+    public delegate IList<string> SortSize(IList<TwoDimensionalX> x);
     /// <summary> 
     /// convert T to datatable
     /// </summary>
@@ -66,43 +77,49 @@ namespace PHLibrary.ExcelExportExcelCreator
 
 
 
-        public class ColumnsBuilder {
-            DataTable originalTable;
-            TwoDimensionalDefine twoDimentinalColumnNames;
-            private IList<DataColumn> GetColumnsWithTwoDimensional( )
+        public class ColumnsBuilder
+        {
+
+            /// <summary>
+            /// 包含二维数据的列
+            /// </summary>
+            public IList<DataColumn> NotTwoDimensinalColumns { get; private set; } = new List<DataColumn>();
+            /// <summary>
+            /// 不包含二维数据的列
+            /// </summary>
+            public IList<DataColumn> TwoDimensinalColumns { get; private set; } = new List<DataColumn>();
+            public void Build(DataTable originalTable, TwoDimensionalDefine twoDimentinalColumnNames)
             {
-                throw new Exception();
+
+
+                foreach (DataColumn column in originalTable.Columns)
+                {
+
+                    if ( twoDimentinalColumnNames.Contains(column.ColumnName))
+                    {
+                        TwoDimensinalColumns.Add(column);
+                    }
+                    else
+                    {
+                        NotTwoDimensinalColumns.Add(column);
+                    }
+
+
+
+                }
             }
-            private IList<DataColumn> GetColumnsWithoutTwoDimensional()
-            {
-                throw new Exception();
-            }
+
+            
+
         }
-       
+
         public DataTable ConvertToTwoDimentioanl(DataTable originalTable, TwoDimensionalDefine twoDimentinalColumnNames, SortSize sortSize)
         {
 
-            var newColumns = new List<DataColumn>();
-            string normalColumns = string.Empty;
+            ColumnsBuilder columnsBuilder = new ColumnsBuilder();
+            columnsBuilder.Build(originalTable, twoDimentinalColumnNames);
 
-            var dictGroupBy = new Dictionary<string, object>();
-            var groupby = new ExpandoObject();
-
-            var staticColumns = new List<DataColumn>();
-
-            foreach (DataColumn column in originalTable.Columns)
-            {
-                
-                if (!twoDimentinalColumnNames.Contains(column.ColumnName))
-                {
-                    staticColumns.Add(column);
-                    newColumns.Add(column);
-                }
-                normalColumns += column.ColumnName + ",";
-
-
-            }
-            normalColumns = normalColumns.TrimEnd(',');
+            
 
             //var twoDimentionalColumnValues = originalTable.AsEnumerable().Select(x => x[twoDimentinalColumnNames.Item1].ToString()).Distinct();
             //foreach (var twoDementinalColumnValue in twoDimentionalColumnValues)
@@ -111,33 +128,48 @@ namespace PHLibrary.ExcelExportExcelCreator
             //    newColumns.Add(new DataColumn(twoDementinalColumnValue, twoDementinalColumnValue.GetType()));
             //}
 
-            var newTable = originalTable.AsEnumerable()
-                         .GroupBy(x => GetGroupBy(staticColumns.Select(c => c.ColumnName), x))
+            var columnsGroupByNoTwoDimensinal = originalTable.AsEnumerable()
+                         .GroupBy(x => GetGroupBy(columnsBuilder.NotTwoDimensinalColumns.Select(c => c.ColumnName), x))
                          //.GroupBy(x=>new{品名= x.Field<string>("品名"),颜色=x.Field<string>("颜色") })
                          .Select((g, v) =>
                          {
                              return g;
                          }).ToList();
 
-            IList<string> newColumns2 = newTable.SelectMany(x => x.ToList()).Select(x => x[twoDimentinalColumnNames.XName].ToString()).Distinct().ToList();
+            IList<TwoDimensionalX> newColumns2 = columnsGroupByNoTwoDimensinal.SelectMany(x => x.ToList())
+                .Select(x =>new TwoDimensionalX(
+                    x[twoDimentinalColumnNames.TwoDimensionalX.Name].ToString(),
+                    x[twoDimentinalColumnNames.TwoDimensionalX.Guid]==null ?"": x[twoDimentinalColumnNames.TwoDimensionalX.Guid].ToString())
+                    )
+                .Distinct()
+                .ToList();
 
-            newColumns2 = sortSize(newColumns2);
+           
+            IList<string> orderedTwoDimensionalColumns= sortSize(newColumns2);
+            var allColumns = new List<DataColumn>();
 
-            foreach (var col2 in newColumns2)
+            foreach (var col in columnsBuilder.NotTwoDimensinalColumns)
             {
-                newColumns.Add(new DataColumn(col2.ToString()));
+                allColumns.Add(col); 
             }
+            foreach (var col2 in orderedTwoDimensionalColumns)
+            {
+                allColumns.Add(new DataColumn(col2.ToString()));
+            }
+            
+
             DataTable newt = new DataTable();
-            foreach (var col in newColumns)
+
+            foreach (var col in allColumns)
             {
                 newt.Columns.Add(new DataColumn(col.ColumnName, col.DataType)); ;
             }
 
 
-            foreach (var group in newTable)
+            foreach (var group in columnsGroupByNoTwoDimensinal)
             {
                 var row = newt.NewRow();
-                foreach (var col in newColumns)
+                foreach (DataColumn col in newt.Columns)
                 {
                     if (((IDictionary<string, object>)group.Key).ContainsKey(col.ColumnName))
                     {
@@ -145,7 +177,7 @@ namespace PHLibrary.ExcelExportExcelCreator
                     }
                     foreach (var r in group.ToList())
                     {
-                        if (r[twoDimentinalColumnNames.XName].ToString() == col.ColumnName)
+                        if (r[twoDimentinalColumnNames.TwoDimensionalX.Name].ToString() == col.ColumnName)
                         {
                             row[col.ColumnName] = r[twoDimentinalColumnNames.YName];
 
@@ -216,7 +248,7 @@ namespace PHLibrary.ExcelExportExcelCreator
             {
                 return null;
             }
-            return new TwoDimensionalDefine(twoDimensionalColumn_X,twoDimensionalColumn_XId,twoDimensionalColumn_Y);
+            return new TwoDimensionalDefine(twoDimensionalColumn_X, twoDimensionalColumn_XId, twoDimensionalColumn_Y);
 
 
 

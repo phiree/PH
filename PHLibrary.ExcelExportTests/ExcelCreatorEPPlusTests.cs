@@ -64,6 +64,8 @@ namespace PHLibrary.ExcelExport.Tests
             public string Color { get; set; }
             [TwoDimensional(true)]
             public string Size { get; set; }
+            [TwoDimensionalGuid]
+            public Guid SizeGuid { get;set;}
             [TwoDimensional]
             public int Amount { get; set; }
 

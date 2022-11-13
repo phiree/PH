@@ -30,6 +30,23 @@ namespace PHLibrary.ExcelExportExcelCreator
         public Dictionary<int, Image> Images { get; set; }
 
     }
+    public class TwoDimensionalDefine
+    {
+        public string XName { get;set;}
+        public string XGuid { get;set;} 
+        public string YName { get;set;} 
+
+        public TwoDimensionalDefine(string xName, string xGuid, string yName)
+        {
+            
+            XName = xName;
+            XGuid = xGuid;
+            YName = yName;
+        }
+        public bool Contains(string columnName) { 
+            return XName==columnName||XGuid==columnName||YName==columnName;
+            }
+    }
     public delegate IList<string> SortSize(IList<string> sizes);
     /// <summary> 
     /// convert T to datatable
@@ -47,9 +64,22 @@ namespace PHLibrary.ExcelExportExcelCreator
             }
         }
 
-        
+
+
+        public class ColumnsBuilder {
+            DataTable originalTable;
+            TwoDimensionalDefine twoDimentinalColumnNames;
+            private IList<DataColumn> GetColumnsWithTwoDimensional( )
+            {
+                throw new Exception();
+            }
+            private IList<DataColumn> GetColumnsWithoutTwoDimensional()
+            {
+                throw new Exception();
+            }
+        }
        
-        public DataTable ConvertToTwoDimentioanl(DataTable originalTable, Tuple<string, string> twoDimentinalColumnNames, SortSize sortSize)
+        public DataTable ConvertToTwoDimentioanl(DataTable originalTable, TwoDimensionalDefine twoDimentinalColumnNames, SortSize sortSize)
         {
 
             var newColumns = new List<DataColumn>();
@@ -62,7 +92,8 @@ namespace PHLibrary.ExcelExportExcelCreator
 
             foreach (DataColumn column in originalTable.Columns)
             {
-                if (column.ColumnName != twoDimentinalColumnNames.Item1 && column.ColumnName != twoDimentinalColumnNames.Item2)
+                
+                if (!twoDimentinalColumnNames.Contains(column.ColumnName))
                 {
                     staticColumns.Add(column);
                     newColumns.Add(column);
@@ -88,19 +119,20 @@ namespace PHLibrary.ExcelExportExcelCreator
                              return g;
                          }).ToList();
 
-            IList<string> newColumns2 = newTable.SelectMany(x => x.ToList()).Select(x => x[twoDimentinalColumnNames.Item1].ToString()).Distinct().ToList();
+            IList<string> newColumns2 = newTable.SelectMany(x => x.ToList()).Select(x => x[twoDimentinalColumnNames.XName].ToString()).Distinct().ToList();
 
-              newColumns2 = sortSize(newColumns2);
+            newColumns2 = sortSize(newColumns2);
 
             foreach (var col2 in newColumns2)
             {
                 newColumns.Add(new DataColumn(col2.ToString()));
             }
             DataTable newt = new DataTable();
-            foreach(var col in newColumns) {
-                newt.Columns.Add(new DataColumn(col.ColumnName,col.DataType));;
+            foreach (var col in newColumns)
+            {
+                newt.Columns.Add(new DataColumn(col.ColumnName, col.DataType)); ;
             }
-           
+
 
             foreach (var group in newTable)
             {
@@ -113,9 +145,9 @@ namespace PHLibrary.ExcelExportExcelCreator
                     }
                     foreach (var r in group.ToList())
                     {
-                        if (r[twoDimentinalColumnNames.Item1].ToString() == col.ColumnName)
+                        if (r[twoDimentinalColumnNames.XName].ToString() == col.ColumnName)
                         {
-                            row[col.ColumnName] = r[twoDimentinalColumnNames.Item2];
+                            row[col.ColumnName] = r[twoDimentinalColumnNames.YName];
 
                         }
                     }
@@ -127,7 +159,7 @@ namespace PHLibrary.ExcelExportExcelCreator
         }
 
         IList<ExpandoObject> keyObjects = new List<ExpandoObject>();
-         
+
         private ExpandoObject GetGroupBy(IEnumerable<string> columns, DataRow row)
         {
 
@@ -148,10 +180,11 @@ namespace PHLibrary.ExcelExportExcelCreator
             return eo;
 
         }
-        public static Tuple<string, string> GetTwoDimensionalColumns<T>() //where T : class
+        public static TwoDimensionalDefine GetTwoDimensionalColumns<T>() //where T : class
         {
 
             string twoDimensionalColumn_X = string.Empty, twoDimensionalColumn_Y = string.Empty;
+            string twoDimensionalColumn_XId = string.Empty;
             var propertyInfos = typeof(T).GetProperties();
 
             foreach (var p in propertyInfos)
@@ -172,6 +205,10 @@ namespace PHLibrary.ExcelExportExcelCreator
                             twoDimensionalColumn_Y = p.Name;
                         }
                     }
+                    if (attr is TwoDimensionalGuidAttribute twoDimensionalGuidAttribute)
+                    {
+                        twoDimensionalColumn_XId = p.Name;
+                    }
                 }
 
             }
@@ -179,7 +216,7 @@ namespace PHLibrary.ExcelExportExcelCreator
             {
                 return null;
             }
-            return new Tuple<string, string>(twoDimensionalColumn_X, twoDimensionalColumn_Y);
+            return new TwoDimensionalDefine(twoDimensionalColumn_X,twoDimensionalColumn_XId,twoDimensionalColumn_Y);
 
 
 
@@ -211,12 +248,12 @@ namespace PHLibrary.ExcelExportExcelCreator
         /// <summary>
         /// Extension method that turns a dictionary of string and object to an ExpandoObject
         /// </summary>
-        public DataTable Convert(IList<T> data,   SortSize sortSize)
+        public DataTable Convert(IList<T> data, SortSize sortSize)
         {
 
- 
-              var  propertyNameMaps = ColumnMapCreator.CreateColumnMap<T>(data);
-            
+
+            var propertyNameMaps = ColumnMapCreator.CreateColumnMap<T>(data);
+
             var dataTable = new DataTable("Sheet1");
             var unOrderedColumns = new Dictionary<DataColumn, int>();
             for (int i = 0; i < propertyNameMaps.Count(); i++)// var name in memberNames)
@@ -287,21 +324,24 @@ namespace PHLibrary.ExcelExportExcelCreator
             }
 
             var twoDimensionalColumns = GetTwoDimensionalColumns<T>();
-            if (twoDimensionalColumns != null) {
-                if (sortSize == null) {
+            if (twoDimensionalColumns != null)
+            {
+                if (sortSize == null)
+                {
                     throw new Exception("必须提供二维列排序委托");
                 }
-            dataTable=ConvertToTwoDimentioanl(dataTable, twoDimensionalColumns, sortSize);
+                dataTable = ConvertToTwoDimentioanl(dataTable, twoDimensionalColumns, sortSize);
             }
 
             return dataTable;
         }
-        Dictionary<string,Image> imageDict=new Dictionary<string, Image>();
+        Dictionary<string, Image> imageDict = new Dictionary<string, Image>();
         private Image DownloadImageAsync(string uri)
         {
-            if (imageDict.ContainsKey(uri)) { 
+            if (imageDict.ContainsKey(uri))
+            {
                 return imageDict[uri];
-                }
+            }
             var httpClient = new HttpClient();
 
 
@@ -315,7 +355,7 @@ namespace PHLibrary.ExcelExportExcelCreator
 
             image.Save("d:\\a.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
 
-            imageDict.Add(uri,image);
+            imageDict.Add(uri, image);
             return image;
 
 

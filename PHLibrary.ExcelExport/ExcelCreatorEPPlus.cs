@@ -17,18 +17,18 @@ namespace PHLibrary.ExcelExport
     public class ExcelCreatorEPPlus : IExcelCreator
     {
 
-        public Stream Create<T>(IList<T> data, SortSize sortSize,IList<IList<string>> summaryData, int summaryTableBottomMargin, CellStyleSettings cellStyleSettings)
+        public Stream Create<T>(IList<T> data, SortSize sortSize, IList<IList<string>> summaryData, int summaryTableBottomMargin, CellStyleSettings cellStyleSettings)
 
         {
             var tableConvertor = new DataTableConverter<T>();
-            var dataTable = tableConvertor.Convert(data,sortSize);
+            var dataTable = tableConvertor.Convert(data, sortSize);
 
-            return Create(new List<DataTable>{dataTable},new List<ColumnTree>{ CreateColumnTree(dataTable) },summaryData, summaryTableBottomMargin, cellStyleSettings);
+            return Create(new List<DataTable> { dataTable }, new List<ColumnTree> { CreateColumnTree(dataTable) }, summaryData, summaryTableBottomMargin, cellStyleSettings);
 
 
         }
-       
-        private Stream Create(IList<DataTable> datatables, IList<ColumnTree> columnTrees, IList<IList<string>> summaryData,int summaryTableBottomMargin, CellStyleSettings cellStyleSettings)
+
+        private Stream Create(IList<DataTable> datatables, IList<ColumnTree> columnTrees, IList<IList<string>> summaryData, int summaryTableBottomMargin, CellStyleSettings cellStyleSettings)
         {
             if (cellStyleSettings == null)
             {
@@ -47,9 +47,12 @@ namespace PHLibrary.ExcelExport
                     string tablename = string.IsNullOrEmpty(dataTable.TableName) ? "sheet1" : dataTable.TableName;
                     var columnTree = columnTrees[i];
                     var sheet = excelPackage.Workbook.Worksheets.Add(tablename);
-
-                    var summaryTableCreator=new SummaryTableCreator(sheet, summaryTableBottomMargin);
-                    int summaryTableHeight=summaryTableCreator.Create(summaryData);
+                    int summaryTableHeight = 0;
+                    if (summaryData != null)
+                    {
+                        var summaryTableCreator = new SummaryTableCreator(sheet, summaryTableBottomMargin);
+                        summaryTableHeight = summaryTableCreator.Create(summaryData);
+                    }
                     //create merged header cells
                     var headerCreateor = new ExceHeaderCreatorEPPlus(columnTree, sheet, cellStyleSettings.HeaderBackgroundColor, summaryTableHeight);
                     IList<string> columnFormats;
@@ -82,7 +85,7 @@ namespace PHLibrary.ExcelExport
             columnTree.Roots = roots;
             return columnTree;
         }
-       
+
         private void FillSheetEpplusWithLoadRange(ExcelWorksheet sheet, DataTable dataTable, int startRow, IList<string> columnFormats, CellStyleSettings cellStyleSettings)
         {
 
@@ -131,9 +134,9 @@ namespace PHLibrary.ExcelExport
 
         }
 
-        const int ImageWidth=100;
-        const int ImageHeight=100;
-        const int imageMargin=3;
+        const int ImageWidth = 100;
+        const int ImageHeight = 100;
+        const int imageMargin = 3;
         private void LoadPictures(ExcelWorksheet sheet, DataTable dataTable, int startRow)
         {
             for (int i = 0; i < dataTable.Rows.Count; i++)
@@ -150,45 +153,34 @@ namespace PHLibrary.ExcelExport
 
                         var picture = sheet.Drawings.AddPicture($"pic_{i}_{j}", dataCell as System.Drawing.Image);
 
-                        
+
                         picture.SetSize(ImageWidth, ImageHeight);
                         //picture.EditAs=OfficeOpenXml.Drawing.eEditAs.TwoCell;
-                        picture.SetPosition(startRow + i,imageMargin, j,imageMargin);
+                        picture.SetPosition(startRow + i, imageMargin, j, imageMargin);
                         SetRowHeight(sheet, startRow + i + 1);
-                        SetColumnWidth(sheet,j+1);
+                        SetColumnWidth(sheet, j + 1);
 
                     }
 
                 }
             }
         }
-      
- 
-       
-        private static double GetWidth(int pix)
-        {
-            return (pix - 12 + 5) / 7d + 1;
-        }
 
-        private static double GetHeight(int pix)
-        {
-            return pix * 72 / 96d;
-        }
         private void SetRowHeight(ExcelWorksheet sheet, int rowIndex)
         {
             var row = sheet.Row(rowIndex);
-            row.Height = GetHeight(ImageHeight+imageMargin*2);
+            row.Height = (double)((ImageHeight + imageMargin * 2) * 72 / 96d);
 
         }
         private void SetColumnWidth(ExcelWorksheet sheet, int columnIdex)
         {
             var column = sheet.Column(columnIdex);
-            column.Width = GetWidth(ImageWidth+imageMargin*2);
+            column.Width = (double)((ImageWidth + imageMargin * 2 - 12 + 5) / 7d + 1);
             //https://stackoverflow.com/a/7902415/714883
 
         }
 
-     
+
     }
 
 }

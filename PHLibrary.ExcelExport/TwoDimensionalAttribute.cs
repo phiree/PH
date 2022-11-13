@@ -9,10 +9,11 @@ namespace PHLibrary.ExcelExport
     {
 
         readonly bool isX = false;//or y
-
-        public TwoDimensionalAttribute(bool isX = false)
+        
+        public TwoDimensionalAttribute(  bool isX = false)
         {
             this.isX = isX;
+             
 
         }
 
@@ -22,5 +23,10 @@ namespace PHLibrary.ExcelExport
         }
 
 
+    }
+    [System.AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    public sealed class TwoDimensionalGuidAttribute : Attribute
+    {
+        
     }
 }

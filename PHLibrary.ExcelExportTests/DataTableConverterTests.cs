@@ -33,10 +33,22 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
             Assert.AreEqual("姓名", dataTable.Columns[0].ColumnName);
             Assert.AreEqual("Age", dataTable.Columns[1].ColumnName);
         }
-        
-        
-         
-        
+        [TestMethod()]
+        public void ConvertTestWithNullable()
+        {
+            var birthday=DateTime.Now.AddYears(-1);
+            var studentList = new List<Student3> { new Student3 { Birthday = null}, new Student3 { Birthday = birthday } };
+            DataTableConverter<Student3> converter = new DataTableConverter<Student3>();
+            var dataTable = converter.Convert(studentList, null);
+          
+            Assert.AreEqual("Birthday", dataTable.Columns[0].ColumnName);
+            Assert.AreEqual(DBNull.Value, dataTable.Rows[0][0]);
+            Assert.AreEqual(birthday, dataTable.Rows[1][0]);
+        }
+
+
+
+
 
         public class Student
         {
@@ -104,5 +116,35 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
         {
             return new List<string> { "M", "L", "XL", "XXL" };
         }
+
+        public class Student3
+        {
+
+           
+
+            public DateTime? Birthday { get; set; }
+        }
+
+        [TestMethod()]
+        public void ConvertToTwoDimentioanlWithNullableTest()
+        {
+            var table = CreateTable();
+
+            DataTableConverter<Student> converter = new DataTableConverter<Student>();
+
+            var newTable = converter.ConvertToTwoDimentioanl(table, new TwoDimensionalDefine("尺码", "SizeGuid", "数量"), Sort);
+
+            Assert.AreEqual(6, newTable.Columns.Count);
+            Assert.AreEqual("春装001", newTable.Rows[0][0]);
+            Assert.AreEqual("红色", newTable.Rows[0][1]);
+            Assert.AreEqual("2", newTable.Rows[0][2]);
+            Assert.AreEqual("1", newTable.Rows[0][3]);
+            Assert.AreEqual("3", newTable.Rows[0][4]);
+            Assert.AreEqual("蓝色", newTable.Rows[1][1]);
+            Assert.AreEqual("5", newTable.Rows[1][2]);
+            Assert.AreEqual("4", newTable.Rows[1][3]);
+            Assert.AreEqual("6", newTable.Rows[1][5]);
+        }
+
     }
 }

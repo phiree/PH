@@ -322,7 +322,7 @@ namespace PHLibrary.ExcelExportExcelCreator
 
                 var columnType = new ColumnDataTypeDetermine<T>().GetPropertyType(data, name);
                 //guess column type using first row of data
-                var column = new DataColumn(columnName, columnType);
+                var column = new DataColumn(columnName, Nullable.GetUnderlyingType( columnType) ?? columnType);
                 column.Caption = name;
                 unOrderedColumns.Add(column, orderNo);
 
@@ -347,7 +347,9 @@ namespace PHLibrary.ExcelExportExcelCreator
 
                     else
                     {
-
+                        if(value == null) { 
+                            value=DBNull.Value;
+                            }
                         row[column.ColumnName] = value;
                     }
 

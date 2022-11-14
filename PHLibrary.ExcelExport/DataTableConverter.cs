@@ -23,42 +23,7 @@ using PHLibrary.ExcelExport;
 
 namespace PHLibrary.ExcelExportExcelCreator
 {
-
-    public class DataTableWithExtensions
-    {
-        public DataTable DataTable { get; set; }
-        public Dictionary<int, Image> Images { get; set; }
-
-    }
-    public class TwoDimensionalDefine
-    {
-        public TwoDimensionalX TwoDimensionalX { get; set; }
-       
-        public string YName { get; set; }
-
-        public TwoDimensionalDefine(string xName, string xGuid, string yName)
-        {
-            TwoDimensionalX=new TwoDimensionalX(xName,xGuid);
-            
-            YName = yName;
-        }
-        public bool Contains(string columnName)
-        {
-            return TwoDimensionalX.Name == columnName || TwoDimensionalX.Guid == columnName || YName == columnName;
-        }
-    }
-    public class TwoDimensionalX
-    { 
-        public string Name;
-        public string Guid;
-
-        public TwoDimensionalX(string name, string guid)
-        {
-            Name = name;
-            Guid = guid;
-        }
-    }
-    public delegate IList<string> SortSize(IList<TwoDimensionalX> x);
+    public delegate IList<TwoDimensionalX> SortSize(IList<TwoDimensionalX> x);
     /// <summary> 
     /// convert T to datatable
     /// </summary>
@@ -95,7 +60,7 @@ namespace PHLibrary.ExcelExportExcelCreator
                 foreach (DataColumn column in originalTable.Columns)
                 {
 
-                    if ( twoDimentinalColumnNames.Contains(column.ColumnName))
+                    if (twoDimentinalColumnNames.Contains(column.ColumnName))
                     {
                         TwoDimensinalColumns.Add(column);
                     }
@@ -109,7 +74,7 @@ namespace PHLibrary.ExcelExportExcelCreator
                 }
             }
 
-            
+
 
         }
 
@@ -119,7 +84,7 @@ namespace PHLibrary.ExcelExportExcelCreator
             ColumnsBuilder columnsBuilder = new ColumnsBuilder();
             columnsBuilder.Build(originalTable, twoDimentinalColumnNames);
 
-            
+
 
             //var twoDimentionalColumnValues = originalTable.AsEnumerable().Select(x => x[twoDimentinalColumnNames.Item1].ToString()).Distinct();
             //foreach (var twoDementinalColumnValue in twoDimentionalColumnValues)
@@ -136,27 +101,29 @@ namespace PHLibrary.ExcelExportExcelCreator
                              return g;
                          }).ToList();
 
-            IList<TwoDimensionalX> newColumns2 = columnsGroupByNoTwoDimensinal.SelectMany(x => x.ToList())
-                .Select(x =>new TwoDimensionalX(
+            IList<TwoDimensionalX> twoDimensionalColumns = columnsGroupByNoTwoDimensinal.SelectMany(x => x.ToList())
+                .Select(x => new TwoDimensionalX(
                     x[twoDimentinalColumnNames.TwoDimensionalX.Name].ToString(),
-                    x[twoDimentinalColumnNames.TwoDimensionalX.Guid]==null ?"": x[twoDimentinalColumnNames.TwoDimensionalX.Guid].ToString())
+                    x[twoDimentinalColumnNames.TwoDimensionalX.Guid] == null ? "" : x[twoDimentinalColumnNames.TwoDimensionalX.Guid].ToString())
                     )
                 .Distinct()
                 .ToList();
 
-           
-            IList<string> orderedTwoDimensionalColumns= sortSize(newColumns2);
+         
+            var twoDimensionalColumnsOrdered=  sortSize(twoDimensionalColumns.Distinct().ToList());
             var allColumns = new List<DataColumn>();
 
             foreach (var col in columnsBuilder.NotTwoDimensinalColumns)
             {
-                allColumns.Add(col); 
+                allColumns.Add(col);
             }
-            foreach (var col2 in orderedTwoDimensionalColumns)
+            foreach (var col2 in twoDimensionalColumnsOrdered)
             {
-                allColumns.Add(new DataColumn(col2.ToString()));
+                string colName=col2.Name;// col2.Guid!= string.Empty?col2.Guid:col2.Name;
+                
+                allColumns.Add(new DataColumn(colName.ToString()));
             }
-            
+
 
             DataTable newt = new DataTable();
 
@@ -278,9 +245,14 @@ namespace PHLibrary.ExcelExportExcelCreator
             return true;
         }
         /// <summary>
-        /// Extension method that turns a dictionary of string and object to an ExpandoObject
+        /// 转换为datatable，方便eeplus调用 LoadRange（Datatable)方法。
         /// </summary>
-        public DataTable Convert(IList<T> data, SortSize sortSize)
+        /// <param name="data"></param>
+        /// <param name="sortSize"></param>
+        /// <param name="amountFormat">小数点位数。F0，F1，F2，F3（数字表示小数点位数）</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public DataTable Convert(IList<T> data, SortSize sortSize, string amountFormat)
         {
 
 
@@ -293,37 +265,41 @@ namespace PHLibrary.ExcelExportExcelCreator
                 int orderNo = i + 1;
                 string name = propertyNameMaps.ElementAt(i).Key;
                 string columnName = propertyNameMaps.ElementAt(i).Value;
-                try
+                var property = typeof(T).GetProperty(name);
+                if (property == null)
                 {
-                    var orderProperty = typeof(T).GetProperty(name);
-                    if (orderProperty == null)
-                    {
-                        logger.LogWarning("OrderProperty is null");
-                    }
-                    else
-                    {
-                        var attributes = orderProperty.GetCustomAttributes(false);
-
-                        foreach (var attribute in attributes)
-                        {
-                            if (attribute is PropertyOrderAttribute)
-                            {
-                                orderNo = ((PropertyOrderAttribute)attribute).Order;
-                            }
-
-                        }
-
-                    }
+                    logger.LogWarning("OrderProperty is null");
+                    continue;
                 }
-                catch (Exception ex)
+
+                var attributes = property.GetCustomAttributes(false);
+
+
+                bool isCustomAmountFormat = false;
+                foreach (var attribute in attributes)
                 {
-                    logger.LogError("Get OrderPropertyError :" + ex.ToString());
+                    if (attribute is PropertyOrderAttribute propertyOrder)
+                    {
+                        orderNo = propertyOrder.Order;
+                    }
+                    else if (attribute is CustomAmountFormatAttribute customAmountFormat)
+                    {
+                        isCustomAmountFormat = true;
+                    }
+
                 }
+
 
                 var columnType = new ColumnDataTypeDetermine<T>().GetPropertyType(data, name);
                 //guess column type using first row of data
-                var column = new DataColumn(columnName, Nullable.GetUnderlyingType( columnType) ?? columnType);
+                var column = new DataColumn(columnName, Nullable.GetUnderlyingType(columnType) ?? columnType);
                 column.Caption = name;
+                if (isCustomAmountFormat)
+                {
+                    column.ExtendedProperties.Add(nameof(CustomAmountFormatAttribute), "");
+                }
+
+
                 unOrderedColumns.Add(column, orderNo);
 
             }
@@ -347,9 +323,14 @@ namespace PHLibrary.ExcelExportExcelCreator
 
                     else
                     {
-                        if(value == null) { 
-                            value=DBNull.Value;
-                            }
+                        if (value == null)
+                        {
+                            value = DBNull.Value;
+                        }
+                        if (column.ExtendedProperties.ContainsKey(nameof(CustomAmountFormatAttribute)))
+                        {
+                            value = GetFormatedAmount((double)value, amountFormat);
+                        }
                         row[column.ColumnName] = value;
                     }
 
@@ -369,6 +350,28 @@ namespace PHLibrary.ExcelExportExcelCreator
 
             return dataTable;
         }
+
+        /// <summary>
+        /// 系统的金额都是 厘，
+        /// </summary>
+        /// <param name="amount"></param>
+        /// <returns></returns>
+        private double GetFormatedAmount(double amount, string amountFormat)
+        {
+            int dividedBy = 1;
+            switch (amountFormat.ToLower())
+            {
+                case "f0":
+
+                    break;
+                case "f1": dividedBy = 10; break;
+                case "f2": dividedBy = 100; break;
+                case "f3": dividedBy = 1000; break;
+                default: throw new Exception("错误的格式：" + amountFormat);
+            }
+            return (amount*1.0) / dividedBy;
+        }
+
         Dictionary<string, Image> imageDict = new Dictionary<string, Image>();
         private Image DownloadImageAsync(string uri)
         {
@@ -394,145 +397,5 @@ namespace PHLibrary.ExcelExportExcelCreator
 
 
         }
-    }
-
-    public static class DictToExpando
-    {
-        /// <summary>
-        /// Extension method that turns a dictionary to an ExpandoObject, recursively (sub-dictionaries and sub-collections are also turned into ExpandoObjects).
-        /// If TKey is not the String type and no keyTransformer has been provided, an InvalidCastException will be thrown (unless the dictionary is empty). For
-        /// sub-dictionaries, if an Exception occurs during the transformation of dictionary to ExpandoObject, the sub-dictionary is left as is and not transformed.
-        /// </summary>
-        /// <param name="dictionary">The dictionary to transform into an ExpandoObject</param>
-        /// <param name="keyTransformer">An optional delegate function who will be passed each dictionary key and must return the corresponding string key</param>
-        /// <returns>The ExpandoObject</returns>
-        /// <throws>InvalidCastException when a non-string key has been found by the default keyTransformer</throws>
-        public static ExpandoObject ToExpando<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, Func<object, string> keyTransformer = null)
-        {
-            if (keyTransformer == null)
-            {
-                // When no keyTransformer has been provided, simply assume every key is a string (will throw InvalidCastException when not the case)
-                keyTransformer = delegate (object key) { return (string)key; };
-            }
-            var expando = new ExpandoObject();
-            var expandoDic = (IDictionary<string, object>)expando;
-
-            // go through the items in the dictionary and copy over the key value pairs)
-            foreach (var kvp in dictionary)
-            {
-                if (kvp.Value is System.Collections.IDictionary || (kvp.Value != null && kvp.Value.GetType().IsGenericType && kvp.Value.GetType().GetGenericTypeDefinition() == typeof(Dictionary<,>)))
-                {
-                    // if value is a dictionary (generic or non-generic), convert it to ExpandoObject
-                    expandoDic.Add(keyTransformer(kvp.Key), TryConvertToExpandoIfDictionary(kvp.Value));
-                }
-                else if (kvp.Value != null && null != kvp.Value.GetType().GetInterface("System.Collections.ICollection"))
-                {
-                    // if value is a collection, convert it to ExpandoObject
-                    expandoDic.Add(keyTransformer(kvp.Key), TryConvertToExpandoIfCollection(kvp.Value));
-                }
-                else
-                {
-                    expandoDic.Add(keyTransformer(kvp.Key), kvp.Value);
-                }
-            }
-            return expando;
-        }
-
-        /// <summary>
-        /// Extension method that turns a dictionary to an ExpandoObject, recursively (sub-dictionaries and sub-collections are also turned into ExpandoObjects).
-        /// When a non-string key is found and no keyTransformer has been provided, an InvalidCastException will be thrown. For sub-dictionaries, if an Exception
-        /// occurs during the transformation of dictionary to ExpandoObject, the sub-dictionary is left as is and not transformed.
-        /// </summary>
-        /// <param name="dictionary">The dictionary to transform into an ExpandoObject</param>
-        /// <param name="keyTransformer">An optional delegate function who will be passed each dictionary key and must return the corresponding string key</param>
-        /// <returns>The ExpandoObject</returns>
-        /// <throws>InvalidCastException when a non-string key has been found by the default keyTransformer</throws>
-
-        private static object TryConvertToExpandoIfDictionary(dynamic dictionary, Func<object, string> keyTransformer = null)
-        {
-            if (keyTransformer == null)
-            {
-                keyTransformer = delegate (object key) { return (string)key; };
-            }
-            try
-            {
-                if (dictionary is System.Collections.IDictionary || (dictionary.GetType().IsGenericType && dictionary.GetType().GetGenericTypeDefinition() == typeof(Dictionary<,>)))
-                {
-                    return dictionary.ToExpando(keyTransformer);
-                }
-            }
-            catch (Exception) { }
-            return dictionary;
-        }
-
-        private static object TryConvertToExpandoIfCollection(object collection, Func<object, string> keyTransformer = null)
-        {
-            try
-            {
-                if (null != collection.GetType().GetInterface("System.Collections.ICollection"))
-                {
-                    var newList = new List<object>();
-                    foreach (var item in (System.Collections.ICollection)collection)
-                    {
-                        if (item is System.Collections.IDictionary || (item != null && item.GetType().IsGenericType && item.GetType().GetGenericTypeDefinition() == typeof(Dictionary<,>)))
-                        {
-                            newList.Add(TryConvertToExpandoIfDictionary(item, keyTransformer));
-                        }
-                        else if (item != null && null != item.GetType().GetInterface("System.Collections.ICollection"))
-                        {
-                            newList.Add(TryConvertToExpandoIfCollection(item, keyTransformer));
-                        }
-                        else
-                        {
-                            newList.Add(item);
-                        }
-                    }
-                    return newList;
-                }
-            }
-            catch (Exception) { }
-            return collection;
-        }
-    }
-
-    //列的数据类型定义
-    /// <summary>
-    /// t 有可能是匿名类。
-    /// 
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class ColumnDataTypeDetermine<T>
-    {
-
-        public Type GetPropertyType(IList<T> data, string propertyName)
-        {
-
-            var property = typeof(T).GetProperty(propertyName);
-            if (property == null)
-            {
-                //匿名类
-                if (data.Count > 0)
-                {
-                    var firstData = data[0];
-                    var propertyValue = Dynamic.InvokeGet(firstData, propertyName);
-                    return propertyValue.GetType();
-                }
-            }
-            else
-            {
-                var imageAttribute = property.GetAttribute<ImageColumnAttribute>(false);
-                if (imageAttribute != null)
-                {
-                    return typeof(System.Drawing.Image);
-                }
-
-                return property.PropertyType;
-            }
-            return typeof(string);
-        }
-    }
-    [System.AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
-    public sealed class ImageColumnAttribute : Attribute
-    {
     }
 }

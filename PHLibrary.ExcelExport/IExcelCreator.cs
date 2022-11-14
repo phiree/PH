@@ -13,7 +13,7 @@ namespace PHLibrary.ExcelExport
     /// </summary>
    public  interface IExcelCreator
     {
-          Stream Create<T>(IList<T> data, SortSize sortSize, IList<IList<string>> summaryData, int summaryTableBottomMargin ,CellStyleSettings cellStyleSettings);
+          Stream Create<T>(IList<T> data, SortSize sortSize, IList<IList<string>> summaryData, int summaryTableBottomMargin ,CellStyleSettings cellStyleSettings, string amountFormat="F0");
     }
  
 

@@ -1,10 +1,13 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PHLibrary.ExcelExport;
 using PHLibrary.ExcelExportExcelCreator;
 using PHLibrary.Reflection.ArrayValuesToInstance;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
+using System.Linq;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PHLibrary.ExcelExportExcelCreator.Tests
 {
@@ -20,7 +23,7 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
         {
             var studentList = new List<Student> { new Student { Name = "yf" } };
             DataTableConverter<Student> converter = new DataTableConverter<Student>();
-            var dataTable = converter.Convert(studentList, null);
+            var dataTable = converter.Convert(studentList, null,"F0");
             Assert.AreEqual("姓名", dataTable.Columns[1].ColumnName);
             Assert.AreEqual("Age", dataTable.Columns[0].ColumnName);
         }
@@ -29,7 +32,7 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
         {
             var studentList = new List<Student2> { new Student2 { Name = "yf" } };
             DataTableConverter<Student2> converter = new DataTableConverter<Student2>();
-            var dataTable = converter.Convert(studentList, null);
+            var dataTable = converter.Convert(studentList, null, "F0");
             Assert.AreEqual("姓名", dataTable.Columns[0].ColumnName);
             Assert.AreEqual("Age", dataTable.Columns[1].ColumnName);
         }
@@ -39,21 +42,36 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
             var birthday=DateTime.Now.AddYears(-1);
             var studentList = new List<Student3> { new Student3 { Birthday = null}, new Student3 { Birthday = birthday } };
             DataTableConverter<Student3> converter = new DataTableConverter<Student3>();
-            var dataTable = converter.Convert(studentList, null);
+            var dataTable = converter.Convert(studentList, null, "F0");
           
             Assert.AreEqual("Birthday", dataTable.Columns[0].ColumnName);
             Assert.AreEqual(DBNull.Value, dataTable.Rows[0][0]);
             Assert.AreEqual(birthday, dataTable.Rows[1][0]);
         }
 
+        [TestMethod()]
+        public void ConvertTestWithAmountFormat()
+        {
+           
+            DataTableConverter<Order1114> converter = new DataTableConverter<Order1114>();
 
+            
+            Assert.AreEqual((double)1234, converter.Convert(new List<Order1114> { new Order1114 {Amount=1234 }}, null, "F0").Rows[0][0]);
+            Assert.AreEqual(123.4, converter.Convert(new List<Order1114> { new Order1114 {Amount=1234 }}, null, "F1").Rows[0][0]);
+            Assert.AreEqual(12.34, converter.Convert(new List<Order1114> { new Order1114 {Amount=1234 }}, null, "F2").Rows[0][0]);
+            Assert.AreEqual(1.234, converter.Convert(new List<Order1114> { new Order1114 {Amount=1234 }}, null, "F3").Rows[0][0]);
+            
+        }
 
-
+        public class Order1114 {
+            [CustomAmountFormat]
+            public long Amount { get;set;}
+            }
 
         public class Student
         {
             [PropertyOrder(3)]
-            [System.ComponentModel.DisplayName("姓名")]
+            [Column("姓名")]
             public string Name { get; set; }
             [PropertyOrder(1)]
             public int Age { get; set; }
@@ -61,7 +79,7 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
         public class Student2
         {
 
-            [System.ComponentModel.DisplayName("姓名")]
+            [Column("姓名")]
             public string Name { get; set; }
 
             public int Age { get; set; }
@@ -95,12 +113,13 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
             dataTable.Columns.Add(new DataColumn("颜色", typeof(string)));
             dataTable.Columns.Add(new DataColumn("尺码", typeof(string)));
             dataTable.Columns.Add(new DataColumn("数量", typeof(int)));
-            dataTable.Rows.Add("春装001", "红色", "L", 1);
-            dataTable.Rows.Add("春装001", "红色", "M", 2);
-            dataTable.Rows.Add("春装001", "红色", "XL", 3);
-            dataTable.Rows.Add("春装001", "蓝色", "L", 4);
-            dataTable.Rows.Add("春装001", "蓝色", "M", 5);
-            dataTable.Rows.Add("春装001", "蓝色", "XXL", 6);
+            dataTable.Columns.Add(new DataColumn("SizeGuid", typeof(string)));
+            dataTable.Rows.Add("春装001", "红色", "L", 1,"1");
+            dataTable.Rows.Add("春装001", "红色", "M", 2, "2");
+            dataTable.Rows.Add("春装001", "红色", "XL", 3, "3");
+            dataTable.Rows.Add("春装001", "蓝色", "L", 4, "1");
+            dataTable.Rows.Add("春装001", "蓝色", "M", 5, "2");
+            dataTable.Rows.Add("春装001", "蓝色", "XXL", 6, "4");
             /*二维表：
             品名，  颜色      L M XL XXL
             春001  红色      1 2 3
@@ -109,12 +128,13 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
             */
             return dataTable;
         }
-        private IList<string> Sort(IList<TwoDimensionalX> columns) { 
-            return new List<string> { "M", "L", "XL", "XXL" };
-            }
-        private IList<string> Sort(IList<Tuple<string,string>> columnsWithGuid)
+ 
+        private IList<TwoDimensionalX> Sort(IList<TwoDimensionalX> columns)
         {
-            return new List<string> { "M", "L", "XL", "XXL" };
+            return new List<TwoDimensionalX> {new TwoDimensionalX("M","1")
+                ,new TwoDimensionalX("L","2")
+                ,new TwoDimensionalX("XL","3")
+                ,new TwoDimensionalX( "XXL","4") };
         }
 
         public class Student3

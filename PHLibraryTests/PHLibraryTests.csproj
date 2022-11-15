@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PHLibrary\PHLibrary.csproj" />
+    <ProjectReference Include="..\PHLibrary\PHLibraryLS.csproj" />
   </ItemGroup>
 
   <ItemGroup>

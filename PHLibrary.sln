@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PHLibrary", "PHLibrary\PHLibrary.csproj", "{A67802A1-0F9C-463F-9C57-15C68FE47301}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PHLibraryLS", "PHLibrary\PHLibraryLS.csproj", "{A67802A1-0F9C-463F-9C57-15C68FE47301}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PHLibraryTests", "PHLibraryTests\PHLibraryTests.csproj", "{8AA93703-A2F7-451F-93D1-024CDECB6F7B}"
 EndProject

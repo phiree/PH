@@ -6,7 +6,9 @@
     <Description>common library for future usage, maybe for others .</Description>
     <PackageId>PHLibrary</PackageId>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <PackageReleaseNotes>2.4.2
+    <PackageReleaseNotes>2.5
+
+2.4.2
 support margin
 2.4
 improve code quality

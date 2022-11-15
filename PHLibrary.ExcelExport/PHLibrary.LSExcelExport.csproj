@@ -98,7 +98,7 @@ fix: 格式化没有应用到最后一行数据
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PHLibrary\PHLibrary.csproj" />
+    <ProjectReference Include="..\PHLibrary\PHLibraryLS.csproj" />
   </ItemGroup>
 
 </Project>

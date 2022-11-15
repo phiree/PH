@@ -10,7 +10,13 @@ namespace PHLibrary.Reflection
 {
     public class ColumnMapCreator
     {
-        public static IDictionary<string, string> CreateColumnMap<T>(IList<T> data)
+        bool needExportImage;
+
+        public ColumnMapCreator(bool needExportImage)
+        {
+            this.needExportImage = needExportImage;
+        }
+        public   IDictionary<string, string> CreateColumnMap<T>(IList<T> data)
         {
             var map = GetPropertyMaps<T>();
             if (map.Count == 0)
@@ -24,7 +30,7 @@ namespace PHLibrary.Reflection
             }
             return map;
         }
-        public static IDictionary<string, string> GetPropertyMaps<T>() //where T : class
+        public IDictionary<string, string> GetPropertyMaps<T>() //where T : class
         {
 
 
@@ -37,21 +43,24 @@ namespace PHLibrary.Reflection
                 bool shouldIgnore = true;
                 foreach (var attr in attrs)
                 {
+                    if (attr is ImageColumnAttribute && !needExportImage)
+                    {
+                        shouldIgnore = true;
+                        break;
+                    }
                     //只有设置了propertyorder 的属性才需要导出
-                    
+
                     if (attr is ColumnAttribute columnAttribute)
                     {
-
                         display = columnAttribute == null ? p.Name : columnAttribute.Name;
-
                     }
                     else if (attr is PHLibrary.Reflection.ArrayValuesToInstance.PropertyOrderAttribute
-                        ||attr is TwoDimensionalGuidAttribute
-                        ||attr is TwoDimensionalAttribute
+                        || attr is TwoDimensionalGuidAttribute
+                        || attr is TwoDimensionalAttribute
                         )
                     {
-                        shouldIgnore =shouldIgnore&& false;
-                         
+                        shouldIgnore = shouldIgnore && false;
+
                     }
 
                 }
@@ -64,7 +73,8 @@ namespace PHLibrary.Reflection
             return map;
 
         }
-        
+
+
         public static IDictionary<string, string> GetPropertyMapsForDynamic(object data) //where T : class
         {
             var memberNames = Dynamitey.Dynamic.GetMemberNames(data);

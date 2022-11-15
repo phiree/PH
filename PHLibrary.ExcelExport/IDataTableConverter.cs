@@ -12,6 +12,6 @@ namespace PHLibrary.ExcelExportExcelCreator
         /// <param name="data">数据集合,用于提取属性名称,数据</param>
         /// <param name="propertyNameMaps">属性名称对应关系.</param>
         /// <returns></returns>
-        DataTable Convert(IList<T> data,  SortSize sortSize,string amountFormat);
+        DataTable Convert(IList<T> data,  SortSize sortSize,string amountFormat,bool needExportImage);
     }
 }

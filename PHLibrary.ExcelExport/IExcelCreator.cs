@@ -13,7 +13,19 @@ namespace PHLibrary.ExcelExport
     /// </summary>
    public  interface IExcelCreator
     {
-          Stream Create<T>(IList<T> data, SortSize sortSize, IList<IList<string>> summaryData, int summaryTableBottomMargin ,CellStyleSettings cellStyleSettings, string amountFormat);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data"></param>
+        /// <param name="sortSize"></param>
+        /// <param name="summaryData">顶部表格二维数据</param>
+        /// <param name="summaryTableBottomMargin">顶部表格和数据表格间隔行数</param>
+        /// <param name="cellStyleSettings"></param>
+        /// <param name="amountFormat">金额单位F0,F1,F2,F3</param>
+        /// <param name="needExportImage">是否导出图片</param>
+        /// <returns></returns>
+          Stream Create<T>(IList<T> data, SortSize sortSize, IList<IList<string>> summaryData, int summaryTableBottomMargin ,CellStyleSettings cellStyleSettings, string amountFormat, bool needExportImage);
     }
  
 

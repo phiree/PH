@@ -42,7 +42,7 @@ namespace PHLibrary.ExcelExport.Tests
                 };
             ExcelCreatorEPPlus excelCreator
                = new ExcelCreatorEPPlus();
-            var stream = excelCreator.Create(list,null,null,1, null,"F3");
+            var stream = excelCreator.Create(list,null,null,1, null,"F3", false);
             using (var file = new FileStream("CreateForImages" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
             {
                 // stream.Seek(0, SeekOrigin.Begin);
@@ -66,6 +66,7 @@ namespace PHLibrary.ExcelExport.Tests
             public long Price { get; set; }
 
             [Column("图片")]
+            [PropertyOrder(4)]
             [ImageColumn]
             public string Picture { get; set; }
             [Column("颜色")]
@@ -109,7 +110,7 @@ namespace PHLibrary.ExcelExport.Tests
                 };
             ExcelCreatorEPPlus excelCreator
                = new ExcelCreatorEPPlus();
-            var stream = excelCreator.Create(list,Sort,null,1, null,"F3");
+            var stream = excelCreator.Create(list,Sort,null,1, null,"F3", false);
             using (var file = new FileStream("CreateForImagesAndTwoDimetional" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
             {
                 // stream.Seek(0, SeekOrigin.Begin);
@@ -154,7 +155,7 @@ namespace PHLibrary.ExcelExport.Tests
                     }
                 ,4
                 , null
-                ,"F2");
+                ,"F2", false);
             using (var file = new FileStream("CreateForImages" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
             {
                 // stream.Seek(0, SeekOrigin.Begin);

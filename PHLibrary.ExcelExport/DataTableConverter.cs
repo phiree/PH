@@ -252,11 +252,11 @@ namespace PHLibrary.ExcelExportExcelCreator
         /// <param name="amountFormat">小数点位数。F0，F1，F2，F3（数字表示小数点位数）</param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public DataTable Convert(IList<T> data, SortSize sortSize, string amountFormat)
+        public DataTable Convert(IList<T> data, SortSize sortSize, string amountFormat,bool needExportImage)
         {
 
 
-            var propertyNameMaps = ColumnMapCreator.CreateColumnMap<T>(data);
+            var propertyNameMaps =new ColumnMapCreator(needExportImage).CreateColumnMap<T>(data);
 
             var dataTable = new DataTable("Sheet1");
             var unOrderedColumns = new Dictionary<DataColumn, int>();

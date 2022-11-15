@@ -42,7 +42,7 @@ namespace PHLibrary.ExcelExport.Tests
                 };
             ExcelCreatorEPPlus excelCreator
                = new ExcelCreatorEPPlus();
-            var stream = excelCreator.Create(list,null,null,1, null);
+            var stream = excelCreator.Create(list,null,null,1, null,"F3");
             using (var file = new FileStream("CreateForImages" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
             {
                 // stream.Seek(0, SeekOrigin.Begin);
@@ -151,7 +151,8 @@ namespace PHLibrary.ExcelExport.Tests
                     ,new List<string>{ "备注","已付款"} 
                     }
                 ,4
-                , null);
+                , null
+                ,"F2");
             using (var file = new FileStream("CreateForImages" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
             {
                 // stream.Seek(0, SeekOrigin.Begin);

@@ -17,7 +17,7 @@ namespace PHLibrary.ExcelExport
     public class ExcelCreatorEPPlus : IExcelCreator
     {
 
-        public Stream Create<T>(IList<T> data, SortSize sortSize, IList<IList<string>> summaryData, int summaryTableBottomMargin, CellStyleSettings cellStyleSettings,string amountFormat="F0")
+        public Stream Create<T>(IList<T> data, SortSize sortSize, IList<IList<string>> summaryData, int summaryTableBottomMargin, CellStyleSettings cellStyleSettings,string amountFormat)
 
         {
             var tableConvertor = new DataTableConverter<T>();

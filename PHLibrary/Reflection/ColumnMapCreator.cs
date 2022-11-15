@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PHLibrary.ExcelExport;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -23,33 +24,47 @@ namespace PHLibrary.Reflection
             }
             return map;
         }
-        public static IDictionary<string, string> GetPropertyMaps<T>( ) //where T : class
+        public static IDictionary<string, string> GetPropertyMaps<T>() //where T : class
         {
-            
-             
+
+
             var propertyInfos = typeof(T).GetProperties();
             var map = new Dictionary<string, string>();
             foreach (var p in propertyInfos)
             {
                 var attrs = p.GetCustomAttributes(false);
                 string display = p.Name;
+                bool shouldIgnore = true;
                 foreach (var attr in attrs)
                 {
+                    //只有设置了propertyorder 的属性才需要导出
+                    
                     if (attr is ColumnAttribute columnAttribute)
                     {
 
                         display = columnAttribute == null ? p.Name : columnAttribute.Name;
 
                     }
-               
+                    else if (attr is PHLibrary.Reflection.ArrayValuesToInstance.PropertyOrderAttribute
+                        ||attr is TwoDimensionalGuidAttribute
+                        ||attr is TwoDimensionalAttribute
+                        )
+                    {
+                        shouldIgnore =shouldIgnore&& false;
+                         
+                    }
+
                 }
-                map.Add(p.Name, display);
+                if (!shouldIgnore)
+                {
+                    map.Add(p.Name, display);
+                }
             }
-            
+
             return map;
 
         }
-     
+        
         public static IDictionary<string, string> GetPropertyMapsForDynamic(object data) //where T : class
         {
             var memberNames = Dynamitey.Dynamic.GetMemberNames(data);
@@ -58,6 +73,6 @@ namespace PHLibrary.Reflection
 
         }
     }
-   
-   
+
+
 }

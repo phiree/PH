@@ -1,9 +1,10 @@
 ﻿using System;
 
-namespace PHLibrary.ExcelExportExcelCreator
+namespace PHLibrary.ExcelExport
 {
     [System.AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
-    public sealed class ImageColumnAttribute : Attribute
+    public sealed class TwoDimensionalGuidAttribute : Attribute
     {
+        
     }
 }

@@ -61,6 +61,7 @@ namespace PHLibrary.ExcelExport.Tests
             public string Code { get; set; }
 
             [Column("单价")]
+            [PropertyOrder(1)]
             [CustomAmountFormat]
             public long Price { get; set; }
 
@@ -70,6 +71,7 @@ namespace PHLibrary.ExcelExport.Tests
             [Column("颜色")]
             public string Color { get; set; }
             [TwoDimensional(true)]
+            [PropertyOrder(3)]
             public string Size { get; set; }
             [TwoDimensionalGuid]
             public Guid SizeGuid { get;set;}

@@ -47,13 +47,13 @@ improvement,
 first array's order can be diffrent with properties
 1.0.6
 support properties that dont have orderattribute</PackageReleaseNotes>
-    <Version>2.4.1</Version>
+    <Version>2.5</Version>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <Company>PHLibrary</Company>
     <Authors>PHLibrary</Authors>
     <PackageLicenseUrl></PackageLicenseUrl>
-    <FileVersion>2.4.1</FileVersion>
-    <AssemblyVersion>2.4.1</AssemblyVersion>
+    <FileVersion>2.5</FileVersion>
+    <AssemblyVersion>2.5</AssemblyVersion>
     <PackageProjectUrl>https://github.com/phiree/PHLibrary</PackageProjectUrl>
     <PackageIcon>icon.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

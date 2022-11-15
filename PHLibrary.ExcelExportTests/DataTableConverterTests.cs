@@ -79,10 +79,10 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
         }
         public class Student2
         {
-
+            [PropertyOrder(1)]
             [Column("姓名")]
             public string Name { get; set; }
-
+            [PropertyOrder(2)]
             public int Age { get; set; }
         }
 

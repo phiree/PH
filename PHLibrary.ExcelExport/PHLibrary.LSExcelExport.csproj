@@ -9,7 +9,9 @@
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/phiree/PHLibrary</RepositoryUrl>
     <PackageProjectUrl>https://github.com/phiree/PHLibrary</PackageProjectUrl>
-    <PackageReleaseNotes>1.11.0
+    <PackageReleaseNotes>1.12.0
+支持时间格式
+1.11.0
 设置是否导出图片，忽略没有propertyorder的属性
 1.10.0
 feat：支持传入客户金额单位
@@ -76,11 +78,11 @@ fix: 格式化没有应用到最后一行数据
     <Product>lianshang</Product>
     <PackageId>PHLibrary.LSExcelExport</PackageId>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Version>1.11.0</Version>
+    <Version>1.12.0</Version>
     <Company>4yankeji</Company>
     <Authors>yf</Authors>
-    <FileVersion>1.10.0</FileVersion>
-    <AssemblyVersion>1.10.0</AssemblyVersion>
+    <FileVersion>1.12.0</FileVersion>
+    <AssemblyVersion>1.12.0</AssemblyVersion>
     <Copyright>无版权</Copyright>
   </PropertyGroup>
 

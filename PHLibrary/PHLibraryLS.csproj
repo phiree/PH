@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Product>PHLibrary</Product>
     <Description>common library for future usage, maybe for others .</Description>
-    <PackageId>PHLibrary</PackageId>
+    <PackageId>PHLibraryLS</PackageId>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <PackageReleaseNotes>2.5
 

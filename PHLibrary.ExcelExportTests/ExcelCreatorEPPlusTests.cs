@@ -24,10 +24,13 @@ namespace PHLibrary.ExcelExport.Tests
         public class TestItem
         {
             [Column( "姓名")]
+            [PropertyOrder(1)]
             public string Name { get; set; }
             [Column("年龄")]
+            [PropertyOrder(1)]
             public int Age { get; set; }
             [ImageColumn]
+            [PropertyOrder(1)]
             [Column("图片")]
             public string Picture { get;set;}
         }
@@ -42,7 +45,7 @@ namespace PHLibrary.ExcelExport.Tests
                 };
             ExcelCreatorEPPlus excelCreator
                = new ExcelCreatorEPPlus();
-            var stream = excelCreator.Create(list,null,null,1, null,"F3", false);
+            var stream = excelCreator.Create(list,null,null,1, null,"F3", true);
             using (var file = new FileStream("CreateForImages" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
             {
                 // stream.Seek(0, SeekOrigin.Begin);
@@ -166,7 +169,10 @@ namespace PHLibrary.ExcelExport.Tests
         }
         public class TestWithDatetime {
             [PropertyOrder(1)]
+            [DateFormat("hh:mm:ss")]
             public DateTime Begin { get;set;}
+            [PropertyOrder(2)]
+            [DateFormat("yyyyMMdd hh-mm-ss")]
             public DateTime? End { get; set; }
         }
         [TestMethod()]

@@ -16,26 +16,41 @@ namespace PHLibrary.Reflection
         {
             this.needExportImage = needExportImage;
         }
-        public   IDictionary<string, string> CreateColumnMap<T>(IList<T> data)
+        public IList< ColumnDefine> CreateColumnMap<T>(IList<T> data)
         {
             var map = GetPropertyMaps<T>();
-            if (map.Count == 0)
-            {
-                if (data.Count > 0)
-                {
-                    map = GetPropertyMapsForDynamic(data[0]);
-                }
+            //if (map.Count == 0)
+            //{
+            //    if (data.Count > 0)
+            //    {
+            //        map = GetPropertyMapsForDynamic(data[0]);
+            //    }
 
 
-            }
+            //}
             return map;
         }
-        public IDictionary<string, string> GetPropertyMaps<T>() //where T : class
+        public class ColumnDefine
+        {
+            public ColumnDefine(string propertyName, string displayName, object[] attributes)
+            {
+                PropertyName = propertyName;
+                DisplayName = displayName;
+                Attributes = attributes;
+            }
+
+            public string PropertyName { get; set; }
+            public string DisplayName { get; set; }
+            public object[] Attributes { get; set; }=new object[] { };
+
+
+        }
+        public IList< ColumnDefine> GetPropertyMaps<T>() //where T : class
         {
 
 
             var propertyInfos = typeof(T).GetProperties();
-            var map = new Dictionary<string, string>();
+            var map = new List<ColumnDefine>();
             foreach (var p in propertyInfos)
             {
                 var attrs = p.GetCustomAttributes(false);
@@ -66,7 +81,7 @@ namespace PHLibrary.Reflection
                 }
                 if (!shouldIgnore)
                 {
-                    map.Add(p.Name, display);
+                    map.Add( new ColumnDefine(p.Name,display,attrs));
                 }
             }
 
@@ -75,10 +90,10 @@ namespace PHLibrary.Reflection
         }
 
 
-        public static IDictionary<string, string> GetPropertyMapsForDynamic(object data) //where T : class
+        public static IList<ColumnDefine> GetPropertyMapsForDynamic(object data) //where T : class
         {
             var memberNames = Dynamitey.Dynamic.GetMemberNames(data);
-            return memberNames.ToDictionary(x => x, x => x);
+            return memberNames.Select(x =>  new ColumnDefine(x,x,null)).ToList();
 
 
         }

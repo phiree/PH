@@ -8,6 +8,9 @@ using OfficeOpenXml;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
 using PHLibrary.ExcelExportExcelCreator;
 using System.Drawing;
+using static PHLibrary.Reflection.ColumnMapCreator;
+using System.Linq;
+using PHLibrary.Reflection;
 
 namespace PHLibrary.ExcelExport
 {
@@ -80,7 +83,7 @@ namespace PHLibrary.ExcelExport
             {
                 var column = table.Columns[i];
 
-                roots.Add(new ColumnTreeNode { Title = column.ColumnName });
+                roots.Add(new ColumnTreeNode {  Title = column.ColumnName });
             }
             columnTree.Roots = roots;
             return columnTree;
@@ -135,6 +138,7 @@ namespace PHLibrary.ExcelExport
             SetFormatForDateColumn(sheet, dataTable);
 
         }
+        
         private void SetFormatForDateColumn(ExcelWorksheet sheet,DataTable dataTable) {
             int columnIndex = 1;
             foreach (DataColumn column in dataTable.Columns)
@@ -143,8 +147,10 @@ namespace PHLibrary.ExcelExport
                 if (column.DataType == typeof(DateTime))
                 {
                     var sheetColumn = sheet.Column(columnIndex);
+                    var formatAttribute = ((ColumnDefine)column.ExtendedProperties["columnDefine"]).Attributes.FirstOrDefault(x=>x.GetType()==typeof(DateFormatAttribute));
+                    string dateFormatString=formatAttribute!=null?((DateFormatAttribute) formatAttribute).DateFormatString: "yyyy/MM/dd HH:mm:ss";
                     
-                    sheetColumn.Style.Numberformat.Format = "yyyy/MM/dd HH:mm:ss";
+                    sheetColumn.Style.Numberformat.Format = dateFormatString;
                     sheetColumn.AutoFit();
                 }
                 columnIndex++;

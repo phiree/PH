@@ -20,6 +20,7 @@ using System.IO;
 using System.Dynamic;
 using System.Collections;
 using PHLibrary.ExcelExport;
+using static PHLibrary.Reflection.ColumnMapCreator;
 
 namespace PHLibrary.ExcelExportExcelCreator
 {
@@ -109,8 +110,8 @@ namespace PHLibrary.ExcelExportExcelCreator
                 .Distinct()
                 .ToList();
 
-         
-            var twoDimensionalColumnsOrdered=  sortSize(twoDimensionalColumns.Distinct().ToList());
+
+            var twoDimensionalColumnsOrdered = sortSize(twoDimensionalColumns.Distinct().ToList());
             var allColumns = new List<DataColumn>();
 
             foreach (var col in columnsBuilder.NotTwoDimensinalColumns)
@@ -119,8 +120,8 @@ namespace PHLibrary.ExcelExportExcelCreator
             }
             foreach (var col2 in twoDimensionalColumnsOrdered)
             {
-                string colName=col2.Name;// col2.Guid!= string.Empty?col2.Guid:col2.Name;
-                
+                string colName = col2.Name;// col2.Guid!= string.Empty?col2.Guid:col2.Name;
+
                 allColumns.Add(new DataColumn(colName.ToString()));
             }
 
@@ -252,39 +253,28 @@ namespace PHLibrary.ExcelExportExcelCreator
         /// <param name="amountFormat">小数点位数。F0，F1，F2，F3（数字表示小数点位数）</param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public DataTable Convert(IList<T> data, SortSize sortSize, string amountFormat,bool needExportImage)
+        public DataTable Convert(IList<T> data, SortSize sortSize, string amountFormat, bool needExportImage)
         {
 
 
-            var propertyNameMaps =new ColumnMapCreator(needExportImage).CreateColumnMap<T>(data);
+            var propertyNameMaps = new ColumnMapCreator(needExportImage).GetPropertyMaps<T>();
 
             var dataTable = new DataTable("Sheet1");
             var unOrderedColumns = new Dictionary<DataColumn, int>();
             for (int i = 0; i < propertyNameMaps.Count(); i++)// var name in memberNames)
             {
+                var columnDefine = propertyNameMaps[i];
                 int orderNo = i + 1;
-                string name = propertyNameMaps.ElementAt(i).Key;
-                string columnName = propertyNameMaps.ElementAt(i).Value;
-                var property = typeof(T).GetProperty(name);
-                if (property == null)
-                {
-                    logger.LogWarning("OrderProperty is null");
-                    continue;
-                }
+                string name = columnDefine.PropertyName;
+                string columnName = columnDefine.DisplayName;
 
-                var attributes = property.GetCustomAttributes(false);
+                var attributes = columnDefine.Attributes;
 
-
-                bool isCustomAmountFormat = false;
                 foreach (var attribute in attributes)
                 {
                     if (attribute is PropertyOrderAttribute propertyOrder)
                     {
                         orderNo = propertyOrder.Order;
-                    }
-                    else if (attribute is CustomAmountFormatAttribute customAmountFormat)
-                    {
-                        isCustomAmountFormat = true;
                     }
 
                 }
@@ -294,11 +284,9 @@ namespace PHLibrary.ExcelExportExcelCreator
                 //guess column type using first row of data
                 var column = new DataColumn(columnName, Nullable.GetUnderlyingType(columnType) ?? columnType);
                 column.Caption = name;
-                if (isCustomAmountFormat)
-                {
-                    column.ExtendedProperties.Add(nameof(CustomAmountFormatAttribute), "");
-                }
 
+               
+                column.ExtendedProperties.Add("columnDefine", columnDefine);
 
                 unOrderedColumns.Add(column, orderNo);
 
@@ -313,22 +301,22 @@ namespace PHLibrary.ExcelExportExcelCreator
                 var finalColumns = new List<DataColumn>();
                 foreach (DataColumn column in dataTable.Columns)
                 {
-                    string propertyName = column.Caption;
+                    var columnDefine= (ColumnDefine)column.ExtendedProperties["columnDefine"];
+                    string propertyName = columnDefine.PropertyName;
                     var value = Dynamic.InvokeGet(t, propertyName);
-
-                    if (column.DataType == typeof(System.Drawing.Image))
+                    if (column.DataType == typeof(Image))
                     {
                         row[column.ColumnName] = DownloadImageAsync(value);
                     }
-
                     else
                     {
                         if (value == null)
                         {
                             value = DBNull.Value;
                         }
-                        if (column.ExtendedProperties.ContainsKey(nameof(CustomAmountFormatAttribute)))
+                        if (columnDefine.Attributes.Any(x=>x.GetType()== typeof( CustomAmountFormatAttribute)))
                         {
+
                             value = GetFormatedAmount((double)value, amountFormat);
                         }
                         row[column.ColumnName] = value;
@@ -356,12 +344,12 @@ namespace PHLibrary.ExcelExportExcelCreator
         /// </summary>
         /// <param name="amount"></param>
         /// <returns></returns>
-        public  double GetFormatedAmount(double amount, string amountFormat)
+        public double GetFormatedAmount(double amount, string amountFormat)
         {
             int digits = 0;
-            var yuan=amount*1.0/1000;
+            var yuan = amount * 1.0 / 1000;
 
-           
+
             switch (amountFormat.ToLower())
             {
                 case "f0":
@@ -374,7 +362,7 @@ namespace PHLibrary.ExcelExportExcelCreator
             }
             var result = Math.Round(yuan, digits);
             return result;
-            
+
         }
 
         Dictionary<string, Image> imageDict = new Dictionary<string, Image>();

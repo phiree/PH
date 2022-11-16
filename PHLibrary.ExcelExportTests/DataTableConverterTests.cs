@@ -57,9 +57,9 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
             DataTableConverter<Order1114> converter = new DataTableConverter<Order1114>();
 
 
-            Assert.AreEqual((double)1234, converter.Convert(new List<Order1114> { new Order1114 { Amount = 1234 } }, null, "F0", false).Rows[0][0]);
-            Assert.AreEqual(123.4, converter.Convert(new List<Order1114> { new Order1114 { Amount = 1234 } }, null, "F1", false).Rows[0][0]);
-            Assert.AreEqual(12.34, converter.Convert(new List<Order1114> { new Order1114 { Amount = 1234 } }, null, "F2", false).Rows[0][0]);
+            Assert.AreEqual((double)1, converter.Convert(new List<Order1114> { new Order1114 { Amount = 1234 } }, null, "F0", false).Rows[0][0]);
+            Assert.AreEqual(1.2, converter.Convert(new List<Order1114> { new Order1114 { Amount = 1234 } }, null, "F1", false).Rows[0][0]);
+            Assert.AreEqual(1.23, converter.Convert(new List<Order1114> { new Order1114 { Amount = 1234 } }, null, "F2", false).Rows[0][0]);
             Assert.AreEqual(1.234, converter.Convert(new List<Order1114> { new Order1114 { Amount = 1234 } }, null, "F3", false).Rows[0][0]);
 
         }
@@ -67,6 +67,7 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
         public class Order1114
         {
             [CustomAmountFormat]
+            [PropertyOrder(1)]
             public long Amount { get; set; }
         }
 
@@ -143,7 +144,7 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
         {
 
 
-
+            [PropertyOrder(1)]
             public DateTime? Birthday { get; set; }
         }
 

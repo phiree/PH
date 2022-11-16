@@ -356,20 +356,25 @@ namespace PHLibrary.ExcelExportExcelCreator
         /// </summary>
         /// <param name="amount"></param>
         /// <returns></returns>
-        private double GetFormatedAmount(double amount, string amountFormat)
+        public  double GetFormatedAmount(double amount, string amountFormat)
         {
-            int dividedBy = 1;
+            int digits = 0;
+            var yuan=amount*1.0/1000;
+
+           
             switch (amountFormat.ToLower())
             {
                 case "f0":
 
                     break;
-                case "f1": dividedBy = 10; break;
-                case "f2": dividedBy = 100; break;
-                case "f3": dividedBy = 1000; break;
+                case "f1": digits = 1; break;
+                case "f2": digits = 2; break;
+                case "f3": digits = 3; break;
                 default: throw new Exception("错误的格式：" + amountFormat);
             }
-            return (amount*1.0) / dividedBy;
+            var result = Math.Round(yuan, digits);
+            return result;
+            
         }
 
         Dictionary<string, Image> imageDict = new Dictionary<string, Image>();

@@ -164,5 +164,35 @@ namespace PHLibrary.ExcelExport.Tests
             }
 
         }
+        public class TestWithDatetime {
+            [PropertyOrder(1)]
+            public DateTime Begin { get;set;}
+            public DateTime? End { get; set; }
+        }
+        [TestMethod()]
+        public void CreateForDatetime()
+        {
+
+            var list = new List<TestWithDatetime>() {
+                new TestWithDatetime{ Begin=DateTime.Now},
+                new TestWithDatetime{ Begin=DateTime.Now,End=DateTime.Now.AddSeconds(14)}
+                };
+            ExcelCreatorEPPlus excelCreator
+               = new ExcelCreatorEPPlus();
+            var stream = excelCreator.Create(
+                list
+                , null
+                ,null
+                , 4
+                , null
+                , "F2", false);
+            using (var file = new FileStream("CreateForDatetime" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
+            {
+                // stream.Seek(0, SeekOrigin.Begin);
+                CopyStream(stream, file);
+
+            }
+
+        }
     }
 }

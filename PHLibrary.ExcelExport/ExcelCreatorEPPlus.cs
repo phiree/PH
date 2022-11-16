@@ -99,7 +99,7 @@ namespace PHLibrary.ExcelExport
             }
             //fill data
             var cells = sheet.Cells[startRow + 1, 1, rows, columns];
-
+           
 
             cells.LoadFromDataTable(dataTable, false);
 
@@ -120,7 +120,7 @@ namespace PHLibrary.ExcelExport
                 }
             }
             //style
-
+            
             var bodyCells = sheet.Cells[startRow + 1, 1, startRow + rows, columns];
             if (cellStyleSettings != null)
             {
@@ -131,7 +131,24 @@ namespace PHLibrary.ExcelExport
                 //  bodyCells.AutoFitColumns();
             }
             //image
+            //datetime 
+            SetFormatForDateColumn(sheet, dataTable);
 
+        }
+        private void SetFormatForDateColumn(ExcelWorksheet sheet,DataTable dataTable) {
+            int columnIndex = 1;
+            foreach (DataColumn column in dataTable.Columns)
+            {
+
+                if (column.DataType == typeof(DateTime))
+                {
+                    var sheetColumn = sheet.Column(columnIndex);
+                    
+                    sheetColumn.Style.Numberformat.Format = "yyyy/MM/dd HH:mm:ss";
+                    sheetColumn.AutoFit();
+                }
+                columnIndex++;
+            }
         }
 
         const int ImageWidth = 100;

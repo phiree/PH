@@ -253,7 +253,7 @@ namespace PHLibrary.ExcelExportExcelCreator
         /// <param name="amountFormat">小数点位数。F0，F1，F2，F3（数字表示小数点位数）</param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public DataTable Convert(IList<T> data, SortSize sortSize, string amountFormat ,IDictionary<string,string> propertiesToDisplay)
+        public DataTable Convert(IList<T> data, SortSize sortSize, string amountFormat ,IList<string> propertiesToDisplay)
         {
 
 

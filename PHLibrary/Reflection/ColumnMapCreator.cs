@@ -33,7 +33,7 @@ namespace PHLibrary.Reflection
 
 
         }
-        public IList<ColumnDefine> GetPropertyMaps<T>(IDictionary<string,string> propertiesToDisplay) //where T : class
+        public IList<ColumnDefine> GetPropertyMaps<T>(IList<string> propertiesToDisplay) //where T : class
         {
 
 

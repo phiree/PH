@@ -24,7 +24,7 @@ namespace PHLibrary.ExcelExport
         /// <summary>
         /// 需要展示的属性名称
         /// </summary>
-        public IDictionary<string,string> PropertiesToDisplay {get;set; }
+        public IList<string> PropertiesToDisplay {get;set; }
         public IList<IList<string>> SummaryDataForTopTable { get;set;}
         }
 

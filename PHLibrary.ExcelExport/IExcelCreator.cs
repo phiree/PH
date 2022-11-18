@@ -11,7 +11,7 @@ namespace PHLibrary.ExcelExport
     /// <summary>
     /// 导出dataset
     /// </summary>
-   public  interface IExcelCreator
+    public interface IExcelCreator
     {
         /// <summary>
         /// 
@@ -25,8 +25,7 @@ namespace PHLibrary.ExcelExport
         /// <param name="amountFormat">金额单位F0,F1,F2,F3</param>
         /// <param name="needExportImage">是否导出图片</param>
         /// <returns></returns>
-          Stream Create<T>(IList<T> data, SortSize sortSize, IList<IList<string>> summaryData, int summaryTableBottomMargin ,CellStyleSettings cellStyleSettings, string amountFormat, bool needExportImage);
-    }
- 
+        Stream Create<T>(IList<SheetData<T>> sheetDatas, SortSize sortSize, string amountFormat);
 
+    }
 }

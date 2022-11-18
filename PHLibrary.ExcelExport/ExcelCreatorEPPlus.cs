@@ -14,47 +14,115 @@ using PHLibrary.Reflection;
 
 namespace PHLibrary.ExcelExport
 {
+
+    public class SheetData<T> { 
+        /// <summary>
+        /// sheet 对应的数据
+        /// </summary>
+        public IList<T> Data { get;set;}
+        public string SheetName { get;set;}
+        /// <summary>
+        /// 需要展示的属性名称
+        /// </summary>
+        public IDictionary<string,string> PropertiesToDisplay {get;set; }
+        public IList<IList<string>> SummaryDataForTopTable { get;set;}
+        }
+
+
     /// <summary>
     ///创建表头合并的excel
     /// </summary>
     public class ExcelCreatorEPPlus : IExcelCreator
     {
+        public Stream Create<T>(IList<SheetData<T>> sheetDatas,SortSize sortSize, string amountFormat ) { 
+            
+            IList<DataTable> tables=new List<DataTable>();
+            foreach(var sheetData in sheetDatas) {
+                var tableConvertor = new DataTableConverter<T>();
+                var dataTable = tableConvertor.Convert(sheetData.Data, sortSize, amountFormat,sheetData.PropertiesToDisplay);
+                dataTable.TableName = sheetData.SheetName;
+                tables.Add(dataTable);
+                dataTable.ExtendedProperties[SummaryDataForSheet] =sheetData.SummaryDataForTopTable;
+            }
+            
 
-        public Stream Create<T>(IList<T> data, SortSize sortSize, IList<IList<string>> summaryData, int summaryTableBottomMargin, CellStyleSettings cellStyleSettings,string amountFormat,bool needExportImage)
-
-        {
-            var tableConvertor = new DataTableConverter<T>();
-            var dataTable = tableConvertor.Convert(data, sortSize,amountFormat,needExportImage);
-
-            return Create(new List<DataTable> { dataTable }, new List<ColumnTree> { CreateColumnTree(dataTable) }, summaryData, summaryTableBottomMargin, cellStyleSettings);
-
+            return Create(tables);
 
         }
 
-        private Stream Create(IList<DataTable> datatables, IList<ColumnTree> columnTrees, IList<IList<string>> summaryData, int summaryTableBottomMargin, CellStyleSettings cellStyleSettings)
+        const string SummaryDataForSheet= "SummaryData";
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data"></param>
+        /// <param name="propertiesToDisplay"></param>
+        /// <param name="sheetName"></param>
+        /// <param name="sortSize"></param>
+        /// <param name="summaryData"></param>
+        /// <param name="summaryTableBottomMargin"></param>
+        /// <param name="cellStyleSettings"></param>
+        /// <param name="amountFormat"></param>
+        /// <param name="needExportImage"></param>
+        /// <returns></returns>
+        [Obsolete("已失效。只是为了向下兼容，后期会移除")]
+        public Stream Create<T>(IList<T> data, IList<string> propertiesToDisplay, SortSize sortSize,
+            IList<IList<string>> summaryData, int summaryTableBottomMargin,
+            CellStyleSettings cellStyleSettings, string amountFormat, bool needExportImage, string sheetName="sheet1")
+        { 
+          var sheetDatas=  new List<SheetData<T>> { new SheetData<T>{ Data=data, PropertiesToDisplay=propertiesToDisplay, SheetName=sheetName, SummaryDataForTopTable=summaryData } };
+
+            return Create(sheetDatas,sortSize,amountFormat);
+            
+            }
+        /// <summary>
+        /// 创建只包含一个Sheet的Excel
+        ///     重载 包含多个Sheet的excel方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data"></param>
+        /// <param name="propertiesToDisplay"></param>
+        /// <param name="sheetName"></param>
+        /// <param name="sortSize"></param>
+        /// <param name="summaryData"></param>
+        /// <param name="amountFormat"></param>
+        /// <returns></returns>
+        public Stream Create<T>(IList<T> data, IList<string> propertiesToDisplay, string sheetName, SortSize sortSize,
+           IList<IList<string>> summaryData, string amountFormat )
+        {
+            var sheetDatas = new List<SheetData<T>> 
+            { new SheetData<T> { Data = data, PropertiesToDisplay = propertiesToDisplay
+                , SheetName = sheetName, SummaryDataForTopTable = summaryData } };
+
+            return Create(sheetDatas, sortSize, amountFormat);
+
+        }
+        private Stream Create(IList<DataTable> datatables,  CellStyleSettings cellStyleSettings=null)
         {
             if (cellStyleSettings == null)
             {
                 cellStyleSettings = new CellStyleSettings { BorderStyle = OfficeOpenXml.Style.ExcelBorderStyle.Thin };
-            }
-
-            if (datatables.Count != columnTrees.Count)
-            {
-                throw new Exception($"表头数量[{columnTrees.Count}]和表格数量[{datatables.Count}]不一致.");
             }
             using (var excelPackage = new ExcelPackage())
             {
                 for (int i = 0; i < datatables.Count; i++)// ar dataTable in dataToExport.Tables)
                 {
                     var dataTable = datatables[i];
+
+                    var columnTree =CreateColumnTree(dataTable);
+
                     string tablename = string.IsNullOrEmpty(dataTable.TableName) ? "sheet1" : dataTable.TableName;
-                    var columnTree = columnTrees[i];
+                   
                     var sheet = excelPackage.Workbook.Worksheets.Add(tablename);
                     int summaryTableHeight = 0;
+                    if( dataTable.ExtendedProperties[SummaryDataForSheet] is IList<IList<string>> summaryData)
+                    { 
                     if (summaryData != null)
                     {
-                        var summaryTableCreator = new SummaryTableCreator(sheet, summaryTableBottomMargin);
+                        var summaryTableCreator = new SummaryTableCreator(sheet, 1);
                         summaryTableHeight = summaryTableCreator.Create(summaryData);
+                    }
                     }
                     //create merged header cells
                     var headerCreateor = new ExceHeaderCreatorEPPlus(columnTree, sheet, cellStyleSettings.HeaderBackgroundColor, summaryTableHeight);

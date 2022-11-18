@@ -45,7 +45,7 @@ namespace PHLibrary.ExcelExport.Tests
                 };
             ExcelCreatorEPPlus excelCreator
                = new ExcelCreatorEPPlus();
-            var stream = excelCreator.Create(list,null,null,1, null,"F3", true);
+            var stream = excelCreator.Create(list,new List<string> {"age","name","picture" },null,null,1, null,"F3", true);
             using (var file = new FileStream("CreateForImages" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
             {
                 // stream.Seek(0, SeekOrigin.Begin);
@@ -113,7 +113,7 @@ namespace PHLibrary.ExcelExport.Tests
                 };
             ExcelCreatorEPPlus excelCreator
                = new ExcelCreatorEPPlus();
-            var stream = excelCreator.Create(list,Sort,null,1, null,"F3", false);
+            var stream = excelCreator.Create(list, new List<string> { "Name", "Price", "Picture", "Color","Size", "SizeGuid" },Sort,null,1, null,"F3", false);
             using (var file = new FileStream("CreateForImagesAndTwoDimetional" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
             {
                 // stream.Seek(0, SeekOrigin.Begin);
@@ -148,7 +148,7 @@ namespace PHLibrary.ExcelExport.Tests
                 };
             ExcelCreatorEPPlus excelCreator
                = new ExcelCreatorEPPlus();
-            var stream = excelCreator.Create(list, null,
+            var stream = excelCreator.Create(list, new List<string> { "age", "name" }, null,
                 new List<IList<string>> {
                     new List<string>{"客户","张三" }
                     ,new List<string>{ "电话","13300000000"} 
@@ -159,6 +159,44 @@ namespace PHLibrary.ExcelExport.Tests
                 ,4
                 , null
                 ,"F2", false);
+            using (var file = new FileStream("CreateForImages" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
+            {
+                // stream.Seek(0, SeekOrigin.Begin);
+                CopyStream(stream, file);
+
+            }
+
+        }
+
+        [TestMethod()]
+        public void CreateMultiSheets()
+        {
+
+            var list = new List<TestItem>() {
+                new TestItem{ Age=1, Name="name",Picture=
+                "https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135"  }
+                };
+            var list2 = new List<TestItem>() {
+                new TestItem{ Age=2, Name="name2",Picture=
+                "https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135"  }
+                };
+            ExcelCreatorEPPlus excelCreator
+               = new ExcelCreatorEPPlus();
+            var stream = excelCreator.Create(
+                new List<SheetData<TestItem>>{
+                    new ExcelExport.SheetData<TestItem>{
+                        Data=list
+                        , PropertiesToDisplay= new List<string> { "age", "name","picture"} 
+                        ,SheetName="表格1"
+                        }  
+                    ,new ExcelExport.SheetData<TestItem>{
+                        Data=list2
+                        , PropertiesToDisplay= new List<string> { "name", "age" }
+                        ,SheetName="表格2"
+                        }
+                    },null,"F1"
+                
+                );
             using (var file = new FileStream("CreateForImages" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
             {
                 // stream.Seek(0, SeekOrigin.Begin);
@@ -187,6 +225,7 @@ namespace PHLibrary.ExcelExport.Tests
                = new ExcelCreatorEPPlus();
             var stream = excelCreator.Create(
                 list
+                , new List<string> { "begin", "end" }
                 , null
                 ,null
                 , 4

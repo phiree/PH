@@ -253,11 +253,11 @@ namespace PHLibrary.ExcelExportExcelCreator
         /// <param name="amountFormat">小数点位数。F0，F1，F2，F3（数字表示小数点位数）</param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public DataTable Convert(IList<T> data, SortSize sortSize, string amountFormat, bool needExportImage)
+        public DataTable Convert(IList<T> data, SortSize sortSize, string amountFormat ,IDictionary<string,string> propertiesToDisplay)
         {
 
 
-            var propertyNameMaps = new ColumnMapCreator(needExportImage).GetPropertyMaps<T>();
+            var propertyNameMaps = new ColumnMapCreator().GetPropertyMaps<T>(propertiesToDisplay);
 
             var dataTable = new DataTable("Sheet1");
             var unOrderedColumns = new Dictionary<DataColumn, int>();
@@ -291,7 +291,8 @@ namespace PHLibrary.ExcelExportExcelCreator
                 unOrderedColumns.Add(column, orderNo);
 
             }
-            foreach (var column in unOrderedColumns.OrderBy(x => x.Value))
+            //停用 propertyOrder
+            foreach (var column in unOrderedColumns)//.OrderBy(x => x.Value))
             {
                 dataTable.Columns.Add(column.Key);
             }

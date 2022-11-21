@@ -6,7 +6,9 @@
     <Description>common library for future usage, maybe for others .</Description>
     <PackageId>PHLibraryLS</PackageId>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <PackageReleaseNotes>2.6
+    <PackageReleaseNotes>3.0
+使用传入定义替代自定义属性
+2.6
 支持 dateformat
 
 2.4.2
@@ -50,13 +52,13 @@ improvement,
 first array's order can be diffrent with properties
 1.0.6
 support properties that dont have orderattribute</PackageReleaseNotes>
-    <Version>2.6</Version>
+    <Version>3.0</Version>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <Company>PHLibrary</Company>
     <Authors>PHLibrary</Authors>
     <PackageLicenseUrl></PackageLicenseUrl>
-    <FileVersion>2.6</FileVersion>
-    <AssemblyVersion>2.6</AssemblyVersion>
+    <FileVersion>3.0</FileVersion>
+    <AssemblyVersion>3.0</AssemblyVersion>
     <PackageProjectUrl>https://github.com/phiree/PHLibrary</PackageProjectUrl>
     <PackageIcon>icon.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

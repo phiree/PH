@@ -78,7 +78,7 @@ fix: 格式化没有应用到最后一行数据
     <Product>lianshang</Product>
     <PackageId>PHLibrary.LSExcelExport</PackageId>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Version>1.12.0</Version>
+    <Version>2.0.0</Version>
     <Company>4yankeji</Company>
     <Authors>yf</Authors>
     <FileVersion>1.12.0</FileVersion>

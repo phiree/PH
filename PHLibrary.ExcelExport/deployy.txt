@@ -1,1 +1,0 @@
-dotnet nuget push bin/debug/PHLibrary.LSExcelExport.1.11.0.nupkg --api-key oy2dvrloihbzkw7nolmqbfea57tiozyuvbicfldqkzrxsy --source https://api.nuget.org/v3/index.json

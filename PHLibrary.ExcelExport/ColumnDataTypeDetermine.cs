@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using PHLibrary.Reflection;
+using System.Reflection;
 
 namespace PHLibrary.ExcelExportExcelCreator
 {
@@ -17,7 +18,7 @@ namespace PHLibrary.ExcelExportExcelCreator
         public Type GetPropertyType(IList<T> data, string propertyName)
         {
 
-            var property = typeof(T).GetProperty(propertyName);
+            var property = typeof(T).GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance|System.Reflection.BindingFlags.IgnoreCase);
             if (property == null)
             {
                 //匿名类

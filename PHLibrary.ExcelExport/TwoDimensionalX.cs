@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 
 namespace PHLibrary.ExcelExportExcelCreator
 {
@@ -13,7 +14,8 @@ namespace PHLibrary.ExcelExportExcelCreator
             Name = name;
             Guid = guid;
         }
-          public bool Equals(TwoDimensionalX x, TwoDimensionalX y)
+        
+        public bool Equals(TwoDimensionalX x, TwoDimensionalX y)
         {
             return x.Name==y.Name&&x.Guid==y.Guid;
         }

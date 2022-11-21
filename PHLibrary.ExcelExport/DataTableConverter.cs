@@ -21,6 +21,7 @@ using System.Dynamic;
 using System.Collections;
 using PHLibrary.ExcelExport;
 using static PHLibrary.Reflection.ColumnMapCreator;
+using System.Reflection;
 
 namespace PHLibrary.ExcelExportExcelCreator
 {
@@ -180,42 +181,17 @@ namespace PHLibrary.ExcelExportExcelCreator
             return eo;
 
         }
-        public static TwoDimensionalDefine GetTwoDimensionalColumns<T>() //where T : class
+        public static TwoDimensionalDefine GetTwoDimensionalColumns (IList<ColumnDefine> columnDefines) //where T : class
         {
+            if(!columnDefines.Any(x=>x.TwoDimensionalColumnType== TwoDimensionalColumnType.Column)) { return null;}
 
-            string twoDimensionalColumn_X = string.Empty, twoDimensionalColumn_Y = string.Empty;
-            string twoDimensionalColumn_XId = string.Empty;
-            var propertyInfos = typeof(T).GetProperties();
+            string twoDimensionalColumn_X = columnDefines.Single(x=>x.TwoDimensionalColumnType== TwoDimensionalColumnType.Column).PropertyName;
+           
+            var xguid= columnDefines.FirstOrDefault(x => x.TwoDimensionalColumnType == TwoDimensionalColumnType.ColumnGuid);
+            string twoDimensionalColumn_XId =xguid==null?twoDimensionalColumn_X:xguid.PropertyName;// columnDefines.Single(x => x.TwoDimensionalColumnType == TwoDimensionalColumnType.ColumnGuid).PropertyName;
+            string twoDimensionalColumn_Y= columnDefines.FirstOrDefault(x => x.TwoDimensionalColumnType == TwoDimensionalColumnType.Row).PropertyName;
+             
 
-            foreach (var p in propertyInfos)
-            {
-                var attrs = p.GetCustomAttributes(false);
-
-                foreach (var attr in attrs)
-                {
-
-                    if (attr is TwoDimensionalAttribute twoDimensionalAttribute)
-                    {
-                        if (twoDimensionalAttribute.IsX)
-                        {
-                            twoDimensionalColumn_X = p.Name;
-                        }
-                        else
-                        {
-                            twoDimensionalColumn_Y = p.Name;
-                        }
-                    }
-                    if (attr is TwoDimensionalGuidAttribute twoDimensionalGuidAttribute)
-                    {
-                        twoDimensionalColumn_XId = p.Name;
-                    }
-                }
-
-            }
-            if (string.IsNullOrEmpty(twoDimensionalColumn_X) || string.IsNullOrEmpty(twoDimensionalColumn_Y))
-            {
-                return null;
-            }
             return new TwoDimensionalDefine(twoDimensionalColumn_X, twoDimensionalColumn_XId, twoDimensionalColumn_Y);
 
 
@@ -253,61 +229,39 @@ namespace PHLibrary.ExcelExportExcelCreator
         /// <param name="amountFormat">小数点位数。F0，F1，F2，F3（数字表示小数点位数）</param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public DataTable Convert(IList<T> data, SortSize sortSize, string amountFormat ,IList<string> propertiesToDisplay)
+        public DataTable Convert(IList<T> data, SortSize sortSize, string amountFormat, IList<ColumnDefine> columnDefines)
         {
 
 
-            var propertyNameMaps = new ColumnMapCreator().GetPropertyMaps<T>(propertiesToDisplay);
+             new ColumnMapCreator().CheckColulmnDefines<T>(columnDefines);
 
             var dataTable = new DataTable("Sheet1");
-            var unOrderedColumns = new Dictionary<DataColumn, int>();
-            for (int i = 0; i < propertyNameMaps.Count(); i++)// var name in memberNames)
+
+            foreach (var columnDefine in columnDefines)// var name in memberNames)
             {
-                var columnDefine = propertyNameMaps[i];
-                int orderNo = i + 1;
-                string name = columnDefine.PropertyName;
-                string columnName = columnDefine.DisplayName;
-
-                var attributes = columnDefine.Attributes;
-
-                foreach (var attribute in attributes)
-                {
-                    if (attribute is PropertyOrderAttribute propertyOrder)
-                    {
-                        orderNo = propertyOrder.Order;
-                    }
-
-                }
-
-
-                var columnType = new ColumnDataTypeDetermine<T>().GetPropertyType(data, name);
-                //guess column type using first row of data
-                var column = new DataColumn(columnName, Nullable.GetUnderlyingType(columnType) ?? columnType);
-                column.Caption = name;
-
-               
-                column.ExtendedProperties.Add("columnDefine", columnDefine);
-
-                unOrderedColumns.Add(column, orderNo);
-
+                dataTable.Columns.Add(columnDefine.CreateDataColumn());
             }
-            //停用 propertyOrder
-            foreach (var column in unOrderedColumns)//.OrderBy(x => x.Value))
-            {
-                dataTable.Columns.Add(column.Key);
-            }
+
             foreach (T t in data)
             {
                 var row = dataTable.NewRow();
-                var finalColumns = new List<DataColumn>();
+
                 foreach (DataColumn column in dataTable.Columns)
                 {
-                    var columnDefine= (ColumnDefine)column.ExtendedProperties["columnDefine"];
+                    var columnDefine = (ColumnDefine)column.ExtendedProperties["columnDefine"];
                     string propertyName = columnDefine.PropertyName;
-                    var value = Dynamic.InvokeGet(t, propertyName);
+                    //                    var value = Dynamic.InvokeGet(t, propertyName);
+                    var value = t.GetType().GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase).GetValue(t, null);
                     if (column.DataType == typeof(Image))
                     {
-                        row[column.ColumnName] = DownloadImageAsync(value);
+                        if (value is string imageUrl)
+                        {
+                            value = DownloadImageAsync(imageUrl);
+                        }
+                    }
+                   else if (column.DataType == typeof(double))
+                    {
+                        value = GetFormatedAmount(System.Convert.ToDouble( value), amountFormat);
                     }
                     else
                     {
@@ -315,19 +269,15 @@ namespace PHLibrary.ExcelExportExcelCreator
                         {
                             value = DBNull.Value;
                         }
-                        if (columnDefine.Attributes.Any(x=>x.GetType()== typeof( CustomAmountFormatAttribute)))
-                        {
-
-                            value = GetFormatedAmount((double)value, amountFormat);
-                        }
-                        row[column.ColumnName] = value;
+                         
+                        
                     }
-
+                    row[column.ColumnName] = value;
                 }
                 dataTable.Rows.Add(row);
             }
 
-            var twoDimensionalColumns = GetTwoDimensionalColumns<T>();
+            var twoDimensionalColumns = GetTwoDimensionalColumns(columnDefines);
             if (twoDimensionalColumns != null)
             {
                 if (sortSize == null)

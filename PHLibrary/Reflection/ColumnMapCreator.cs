@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -12,85 +13,114 @@ namespace PHLibrary.Reflection
     public class ColumnMapCreator
     {
 
-        public IList<ColumnDefine> CreateColumnMap<T>(IList<string> propertiesToDisplay)
-        {
-            var map = GetPropertyMaps<T>(propertiesToDisplay);
-
-            return map;
-        }
+         
         public class ColumnDefine
         {
-            public ColumnDefine(string propertyName, string displayName, object[] attributes)
+             public string PropertyName { get;}
+            public string DisplayName { get; }
+            public bool Hide { get; }
+            public bool IsImage { get; }
+            public string DatetimeFormat { get; }
+            public TwoDimensionalColumnType TwoDimensionalColumnType { get; }
+          
+            public bool IsAmount { get;set;}
+
+            public Type ColumnType
             {
-                PropertyName = propertyName;
-                DisplayName = displayName;
-                Attributes = attributes;
+                get {
+                    if (IsImage) { return typeof(System.Drawing.Image); }
+                    if (!String.IsNullOrEmpty( DatetimeFormat)) { return typeof(DateTime); }
+                    if (IsAmount) { return typeof(double);}
+
+                    return typeof(string);
+                    }
+                }
+
+            public static ColumnDefine ImageColumn(string propertyName,string displayName) { 
+                return new ColumnDefine(propertyName,displayName,false,true,"", TwoDimensionalColumnType.None,false);
+                }
+            public static ColumnDefine ImageColumn(string propertyName)
+            {
+                return ImageColumn(propertyName,propertyName);
             }
+            public static ColumnDefine DatetimeColumn(string propertyName,string displayName,string datetimeFormat)
+            {
+                return new ColumnDefine(propertyName, displayName,false,false,datetimeFormat, TwoDimensionalColumnType.None,false);
+            }
+            public static ColumnDefine TwoDimensionalColumn(string propertyName, TwoDimensionalColumnType twoDimensionalColumnType)
+            {
+                bool isAmount=twoDimensionalColumnType== TwoDimensionalColumnType.Row;
+                return new ColumnDefine(propertyName, propertyName, false,false, "", twoDimensionalColumnType,isAmount);
+            }
+            public static ColumnDefine AmountColumn(string propertyName, string displayName)
 
-            public string PropertyName { get; set; }
-            public string DisplayName { get; set; }
-            public object[] Attributes { get; set; } = new object[] { };
+            {
+
+                return new ColumnDefine(propertyName, displayName, false, false, "", TwoDimensionalColumnType.None, true);
+            }
+            public ColumnDefine(string propertyName) : this(propertyName, propertyName) { }
+            public ColumnDefine(string propertyName,string displayName)
+                :this(propertyName,displayName,false,false,"",TwoDimensionalColumnType.None,false)
+                {  }
+            public ColumnDefine(string propertyName, string displayName, bool hide, bool isImage, string format, TwoDimensionalColumnType  twoDimensionalColumnType, bool isAmount)
+            {
+                
+                PropertyName = propertyName;
+                 IsAmount=isAmount;
+                DisplayName = displayName??propertyName;
+                Hide = hide;
+                IsImage = isImage;
+                DatetimeFormat = format;
+                TwoDimensionalColumnType=twoDimensionalColumnType;
+            }
+        
+            public DataColumn CreateDataColumn() { 
+                var dataColumn= new DataColumn(DisplayName,ColumnType);
+                dataColumn.ExtendedProperties.Add("columnDefine",this);
+                return dataColumn;
+                }
+            }
+        public enum TwoDimensionalColumnType { 
+            None,
+            Column,
+            ColumnGuid,
+            Row
+            }
+        //public class ColumnDefine
+        //{
+        //    public ColumnDefine(string propertyName, string displayName, object[] attributes)
+        //    {
+        //        PropertyName = propertyName;
+        //        DisplayName = displayName;
+        //        Attributes = attributes;
+        //    }
+
+        //    public string PropertyName { get; set; }
+        //    public string DisplayName { get; set; }
+        //    public object[] Attributes { get; set; } = new object[] { };
 
 
-        }
-        public IList<ColumnDefine> GetPropertyMaps<T>(IList<string> propertiesToDisplay) //where T : class
+        //}
+        public void CheckColulmnDefines<T>(IList<ColumnDefine> columnDefines) //where T : class
         {
 
 
             var propertyInfos = typeof(T).GetProperties();
-            var map = new List<ColumnDefine>();
-
              
-
-            foreach (var p in propertyInfos)
+            foreach (var columnDefine in columnDefines)
             {
-
-
-                var attrs = p.GetCustomAttributes(false);
-                //哪些列需要显示
-                // 二维列即便没有出现在列表中，也依旧能显示
-                if (!attrs.Any(x => x.GetType() == typeof(TwoDimensionalAttribute) || x.GetType() == typeof(TwoDimensionalGuidAttribute))
-                    && !propertiesToDisplay.Any(x => x.ToLower() == p.Name.ToLower()
-                    ))
-
+                if (!propertyInfos.Any(x => x.Name.ToLower() == columnDefine.PropertyName.ToLower()))
                 {
-                    continue;
+ 
+                    throw new Exception($"类型{nameof(T)}没有找到对应的属性{columnDefine.PropertyName}");
                 }
-                string display = GetDisplayName(p, attrs);
-                map.Add(new ColumnDefine(p.Name, display, attrs));
-                
-            }
-           return  map.OrderBy(x=>propertiesToDisplay.Select(s=>s.ToLower()).ToList().IndexOf(x.PropertyName.ToLower())).ToList();
-            return map;
-
-        }
-
-        private static string GetDisplayName(PropertyInfo p, object[] attrs)
-        {
-            string display = p.Name;
-            foreach (var attr in attrs)
-            {
-
-                //只有设置了propertyorder 的属性才需要导出
-
-                if (attr is ColumnAttribute columnAttribute)
-                {
-                    display = columnAttribute == null ? p.Name : columnAttribute.Name;
-                }
-
-
             }
 
-            return display;
-        }
-
-        public static IList<ColumnDefine> GetPropertyMapsForDynamic(object data) //where T : class
-        {
-            var memberNames = Dynamitey.Dynamic.GetMemberNames(data);
-            return memberNames.Select(x => new ColumnDefine(x, x, null)).ToList();
-
+           
 
         }
+ 
+        
     }
 
 

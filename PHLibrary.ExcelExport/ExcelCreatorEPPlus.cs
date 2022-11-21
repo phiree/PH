@@ -24,7 +24,7 @@ namespace PHLibrary.ExcelExport
         /// <summary>
         /// 需要展示的属性名称
         /// </summary>
-        public IList<string> PropertiesToDisplay {get;set; }
+        public IList<ColumnDefine> PropertiesToDisplay {get;set; }
         public IList<IList<string>> SummaryDataForTopTable { get;set;}
         }
 
@@ -52,30 +52,7 @@ namespace PHLibrary.ExcelExport
 
         const string SummaryDataForSheet= "SummaryData";
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="data"></param>
-        /// <param name="propertiesToDisplay"></param>
-        /// <param name="sheetName"></param>
-        /// <param name="sortSize"></param>
-        /// <param name="summaryData"></param>
-        /// <param name="summaryTableBottomMargin"></param>
-        /// <param name="cellStyleSettings"></param>
-        /// <param name="amountFormat"></param>
-        /// <param name="needExportImage"></param>
-        /// <returns></returns>
-        [Obsolete("已失效。只是为了向下兼容，后期会移除")]
-        public Stream Create<T>(IList<T> data, IList<string> propertiesToDisplay, SortSize sortSize,
-            IList<IList<string>> summaryData, int summaryTableBottomMargin,
-            CellStyleSettings cellStyleSettings, string amountFormat, bool needExportImage, string sheetName="sheet1")
-        { 
-          var sheetDatas=  new List<SheetData<T>> { new SheetData<T>{ Data=data, PropertiesToDisplay=propertiesToDisplay, SheetName=sheetName, SummaryDataForTopTable=summaryData } };
-
-            return Create(sheetDatas,sortSize,amountFormat);
-            
-            }
+         
         /// <summary>
         /// 创建只包含一个Sheet的Excel
         ///     重载 包含多个Sheet的excel方法
@@ -88,7 +65,7 @@ namespace PHLibrary.ExcelExport
         /// <param name="summaryData"></param>
         /// <param name="amountFormat"></param>
         /// <returns></returns>
-        public Stream Create<T>(IList<T> data, IList<string> propertiesToDisplay, string sheetName, SortSize sortSize,
+        public Stream Create<T>(IList<T> data, IList<ColumnDefine> propertiesToDisplay, string sheetName, SortSize sortSize,
            IList<IList<string>> summaryData, string amountFormat )
         {
             var sheetDatas = new List<SheetData<T>> 
@@ -215,8 +192,8 @@ namespace PHLibrary.ExcelExport
                 if (column.DataType == typeof(DateTime))
                 {
                     var sheetColumn = sheet.Column(columnIndex);
-                    var formatAttribute = ((ColumnDefine)column.ExtendedProperties["columnDefine"]).Attributes.FirstOrDefault(x=>x.GetType()==typeof(DateFormatAttribute));
-                    string dateFormatString=formatAttribute!=null?((DateFormatAttribute) formatAttribute).DateFormatString: "yyyy/MM/dd HH:mm:ss";
+                    var datetimeFormat=  ((ColumnDefine)column.ExtendedProperties["columnDefine"]).DatetimeFormat;
+                    string dateFormatString= datetimeFormat ?? "yyyy/MM/dd HH:mm:ss";
                     
                     sheetColumn.Style.Numberformat.Format = dateFormatString;
                     sheetColumn.AutoFit();

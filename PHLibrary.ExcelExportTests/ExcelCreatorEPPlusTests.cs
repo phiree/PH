@@ -15,6 +15,7 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using static PHLibrary.ExcelExport.ExcelCreatorEPPlus;
+using static PHLibrary.Reflection.ColumnMapCreator;
 
 namespace PHLibrary.ExcelExport.Tests
 {
@@ -45,7 +46,14 @@ namespace PHLibrary.ExcelExport.Tests
                 };
             ExcelCreatorEPPlus excelCreator
                = new ExcelCreatorEPPlus();
-            var stream = excelCreator.Create(list,new List<string> {"age","name","picture" },null,null,1, null,"F3", true);
+            var stream = excelCreator.Create(
+                list, 
+                new List<ColumnDefine> {
+                     new ColumnDefine("age","年龄" ),
+                     new ColumnDefine("name","姓名" ),
+                     ColumnDefine.ImageColumn("picture","tupian" )
+                     },"sheet1",
+                 null,null,"F3");
             using (var file = new FileStream("CreateForImages" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
             {
                 // stream.Seek(0, SeekOrigin.Begin);
@@ -113,7 +121,17 @@ namespace PHLibrary.ExcelExport.Tests
                 };
             ExcelCreatorEPPlus excelCreator
                = new ExcelCreatorEPPlus();
-            var stream = excelCreator.Create(list, new List<string> { "Name", "Price", "Picture", "Color","Size", "SizeGuid" },Sort,null,1, null,"F3", false);
+            var stream = excelCreator.Create(list,
+                
+                new List<ColumnDefine> {new ColumnDefine("Name","品名"),
+                ColumnDefine.AmountColumn("Price", "价格"),
+                  ColumnDefine.ImageColumn(  "Picture", "图片"),
+                new ColumnDefine(   "Color", "颜色"),
+                  ColumnDefine.TwoDimensionalColumn( "Size", TwoDimensionalColumnType.Column),
+                  ColumnDefine.TwoDimensionalColumn(  "Amount", TwoDimensionalColumnType.Row),
+              },
+                "sheet1",Sort,
+                null,"F3");
             using (var file = new FileStream("CreateForImagesAndTwoDimetional" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
             {
                 // stream.Seek(0, SeekOrigin.Begin);
@@ -148,7 +166,14 @@ namespace PHLibrary.ExcelExport.Tests
                 };
             ExcelCreatorEPPlus excelCreator
                = new ExcelCreatorEPPlus();
-            var stream = excelCreator.Create(list, new List<string> { "age", "name" }, null,
+            var stream = excelCreator.Create(list,
+
+                  new List<ColumnDefine> {new ColumnDefine("age","年龄"),
+                new ColumnDefine( "name", "姓名"),
+                 
+              } ,
+                
+                "sheet1",null,
                 new List<IList<string>> {
                     new List<string>{"客户","张三" }
                     ,new List<string>{ "电话","13300000000"} 
@@ -156,9 +181,8 @@ namespace PHLibrary.ExcelExport.Tests
                     ,new List<string>{ "总金额","1230"} 
                     ,new List<string>{ "备注","已付款"} 
                     }
-                ,4
-                , null
-                ,"F2", false);
+                
+                ,"F2" );
             using (var file = new FileStream("CreateForImages" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
             {
                 // stream.Seek(0, SeekOrigin.Begin);
@@ -186,12 +210,12 @@ namespace PHLibrary.ExcelExport.Tests
                 new List<SheetData<TestItem>>{
                     new ExcelExport.SheetData<TestItem>{
                         Data=list
-                        , PropertiesToDisplay= new List<string> { "age", "name","picture"} 
+                        , PropertiesToDisplay= new List<ColumnDefine> {new ColumnDefine("age"),  ColumnDefine.ImageColumn("picture")}
                         ,SheetName="表格1"
                         }  
                     ,new ExcelExport.SheetData<TestItem>{
                         Data=list2
-                        , PropertiesToDisplay= new List<string> { "name", "age" }
+                        , PropertiesToDisplay= new List<ColumnDefine> {new ColumnDefine("age"), new ColumnDefine("name"),  ColumnDefine.ImageColumn("picture")}
                         ,SheetName="表格2"
                         }
                     },null,"F1"
@@ -225,12 +249,12 @@ namespace PHLibrary.ExcelExport.Tests
                = new ExcelCreatorEPPlus();
             var stream = excelCreator.Create(
                 list
-                , new List<string> { "begin", "end" }
+                , new List<ColumnDefine> {new ColumnDefine( "begin"),new ColumnDefine("end" )}
                 , null
                 ,null
-                , 4
+              
                 , null
-                , "F2", false);
+                , "F2");
             using (var file = new FileStream("CreateForDatetime" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
             {
                 // stream.Seek(0, SeekOrigin.Begin);

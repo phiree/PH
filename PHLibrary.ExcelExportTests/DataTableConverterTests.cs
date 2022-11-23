@@ -124,11 +124,27 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
         private System.Data.DataTable CreateTable()
         {
             var dataTable = new DataTable();
-            dataTable.Columns.Add(new DataColumn("品名", typeof(string)));
-            dataTable.Columns.Add(new DataColumn("颜色", typeof(string)));
-            dataTable.Columns.Add(new DataColumn("尺码", typeof(string)));
-            dataTable.Columns.Add(new DataColumn("数量", typeof(int)));
-            dataTable.Columns.Add(new DataColumn("SizeGuid", typeof(string)));
+            DataColumn col1= new DataColumn("品名", typeof(string));
+            col1.ExtendedProperties["columnDefine"]=ColumnDefine.GroupColumn ("name","品名");
+
+                DataColumn col2 = new DataColumn("颜色", typeof(string)); 
+                col2.ExtendedProperties["columnDefine"] = ColumnDefine.GroupColumn("color", "颜色");
+
+            DataColumn col3 = new DataColumn("尺码", typeof(string));
+            col3.ExtendedProperties["columnDefine"] = ColumnDefine.TwoDimensionalColumn("size", TwoDimensionalColumnType.Column);
+
+            DataColumn col4 = new DataColumn("数量", typeof(int));
+            col4.ExtendedProperties["columnDefine"] = ColumnDefine.TwoDimensionalColumn("amount", TwoDimensionalColumnType.Row);
+
+            DataColumn col5 = new DataColumn("SizeGuid", typeof(string));
+            col5.ExtendedProperties["columnDefine"] = ColumnDefine.OtherColumn("gguid", "品名guid");
+            dataTable.Columns.Add(col1);
+            dataTable.Columns.Add(col2);
+            dataTable.Columns.Add(col3);
+            dataTable.Columns.Add(col4);
+            dataTable.Columns.Add(col5);
+
+             
             dataTable.Rows.Add("春装001", "红色", "L", 1, "1");
             dataTable.Rows.Add("春装001", "红色", "M", 2, "2");
             dataTable.Rows.Add("春装001", "红色", "XL", 3, "3");

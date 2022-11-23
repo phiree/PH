@@ -16,57 +16,94 @@ namespace PHLibrary.Reflection
          
         public class ColumnDefine
         {
+            /// <summary>
+            /// 数据类属性名
+            /// </summary>
              public string PropertyName { get;}
+            /// <summary>
+            /// excel表头中文名
+            /// </summary>
             public string DisplayName { get; }
+            /// <summary>
+            /// 是否参与分组
+            /// </summary>
+            public bool IsInGroup { get;set;}
+            /// <summary>
+            /// 是否 隐藏
+            /// </summary>
             public bool Hide { get; }
+            /// <summary>
+            /// 是否是图片
+            /// </summary>
             public bool IsImage { get; }
+            /// <summary>
+            /// 时间格式化
+            /// </summary>
             public string DatetimeFormat { get; }
+            /// <summary>
+            /// 二维列类型。
+            /// </summary>
             public TwoDimensionalColumnType TwoDimensionalColumnType { get; }
           
-            public bool IsAmount { get;set;}
+            public bool NeedFormatAmount { get;set;}
 
             public Type ColumnType
             {
                 get {
                     if (IsImage) { return typeof(System.Drawing.Image); }
                     if (!String.IsNullOrEmpty( DatetimeFormat)) { return typeof(DateTime); }
-                    if (IsAmount) { return typeof(double);}
+                    if (NeedFormatAmount) { return typeof(double);}
 
                     return typeof(string);
                     }
                 }
 
             public static ColumnDefine ImageColumn(string propertyName,string displayName) { 
-                return new ColumnDefine(propertyName,displayName,false,true,"", TwoDimensionalColumnType.None,false);
+                return new ColumnDefine(propertyName,displayName,false,false,true,"", TwoDimensionalColumnType.None,false);
                 }
             public static ColumnDefine ImageColumn(string propertyName)
             {
-                return ImageColumn(propertyName,propertyName);
+                return   ColumnDefine.ImageColumn(propertyName, propertyName);//, false, false, true, "", TwoDimensionalColumnType.None, false);
             }
             public static ColumnDefine DatetimeColumn(string propertyName,string displayName,string datetimeFormat)
             {
-                return new ColumnDefine(propertyName, displayName,false,false,datetimeFormat, TwoDimensionalColumnType.None,false);
+                return new ColumnDefine(propertyName, displayName,false,false,false,datetimeFormat, TwoDimensionalColumnType.None,false);
             }
             public static ColumnDefine TwoDimensionalColumn(string propertyName, TwoDimensionalColumnType twoDimensionalColumnType)
             {
-                bool isAmount=twoDimensionalColumnType== TwoDimensionalColumnType.Row;
-                return new ColumnDefine(propertyName, propertyName, false,false, "", twoDimensionalColumnType,isAmount);
+                 
+                return new ColumnDefine(propertyName, propertyName,false, false,false, "", twoDimensionalColumnType,false);
             }
             public static ColumnDefine AmountColumn(string propertyName, string displayName)
 
             {
 
-                return new ColumnDefine(propertyName, displayName, false, false, "", TwoDimensionalColumnType.None, true);
+                return new ColumnDefine(propertyName, displayName,false, false, false, "", TwoDimensionalColumnType.None, true);
             }
-            public ColumnDefine(string propertyName) : this(propertyName, propertyName) { }
-            public ColumnDefine(string propertyName,string displayName)
-                :this(propertyName,displayName,false,false,"",TwoDimensionalColumnType.None,false)
-                {  }
-            public ColumnDefine(string propertyName, string displayName, bool hide, bool isImage, string format, TwoDimensionalColumnType  twoDimensionalColumnType, bool isAmount)
+            public static ColumnDefine OtherColumn(string propertyName, string displayName)
             {
-                
+                return new ColumnDefine(propertyName, displayName, false);
+            }
+            public static ColumnDefine GroupColumn(string propertyName,string displayName) { 
+                return new ColumnDefine(propertyName,displayName,true);
+                }
+            public static ColumnDefine HiddenColumn(string propertyName, string displayName)
+            {
+                return new ColumnDefine(propertyName, displayName,false,true,false,"", TwoDimensionalColumnType.None,false);
+            }
+
+
+            public ColumnDefine(string propertyName) : this(propertyName, propertyName, false) { }
+            public ColumnDefine(string propertyName, string displayName) : this(propertyName, displayName, false) { }
+            public ColumnDefine(string propertyName,string displayName,bool isInGroup)
+                :this(propertyName,displayName, isInGroup,false, false,"",TwoDimensionalColumnType.None,false)
+                {  }
+            public ColumnDefine(string propertyName, string displayName,bool isInGroup, bool hide, bool isImage, string format
+                , TwoDimensionalColumnType  twoDimensionalColumnType, bool isAmount)
+            {
+                IsInGroup=isInGroup;
                 PropertyName = propertyName;
-                 IsAmount=isAmount;
+                 NeedFormatAmount=isAmount;
                 DisplayName = displayName??propertyName;
                 Hide = hide;
                 IsImage = isImage;
@@ -76,14 +113,26 @@ namespace PHLibrary.Reflection
         
             public DataColumn CreateDataColumn() { 
                 var dataColumn= new DataColumn(DisplayName,ColumnType);
+                if(TwoDimensionalColumnType== TwoDimensionalColumnType.Row) { 
+                    dataColumn.DataType=typeof(int);
+                    }
                 dataColumn.ExtendedProperties.Add("columnDefine",this);
                 return dataColumn;
                 }
             }
         public enum TwoDimensionalColumnType { 
             None,
+            /// <summary>
+            /// 二维列
+            /// </summary>
             Column,
+            /// <summary>
+            /// 二维列guid
+            /// </summary>
             ColumnGuid,
+            /// <summary>
+            /// 二维行
+            /// </summary>
             Row
             }
         //public class ColumnDefine

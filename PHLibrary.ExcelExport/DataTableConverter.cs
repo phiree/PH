@@ -48,11 +48,15 @@ namespace PHLibrary.ExcelExportExcelCreator
         {
 
             /// <summary>
-            /// 包含二维数据的列
+            /// 分组列 
             /// </summary>
-            public IList<DataColumn> NotTwoDimensinalColumns { get; private set; } = new List<DataColumn>();
+            public IList<DataColumn> GroupingColumns { get; private set; } = new List<DataColumn>();
             /// <summary>
-            /// 不包含二维数据的列
+            /// 其他列：数据汇总，只取第一个值
+            /// </summary>
+            public IList<DataColumn> OtherColumns { get; private set; } = new List<DataColumn>();
+            /// <summary>
+            ///  二维数据的列
             /// </summary>
             public IList<DataColumn> TwoDimensinalColumns { get; private set; } = new List<DataColumn>();
             public void Build(DataTable originalTable, TwoDimensionalDefine twoDimentinalColumnNames)
@@ -61,6 +65,7 @@ namespace PHLibrary.ExcelExportExcelCreator
 
                 foreach (DataColumn column in originalTable.Columns)
                 {
+                    var columnDefine = (ColumnDefine)column.ExtendedProperties["columnDefine"];
 
                     if (twoDimentinalColumnNames.Contains(column.ColumnName))
                     {
@@ -68,7 +73,14 @@ namespace PHLibrary.ExcelExportExcelCreator
                     }
                     else
                     {
-                        NotTwoDimensinalColumns.Add(column);
+                        if (columnDefine.IsInGroup)
+                        {
+                            GroupingColumns.Add(column);
+                        }
+                        else
+                        {
+                            OtherColumns.Add(column);
+                        }
                     }
 
 
@@ -96,11 +108,60 @@ namespace PHLibrary.ExcelExportExcelCreator
             //}
 
             var columnsGroupByNoTwoDimensinal = originalTable.AsEnumerable()
-                         .GroupBy(x => GetGroupBy(columnsBuilder.NotTwoDimensinalColumns.Select(c => c.ColumnName), x))
+                         .GroupBy(x => GetGroupBy(columnsBuilder.GroupingColumns.Select(c => c.ColumnName), x))
                          //.GroupBy(x=>new{品名= x.Field<string>("品名"),颜色=x.Field<string>("颜色") })
                          .Select((g, v) =>
                          {
-                             return g;
+                             var g2 = g.ToList().GroupBy
+                              (k => GetGroupBy(
+                                  new string[] { twoDimentinalColumnNames.TwoDimensionalX.Guid, twoDimentinalColumnNames.TwoDimensionalX.Name }
+                                   , k));
+
+                             var sumedRows = new List<DataRow>();
+                             foreach (var groupByTwoDimensionalColumn in g2)
+                             {
+
+
+                                 var row = originalTable.NewRow();
+                                 int totalY = 0;
+                                 foreach (DataColumn col in originalTable.Columns)
+                                 {
+                                     var columnDefine = (ColumnDefine)col.ExtendedProperties["columnDefine"];
+                                     //其他列 取第一个
+                                     if (columnsBuilder.OtherColumns.Any(x => x.ColumnName == col.ColumnName)
+
+                                     )
+                                     {
+                                         row[col] = g.ToList()[0][col];
+
+                                     }
+                                     //一级group列，取key的值
+                                     else if (columnsBuilder.GroupingColumns.Any(x => x.ColumnName == col.ColumnName))
+                                     {
+                                         row[col] = ((IDictionary<string, object>)g.Key)[col.ColumnName];
+                                     }
+                                     //
+                                     //二级group列（二维列名称和guid
+                                     else if (twoDimentinalColumnNames.TwoDimensionalX.Name == col.ColumnName
+                                    || twoDimentinalColumnNames.TwoDimensionalX.Guid == col.ColumnName
+                                     )
+                                     {
+                                         row[col] = ((IDictionary<string, object>)groupByTwoDimensionalColumn.Key)[col.ColumnName];
+                                     }
+                                     //二维 Y 列，取汇总值
+                                     else if (columnDefine.TwoDimensionalColumnType == TwoDimensionalColumnType.Row)
+                                     {
+                                         row[col] = groupByTwoDimensionalColumn.ToList().Select(x => x[col]).Sum(x => (int)x);
+                                     }
+                                     
+                                 }
+                                 sumedRows.Add(row);
+                                 
+                             }
+                              
+                             return CreateGroup(sumedRows, g.Key);
+                             //   return g;
+                             ;
                          }).ToList();
 
             IList<TwoDimensionalX> twoDimensionalColumns = columnsGroupByNoTwoDimensinal.SelectMany(x => x.ToList())
@@ -115,23 +176,44 @@ namespace PHLibrary.ExcelExportExcelCreator
             var twoDimensionalColumnsOrdered = sortSize(twoDimensionalColumns.Distinct().ToList());
             var allColumns = new List<DataColumn>();
 
-            foreach (var col in columnsBuilder.NotTwoDimensinalColumns)
+            bool twoDimensinalColumnsAdded = false;
+            foreach (DataColumn col in originalTable.Columns)
             {
-                allColumns.Add(col);
-            }
-            foreach (var col2 in twoDimensionalColumnsOrdered)
-            {
-                string colName = col2.Name;// col2.Guid!= string.Empty?col2.Guid:col2.Name;
+                if (columnsBuilder.GroupingColumns.Any(x => x.ColumnName == col.ColumnName))
+                {
+                    allColumns.Add(col);
+                    continue;
+                }
 
-                allColumns.Add(new DataColumn(colName.ToString()));
+                if (columnsBuilder.OtherColumns.Any(x => x.ColumnName == col.ColumnName))
+                {
+                    allColumns.Add(col);
+                    continue;
+                }
+                if (!twoDimensinalColumnsAdded)
+                {
+                    foreach (var col2 in twoDimensionalColumnsOrdered)
+                    {
+                        string colName = col2.Name;// col2.Guid!= string.Empty?col2.Guid:col2.Name;
+
+                        allColumns.Add(new DataColumn(colName.ToString()));
+                       
+                        // allColumns.Add(new DataColumn(col2.Guid.ToString()));
+                    }
+                    twoDimensinalColumnsAdded = true;
+                }
             }
+
+
 
 
             DataTable newt = new DataTable();
 
             foreach (var col in allColumns)
             {
-                newt.Columns.Add(new DataColumn(col.ColumnName, col.DataType)); ;
+                DataColumn newCol=new DataColumn(col.ColumnName,col.DataType);
+                newCol.ExtendedProperties["columnDefine"] = col.ExtendedProperties["columnDefine"];
+                newt.Columns.Add(newCol);// new DataColumn(col.ColumnName, col.DataType)); ;
             }
 
 
@@ -140,23 +222,38 @@ namespace PHLibrary.ExcelExportExcelCreator
                 var row = newt.NewRow();
                 foreach (DataColumn col in newt.Columns)
                 {
+                    //分组列数据填充
                     if (((IDictionary<string, object>)group.Key).ContainsKey(col.ColumnName))
                     {
                         row[col.ColumnName] = ((IDictionary<string, object>)group.Key)[col.ColumnName];
                     }
+                    //二维列数据填充
                     foreach (var r in group.ToList())
                     {
                         if (r[twoDimentinalColumnNames.TwoDimensionalX.Name].ToString() == col.ColumnName)
                         {
                             row[col.ColumnName] = r[twoDimentinalColumnNames.YName];
 
-                        }
+                        }else if (columnsBuilder.OtherColumns.Any(x => x.ColumnName == col.ColumnName))
+                        {
+                            row[col.ColumnName] = r[col.ColumnName];
+                            }
                     }
                 }
                 newt.Rows.Add(row);
             }
             return newt;
 
+        }
+        private IGrouping<TKey, TElement> CreateGroup<TKey, TElement>(IEnumerable<TElement> theSeqenceToGroup, TKey valueForKey)
+        {
+            return theSeqenceToGroup.GroupBy(stg => valueForKey).FirstOrDefault();
+        }
+        private IList<DataRow> MergeOtherColumns(IGrouping<ExpandoObject, DataRow> groupResults)
+        {
+
+            throw new Exception();
+            // foreach(var key in groupResults.Key)
         }
 
         IList<ExpandoObject> keyObjects = new List<ExpandoObject>();
@@ -181,16 +278,16 @@ namespace PHLibrary.ExcelExportExcelCreator
             return eo;
 
         }
-        public static TwoDimensionalDefine GetTwoDimensionalColumns (IList<ColumnDefine> columnDefines) //where T : class
+        public static TwoDimensionalDefine GetTwoDimensionalColumns(IList<ColumnDefine> columnDefines) //where T : class
         {
-            if(!columnDefines.Any(x=>x.TwoDimensionalColumnType== TwoDimensionalColumnType.Column)) { return null;}
+            if (!columnDefines.Any(x => x.TwoDimensionalColumnType == TwoDimensionalColumnType.Column)) { return null; }
 
-            string twoDimensionalColumn_X = columnDefines.Single(x=>x.TwoDimensionalColumnType== TwoDimensionalColumnType.Column).PropertyName;
-           
-            var xguid= columnDefines.FirstOrDefault(x => x.TwoDimensionalColumnType == TwoDimensionalColumnType.ColumnGuid);
-            string twoDimensionalColumn_XId =xguid==null?twoDimensionalColumn_X:xguid.PropertyName;// columnDefines.Single(x => x.TwoDimensionalColumnType == TwoDimensionalColumnType.ColumnGuid).PropertyName;
-            string twoDimensionalColumn_Y= columnDefines.FirstOrDefault(x => x.TwoDimensionalColumnType == TwoDimensionalColumnType.Row).PropertyName;
-             
+            string twoDimensionalColumn_X = columnDefines.Single(x => x.TwoDimensionalColumnType == TwoDimensionalColumnType.Column).PropertyName;
+
+            var xguid = columnDefines.FirstOrDefault(x => x.TwoDimensionalColumnType == TwoDimensionalColumnType.ColumnGuid);
+            string twoDimensionalColumn_XId = xguid == null ? twoDimensionalColumn_X : xguid.PropertyName;// columnDefines.Single(x => x.TwoDimensionalColumnType == TwoDimensionalColumnType.ColumnGuid).PropertyName;
+            string twoDimensionalColumn_Y = columnDefines.FirstOrDefault(x => x.TwoDimensionalColumnType == TwoDimensionalColumnType.Row).PropertyName;
+
 
             return new TwoDimensionalDefine(twoDimensionalColumn_X, twoDimensionalColumn_XId, twoDimensionalColumn_Y);
 
@@ -233,7 +330,7 @@ namespace PHLibrary.ExcelExportExcelCreator
         {
 
 
-             new ColumnMapCreator().CheckColulmnDefines<T>(columnDefines);
+            new ColumnMapCreator().CheckColulmnDefines<T>(columnDefines);
 
             var dataTable = new DataTable("Sheet1");
 
@@ -259,9 +356,12 @@ namespace PHLibrary.ExcelExportExcelCreator
                             value = DownloadImageAsync(imageUrl);
                         }
                     }
-                   else if (column.DataType == typeof(double))
+                    else if (column.DataType == typeof(double))
                     {
-                        value = GetFormatedAmount(System.Convert.ToDouble( value), amountFormat);
+                        if (columnDefine.NeedFormatAmount)
+                        {
+                            value = GetFormatedAmount(System.Convert.ToDouble(value), amountFormat);
+                        }
                     }
                     else
                     {
@@ -269,8 +369,8 @@ namespace PHLibrary.ExcelExportExcelCreator
                         {
                             value = DBNull.Value;
                         }
-                         
-                        
+
+
                     }
                     row[column.ColumnName] = value;
                 }

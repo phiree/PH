@@ -9,7 +9,11 @@
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/phiree/PHLibrary</RepositoryUrl>
     <PackageProjectUrl>https://github.com/phiree/PHLibrary</PackageProjectUrl>
-    <PackageReleaseNotes>1.12.0
+    <PackageReleaseNotes>2.1
+1)  所有的Attribute都去除，列定义（中文名，对应属性名，是否二维列（x/y轴），是否图片，时间格式化） 都 直接传入进来
+2）列定义增加 “是否参与GroupBy"，用以确定Groupby的列。 groupby列 和 二维列 之外的列， 数据只取第一条， 对应的数量全部加在第一条上。
+
+1.12.0
 支持时间格式
 1.11.0
 设置是否导出图片，忽略没有propertyorder的属性
@@ -78,11 +82,11 @@ fix: 格式化没有应用到最后一行数据
     <Product>lianshang</Product>
     <PackageId>PHLibrary.LSExcelExport</PackageId>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Version>2.0.0</Version>
+    <Version>2.1</Version>
     <Company>4yankeji</Company>
     <Authors>yf</Authors>
-    <FileVersion>1.12.0</FileVersion>
-    <AssemblyVersion>1.12.0</AssemblyVersion>
+    <FileVersion>2.1</FileVersion>
+    <AssemblyVersion>2.1</AssemblyVersion>
     <Copyright>无版权</Copyright>
   </PropertyGroup>
 

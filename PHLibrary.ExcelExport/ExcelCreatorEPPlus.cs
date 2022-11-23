@@ -181,6 +181,8 @@ namespace PHLibrary.ExcelExport
             //image
             //datetime 
             SetFormatForDateColumn(sheet, dataTable);
+            SetHiddenForDateColumn(sheet,dataTable);
+             
 
         }
         
@@ -201,8 +203,22 @@ namespace PHLibrary.ExcelExport
                 columnIndex++;
             }
         }
+        private void SetHiddenForDateColumn(ExcelWorksheet sheet, DataTable dataTable)
+        {
+            int columnIndex = 1;
+            foreach (DataColumn column in dataTable.Columns)
+            {
+                var columnDefine = (ColumnDefine)column.ExtendedProperties["columnDefine"];
+                if (columnDefine!=null&&columnDefine.Hide) {
+                    var sheetColumn = sheet.Column(columnIndex);
+                   sheetColumn.Hidden=true;
+                }
 
-        const int ImageWidth = 100;
+                 
+                columnIndex++;
+            }
+        }
+         const int ImageWidth = 100;
         const int ImageHeight = 100;
         const int imageMargin = 3;
         private void LoadPictures(ExcelWorksheet sheet, DataTable dataTable, int startRow)
@@ -250,5 +266,5 @@ namespace PHLibrary.ExcelExport
 
 
     }
-
+ 
 }

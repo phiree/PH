@@ -68,6 +68,11 @@ namespace PHLibrary.ExcelExport.Tests
             [Column("品名")]
             [PropertyOrder(1)]
             public string Name { get; set; }
+           
+            [PropertyOrder(1)]
+            public string PGuid { get; set; }
+
+
             [Column("货号")]
             public string Code { get; set; }
 
@@ -104,6 +109,9 @@ namespace PHLibrary.ExcelExport.Tests
             var list = new List<Order1103>() { 
                 new Order1103{ Name="春装001", Code="CZ001", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135",
                     Size="M",SizeGuid=guidM ,  Amount=1,Price=12 },
+                 new Order1103{ Name="春装001", Code="CZ001", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135",
+                    Size="M",SizeGuid=guidM ,  Amount=1,Price=13 },
+
                 new Order1103{ Name="春装001", Code="CZ001", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135", 
                     Size="L",SizeGuid=guidL,  Amount=2 ,Price=12},
                 new Order1103{ Name="春装001", Code="CZ001", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135", 
@@ -122,13 +130,17 @@ namespace PHLibrary.ExcelExport.Tests
             ExcelCreatorEPPlus excelCreator
                = new ExcelCreatorEPPlus();
             var stream = excelCreator.Create(list,
-                
-                new List<ColumnDefine> {new ColumnDefine("Name","品名"),
-                ColumnDefine.AmountColumn("Price", "价格"),
-                  ColumnDefine.ImageColumn(  "Picture", "图片"),
-                new ColumnDefine(   "Color", "颜色"),
-                  ColumnDefine.TwoDimensionalColumn( "Size", TwoDimensionalColumnType.Column),
-                  ColumnDefine.TwoDimensionalColumn(  "Amount", TwoDimensionalColumnType.Row),
+                  new List<ColumnDefine> {
+                   ColumnDefine.GroupColumn("Name","品名"),
+                  ColumnDefine.HiddenColumn("PGuid",""),
+
+                  ColumnDefine.AmountColumn("Price", "价格"),
+                  
+                  ColumnDefine.GroupColumn("Color", "颜色"),
+                  ColumnDefine.TwoDimensionalColumn("Size",TwoDimensionalColumnType.Column),
+                  ColumnDefine.TwoDimensionalColumn("SizeGuid",TwoDimensionalColumnType.ColumnGuid),
+                  ColumnDefine.TwoDimensionalColumn("Amount",TwoDimensionalColumnType.Row),
+                  ColumnDefine.ImageColumn("Picture", "图片"),
               },
                 "sheet1",Sort,
                 null,"F3");

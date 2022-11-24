@@ -20,13 +20,15 @@ namespace PHLibrary.ExcelExport
         /// <summary>
         /// sheet 对应的数据
         /// </summary>
-
         public IList<T1> Data1 { get; set; }
         public string SheetName1 { get; set; }
         /// <summary>
         /// 需要展示的属性名称
         /// </summary>
         public IList<ColumnDefine> PropertiesToDisplay1 { get; set; }
+        /// <summary>
+        /// 顶部表格数据
+        /// </summary>
         public IList<IList<string>> SummaryDataForTopTable1 { get; set; }
     }
     public class SheetData<T1, T2> : SheetData<T1>
@@ -56,6 +58,14 @@ namespace PHLibrary.ExcelExport
     /// </summary>
     public class ExcelCreatorEPPlus : IExcelCreator
     {
+        /// <summary>
+        /// 创建Excel
+        /// </summary>
+        /// <typeparam name="T1">数据类型</typeparam>
+        /// <param name="sheetData">数据定义</param>
+        /// <param name="sortSize">尺码排序委托</param>
+        /// <param name="amountFormat">金额京都设置</param>
+        /// <returns></returns>
         public Stream Create<T1>(SheetData<T1> sheetData, SortSize sortSize, string amountFormat)
         {
 

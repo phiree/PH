@@ -44,7 +44,9 @@ namespace PHLibrary.Reflection
             /// 二维列类型。
             /// </summary>
             public TwoDimensionalColumnType TwoDimensionalColumnType { get; }
-          
+          /// <summary>
+          /// 是否需要自定义小数点精度
+          /// </summary>
             public bool NeedFormatAmount { get;set;}
 
             public Type ColumnType
@@ -57,33 +59,74 @@ namespace PHLibrary.Reflection
                     return typeof(string);
                     }
                 }
-
+            /// <summary>
+            /// 图片列
+            /// </summary>
+            /// <param name="propertyName"></param>
+            /// <param name="displayName"></param>
+            /// <returns></returns>
             public static ColumnDefine ImageColumn(string propertyName,string displayName) { 
                 return new ColumnDefine(propertyName,displayName,false,false,true,"", TwoDimensionalColumnType.None,false);
                 }
+            /// <summary>
+            /// 图片列
+            /// </summary>
+            /// <param name="propertyName"></param>
+            /// <returns></returns>
             public static ColumnDefine ImageColumn(string propertyName)
             {
                 return   ColumnDefine.ImageColumn(propertyName, propertyName);//, false, false, true, "", TwoDimensionalColumnType.None, false);
             }
+            /// <summary>
+            /// 时间列
+            /// </summary>
+            /// <param name="propertyName"></param>
+            /// <param name="displayName"></param>
+            /// <param name="datetimeFormat">时间格式字符串</param>
+            /// <returns></returns>
             public static ColumnDefine DatetimeColumn(string propertyName,string displayName,string datetimeFormat)
             {
                 return new ColumnDefine(propertyName, displayName,false,false,false,datetimeFormat, TwoDimensionalColumnType.None,false);
             }
+            /// <summary>
+            /// 二维列
+            /// </summary>
+            /// <param name="propertyName"></param>
+            /// <param name="twoDimensionalColumnType">二维列类型（列/行/guid）</param>
+            /// <returns></returns>
             public static ColumnDefine TwoDimensionalColumn(string propertyName, TwoDimensionalColumnType twoDimensionalColumnType)
             {
                  
                 return new ColumnDefine(propertyName, propertyName,false, false,false, "", twoDimensionalColumnType,false);
             }
+            /// <summary>
+            /// 需要指定精度的数字
+            /// </summary>
+            /// <param name="propertyName"></param>
+            /// <param name="displayName"></param>
+            /// <returns></returns>
             public static ColumnDefine AmountColumn(string propertyName, string displayName)
 
             {
 
                 return new ColumnDefine(propertyName, displayName,false, false, false, "", TwoDimensionalColumnType.None, true);
             }
+            /// <summary>
+            /// 一般列
+            /// </summary>
+            /// <param name="propertyName"></param>
+            /// <param name="displayName"></param>
+            /// <returns></returns>
             public static ColumnDefine OtherColumn(string propertyName, string displayName)
             {
                 return new ColumnDefine(propertyName, displayName, false);
             }
+            /// <summary>
+            /// 二维数据 用来分组的列
+            /// </summary>
+            /// <param name="propertyName"></param>
+            /// <param name="displayName"></param>
+            /// <returns></returns>
             public static ColumnDefine GroupColumn(string propertyName,string displayName) { 
                 return new ColumnDefine(propertyName,displayName,true);
                 }

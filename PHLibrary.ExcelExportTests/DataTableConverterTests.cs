@@ -28,8 +28,8 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
             var dataTable = converter.Convert(studentList, null, "F0",new List<ColumnDefine> {
                 new ColumnDefine("age","年龄" ),
                  new ColumnDefine("name","姓名" )});
-            Assert.AreEqual("年龄", dataTable.Columns[0].ColumnName);
-            Assert.AreEqual("姓名", dataTable.Columns[1].ColumnName);
+            Assert.AreEqual("年龄", dataTable.Columns[0].Caption);
+            Assert.AreEqual("name", dataTable.Columns[1].ColumnName);
         }
         [TestMethod()]
         public void ConvertTestWithDescriptionWithoutOrder()
@@ -39,8 +39,8 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
             var dataTable = converter.Convert(studentList, null, "F0", new List<ColumnDefine> {
                 new ColumnDefine("age","年龄" ),
                  new ColumnDefine("name","姓名" )});
-            Assert.AreEqual("年龄", dataTable.Columns[0].ColumnName);
-            Assert.AreEqual("姓名", dataTable.Columns[1].ColumnName);
+            Assert.AreEqual("年龄", dataTable.Columns[0].Caption);
+            Assert.AreEqual("name", dataTable.Columns[1].ColumnName);
         }
         [TestMethod()]
         public void ConvertTestWithNullable()
@@ -52,7 +52,7 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
                   ColumnDefine.DatetimeColumn("birthday","生日","yyyy-mm-dd") 
                   });
 
-            Assert.AreEqual("生日", dataTable.Columns[0].ColumnName);
+            Assert.AreEqual("生日", dataTable.Columns[0].Caption);
             Assert.AreEqual(DBNull.Value, dataTable.Rows[0][0]);
             Assert.AreEqual(birthday, dataTable.Rows[1][0]);
         }
@@ -137,7 +137,9 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
             col4.ExtendedProperties["columnDefine"] = ColumnDefine.TwoDimensionalColumn("amount", TwoDimensionalColumnType.Row);
 
             DataColumn col5 = new DataColumn("SizeGuid", typeof(string));
-            col5.ExtendedProperties["columnDefine"] = ColumnDefine.OtherColumn("gguid", "品名guid");
+            col5.ExtendedProperties["columnDefine"] = ColumnDefine.TwoDimensionalColumn("sizeguid", TwoDimensionalColumnType.ColumnGuid);
+
+
             dataTable.Columns.Add(col1);
             dataTable.Columns.Add(col2);
             dataTable.Columns.Add(col3);

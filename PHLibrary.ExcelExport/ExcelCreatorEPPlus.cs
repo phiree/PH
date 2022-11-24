@@ -15,18 +15,40 @@ using PHLibrary.Reflection;
 namespace PHLibrary.ExcelExport
 {
 
-    public class SheetData<T> { 
+    public class SheetData<T1>
+    {
         /// <summary>
         /// sheet 对应的数据
         /// </summary>
-        public IList<T> Data { get;set;}
-        public string SheetName { get;set;}
+
+        public IList<T1> Data1 { get; set; }
+        public string SheetName1 { get; set; }
         /// <summary>
         /// 需要展示的属性名称
         /// </summary>
-        public IList<ColumnDefine> PropertiesToDisplay {get;set; }
-        public IList<IList<string>> SummaryDataForTopTable { get;set;}
-        }
+        public IList<ColumnDefine> PropertiesToDisplay1 { get; set; }
+        public IList<IList<string>> SummaryDataForTopTable1 { get; set; }
+    }
+    public class SheetData<T1, T2> : SheetData<T1>
+    {
+        public IList<T2> Data2 { get; set; }
+        public string SheetName2 { get; set; }
+        /// <summary>
+        /// 需要展示的属性名称
+        /// </summary>
+        public IList<ColumnDefine> PropertiesToDisplay2 { get; set; }
+        public IList<IList<string>> SummaryDataForTopTable2 { get; set; }
+    }
+    public class SheetData<T1, T2, T3> : SheetData<T1, T2>
+    {
+        public IList<T3> Data3 { get; set; }
+        public string SheetName3 { get; set; }
+        /// <summary>
+        /// 需要展示的属性名称
+        /// </summary>
+        public IList<ColumnDefine> PropertiesToDisplay3 { get; set; }
+        public IList<IList<string>> SummaryDataForTopTable3 { get; set; }
+    }
 
 
     /// <summary>
@@ -34,25 +56,71 @@ namespace PHLibrary.ExcelExport
     /// </summary>
     public class ExcelCreatorEPPlus : IExcelCreator
     {
-        public Stream Create<T>(IList<SheetData<T>> sheetDatas,SortSize sortSize, string amountFormat ) { 
-            
-            IList<DataTable> tables=new List<DataTable>();
-            foreach(var sheetData in sheetDatas) {
-                var tableConvertor = new DataTableConverter<T>();
-                var dataTable = tableConvertor.Convert(sheetData.Data, sortSize, amountFormat,sheetData.PropertiesToDisplay);
-                dataTable.TableName = sheetData.SheetName;
-                tables.Add(dataTable);
-                dataTable.ExtendedProperties[SummaryDataForSheet] =sheetData.SummaryDataForTopTable;
-            }
-            
+        public Stream Create<T1>(SheetData<T1> sheetData, SortSize sortSize, string amountFormat)
+        {
+
+            IList<DataTable> tables = new List<DataTable>();
+
+            var tableConvertor = new DataTableConverter<T1>();
+            var dataTable = tableConvertor.Convert(sheetData.Data1, sortSize, amountFormat, sheetData.PropertiesToDisplay1);
+            dataTable.TableName = sheetData.SheetName1;
+            tables.Add(dataTable);
+            dataTable.ExtendedProperties[SummaryDataForSheet] = sheetData.SummaryDataForTopTable1;
+
+
+            return Create(tables);
+
+        }
+        public Stream Create<T1, T2>(SheetData<T1, T2> sheetData, SortSize sortSize, string amountFormat)
+        {
+
+            IList<DataTable> tables = new List<DataTable>();
+
+            var table1 = GetTable(sheetData.Data1, sheetData.SheetName1, sortSize, amountFormat, sheetData.PropertiesToDisplay1, sheetData.SummaryDataForTopTable1);
+            var table2 = GetTable(sheetData.Data2, sheetData.SheetName2, sortSize, amountFormat, sheetData.PropertiesToDisplay2, sheetData.SummaryDataForTopTable2);
+
+
+            tables.Add(table1);
+            tables.Add(table2);
+
+            return Create(tables);
+
+        }
+        public Stream Create<T1, T2, T3>(SheetData<T1, T2, T3> sheetData, SortSize sortSize, string amountFormat)
+        {
+
+            IList<DataTable> tables = new List<DataTable>();
+
+            var table1 = GetTable(sheetData.Data1, sheetData.SheetName1, sortSize, amountFormat, sheetData.PropertiesToDisplay1, sheetData.SummaryDataForTopTable1);
+            var table2 = GetTable(sheetData.Data2, sheetData.SheetName2, sortSize, amountFormat, sheetData.PropertiesToDisplay2, sheetData.SummaryDataForTopTable2);
+            var table3 = GetTable(sheetData.Data3, sheetData.SheetName3, sortSize, amountFormat, sheetData.PropertiesToDisplay3, sheetData.SummaryDataForTopTable3);
+
+
+            tables.Add(table1);
+            tables.Add(table2);
+            tables.Add(table3);
 
             return Create(tables);
 
         }
 
-        const string SummaryDataForSheet= "SummaryData";
+        private DataTable GetTable<T>(IList<T> data, string sheetName, SortSize sortSize, string amountFormat, IList<ColumnDefine> propertiesToDisplay, IList<IList<string>> summaryDataForTopTable)
+        {
+            var tableConvertor = new DataTableConverter<T>();
+            var dataTable = tableConvertor.Convert(data, sortSize, amountFormat, propertiesToDisplay);
+            dataTable.TableName = sheetName;
+            dataTable.ExtendedProperties[SummaryDataForSheet] = summaryDataForTopTable;
 
-         
+
+            return dataTable;
+        }
+
+       
+
+
+        const string SummaryDataForSheet = "SummaryData";
+
+
         /// <summary>
         /// 创建只包含一个Sheet的Excel
         ///     重载 包含多个Sheet的excel方法
@@ -66,16 +134,15 @@ namespace PHLibrary.ExcelExport
         /// <param name="amountFormat"></param>
         /// <returns></returns>
         public Stream Create<T>(IList<T> data, IList<ColumnDefine> propertiesToDisplay, string sheetName, SortSize sortSize,
-           IList<IList<string>> summaryData, string amountFormat )
+           IList<IList<string>> summaryData, string amountFormat)
         {
-            var sheetDatas = new List<SheetData<T>> 
-            { new SheetData<T> { Data = data, PropertiesToDisplay = propertiesToDisplay
-                , SheetName = sheetName, SummaryDataForTopTable = summaryData } };
+            var sheetDatas =   new SheetData<T> { Data1 = data, PropertiesToDisplay1 = propertiesToDisplay
+                , SheetName1 = sheetName, SummaryDataForTopTable1 = summaryData } ;
 
-            return Create(sheetDatas, sortSize, amountFormat);
+            return Create (sheetDatas, sortSize, amountFormat);
 
         }
-        private Stream Create(IList<DataTable> datatables,  CellStyleSettings cellStyleSettings=null)
+        private Stream Create(IList<DataTable> datatables, CellStyleSettings cellStyleSettings = null)
         {
             if (cellStyleSettings == null)
             {
@@ -87,19 +154,19 @@ namespace PHLibrary.ExcelExport
                 {
                     var dataTable = datatables[i];
 
-                    var columnTree =CreateColumnTree(dataTable);
+                    var columnTree = CreateColumnTree(dataTable);
 
                     string tablename = string.IsNullOrEmpty(dataTable.TableName) ? "sheet1" : dataTable.TableName;
-                   
+
                     var sheet = excelPackage.Workbook.Worksheets.Add(tablename);
                     int summaryTableHeight = 0;
-                    if( dataTable.ExtendedProperties[SummaryDataForSheet] is IList<IList<string>> summaryData)
-                    { 
-                    if (summaryData != null)
+                    if (dataTable.ExtendedProperties[SummaryDataForSheet] is IList<IList<string>> summaryData)
                     {
-                        var summaryTableCreator = new SummaryTableCreator(sheet, 1);
-                        summaryTableHeight = summaryTableCreator.Create(summaryData);
-                    }
+                        if (summaryData != null)
+                        {
+                            var summaryTableCreator = new SummaryTableCreator(sheet, 1);
+                            summaryTableHeight = summaryTableCreator.Create(summaryData);
+                        }
                     }
                     //create merged header cells
                     var headerCreateor = new ExceHeaderCreatorEPPlus(columnTree, sheet, cellStyleSettings.HeaderBackgroundColor, summaryTableHeight);
@@ -128,7 +195,7 @@ namespace PHLibrary.ExcelExport
             {
                 var column = table.Columns[i];
 
-                roots.Add(new ColumnTreeNode {  Title = column.Caption });
+                roots.Add(new ColumnTreeNode { Title = column.Caption });
             }
             columnTree.Roots = roots;
             return columnTree;
@@ -147,7 +214,7 @@ namespace PHLibrary.ExcelExport
             }
             //fill data
             var cells = sheet.Cells[startRow + 1, 1, rows, columns];
-           
+
 
             cells.LoadFromDataTable(dataTable, false);
 
@@ -168,7 +235,7 @@ namespace PHLibrary.ExcelExport
                 }
             }
             //style
-            
+
             var bodyCells = sheet.Cells[startRow + 1, 1, startRow + rows, columns];
             if (cellStyleSettings != null)
             {
@@ -181,12 +248,13 @@ namespace PHLibrary.ExcelExport
             //image
             //datetime 
             SetFormatForDateColumn(sheet, dataTable);
-            SetHiddenForDateColumn(sheet,dataTable);
-             
+            SetHiddenForDateColumn(sheet, dataTable);
+
 
         }
-        
-        private void SetFormatForDateColumn(ExcelWorksheet sheet,DataTable dataTable) {
+
+        private void SetFormatForDateColumn(ExcelWorksheet sheet, DataTable dataTable)
+        {
             int columnIndex = 1;
             foreach (DataColumn column in dataTable.Columns)
             {
@@ -194,9 +262,9 @@ namespace PHLibrary.ExcelExport
                 if (column.DataType == typeof(DateTime))
                 {
                     var sheetColumn = sheet.Column(columnIndex);
-                    var datetimeFormat=  ((ColumnDefine)column.ExtendedProperties["columnDefine"]).DatetimeFormat;
-                    string dateFormatString= datetimeFormat ?? "yyyy/MM/dd HH:mm:ss";
-                    
+                    var datetimeFormat = ((ColumnDefine)column.ExtendedProperties["columnDefine"]).DatetimeFormat;
+                    string dateFormatString = datetimeFormat ?? "yyyy/MM/dd HH:mm:ss";
+
                     sheetColumn.Style.Numberformat.Format = dateFormatString;
                     sheetColumn.AutoFit();
                 }
@@ -209,16 +277,17 @@ namespace PHLibrary.ExcelExport
             foreach (DataColumn column in dataTable.Columns)
             {
                 var columnDefine = (ColumnDefine)column.ExtendedProperties["columnDefine"];
-                if (columnDefine!=null&&columnDefine.Hide) {
+                if (columnDefine != null && columnDefine.Hide)
+                {
                     var sheetColumn = sheet.Column(columnIndex);
-                   sheetColumn.Hidden=true;
+                    sheetColumn.Hidden = true;
                 }
 
-                 
+
                 columnIndex++;
             }
         }
-         const int ImageWidth = 100;
+        const int ImageWidth = 100;
         const int ImageHeight = 100;
         const int imageMargin = 3;
         private void LoadPictures(ExcelWorksheet sheet, DataTable dataTable, int startRow)
@@ -266,5 +335,5 @@ namespace PHLibrary.ExcelExport
 
 
     }
- 
+
 }

@@ -283,18 +283,16 @@ namespace PHLibrary.ExcelExport.Tests
             ExcelCreatorEPPlus excelCreator
                = new ExcelCreatorEPPlus();
             var stream = excelCreator.Create(
-                new List<SheetData<TestItem>>{
-                    new ExcelExport.SheetData<TestItem>{
-                        Data=list
-                        , PropertiesToDisplay= new List<ColumnDefine> {new ColumnDefine("age"),  ColumnDefine.ImageColumn("picture")}
-                        ,SheetName="表格1"
-                        }  
-                    ,new ExcelExport.SheetData<TestItem>{
-                        Data=list2
-                        , PropertiesToDisplay= new List<ColumnDefine> {new ColumnDefine("age"), new ColumnDefine("name"),  ColumnDefine.ImageColumn("picture")}
-                        ,SheetName="表格2"
+               
+                    new ExcelExport.SheetData<TestItem,TestItem>{
+                        Data1=list
+                        , PropertiesToDisplay1= new List<ColumnDefine> {new ColumnDefine("age"),  ColumnDefine.ImageColumn("picture")}
+                        ,SheetName1="表格1"
+                        ,Data2=list2
+                        , PropertiesToDisplay2= new List<ColumnDefine> {new ColumnDefine("age"), new ColumnDefine("name"),  ColumnDefine.ImageColumn("picture")}
+                        ,SheetName2="表格2"
                         }
-                    },null,"F1"
+                     ,null,"F1"
                 
                 );
             using (var file = new FileStream("CreateForImages" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))

@@ -25,7 +25,9 @@ namespace PHLibrary.ExcelExport
         /// <param name="amountFormat">金额单位F0,F1,F2,F3</param>
         /// <param name="needExportImage">是否导出图片</param>
         /// <returns></returns>
-        Stream Create<T>(IList<SheetData<T>> sheetDatas, SortSize sortSize, string amountFormat);
+        Stream Create<T1>( SheetData<T1> sheetData, SortSize sortSize, string amountFormat);
+        Stream Create<T1,T2>(SheetData<T1,T2> sheetData, SortSize sortSize, string amountFormat);
+        Stream Create<T1,T2,T3>(SheetData<T1,T2,T3> sheetData, SortSize sortSize, string amountFormat);
 
     }
 }

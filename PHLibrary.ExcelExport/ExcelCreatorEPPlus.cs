@@ -128,7 +128,7 @@ namespace PHLibrary.ExcelExport
             {
                 var column = table.Columns[i];
 
-                roots.Add(new ColumnTreeNode {  Title = column.ColumnName });
+                roots.Add(new ColumnTreeNode {  Title = column.Caption });
             }
             columnTree.Roots = roots;
             return columnTree;

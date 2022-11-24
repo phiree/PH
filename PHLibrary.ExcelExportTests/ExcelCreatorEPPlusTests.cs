@@ -101,6 +101,7 @@ namespace PHLibrary.ExcelExport.Tests
         {
      
             Guid guidM=Guid.NewGuid();
+            Guid guidM2 = Guid.NewGuid();
             Guid guidL= Guid.NewGuid();
             Guid guidXL= Guid.NewGuid();
             Guid guidXXL= Guid.NewGuid();
@@ -111,6 +112,8 @@ namespace PHLibrary.ExcelExport.Tests
                     Size="M",SizeGuid=guidM ,  Amount=1,Price=12 },
                  new Order1103{ Name="春装001", Code="CZ001", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135",
                     Size="M",SizeGuid=guidM ,  Amount=1,Price=13 },
+                  new Order1103{ Name="春装001", Code="CZ001", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135",
+                    Size="M",SizeGuid=guidM2 ,  Amount=8,Price=13 },
 
                 new Order1103{ Name="春装001", Code="CZ001", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135", 
                     Size="L",SizeGuid=guidL,  Amount=2 ,Price=12},
@@ -152,6 +155,67 @@ namespace PHLibrary.ExcelExport.Tests
             }
 
         }
+
+        [TestMethod()]
+        public void CreateForTwoDimensionsWithoutGuid()
+        {
+
+            Guid guidM = Guid.NewGuid();
+            Guid guidM2 = Guid.NewGuid();
+            Guid guidL = Guid.NewGuid();
+            Guid guidXL = Guid.NewGuid();
+            Guid guidXXL = Guid.NewGuid();
+            Guid guidXXXL = Guid.NewGuid();
+            Guid guidL2 = Guid.NewGuid();
+            var list = new List<Order1103>() {
+                new Order1103{ Name="春装001", Code="CZ001", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135",
+                    Size="M",  Amount=1,Price=12 },
+                 new Order1103{ Name="春装001", Code="CZ001", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135",
+                    Size="M",   Amount=1,Price=13 },
+                  new Order1103{ Name="春装001", Code="CZ001", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135",
+                    Size="M",   Amount=8,Price=13 },
+
+                new Order1103{ Name="春装001", Code="CZ001", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135",
+                    Size="L",   Amount=2 ,Price=12},
+                new Order1103{ Name="春装001", Code="CZ001", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135",
+                    Size="XL",   Amount=3 ,Price=123},
+                new Order1103{ Name="春装001", Code="CZ001", Color="蓝色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135",
+                    Size="M",   Amount=4 ,Price=123},
+                new Order1103{ Name="春装001", Code="CZ001", Color="蓝色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135",
+                    Size="L",   Amount=5 , Price = 123},
+                new Order1103{ Name="春装001", Code="CZ001", Color="蓝色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135",
+                     Size="XXL",  Amount=6 , Price = 123},
+                new Order1103{ Name="春装002", Code="CZ002", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135",
+                     Size="XXXL",   Amount=7   ,Price=12345},
+                //new Order1103{ Name="春装002", Code="CZ002", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135",
+                //     Size="L",SizeGuid=guidL2,  Amount=7   ,Price=12345},
+                };
+            ExcelCreatorEPPlus excelCreator
+               = new ExcelCreatorEPPlus();
+            var stream = excelCreator.Create(list,
+                  new List<ColumnDefine> {
+                   ColumnDefine.GroupColumn("Name","品名"),
+                  ColumnDefine.HiddenColumn("PGuid",""),
+
+                  ColumnDefine.AmountColumn("Price", "价格"),
+
+                  ColumnDefine.GroupColumn("Color", "颜色"),
+                  ColumnDefine.TwoDimensionalColumn("Size",TwoDimensionalColumnType.Column),
+                 // ColumnDefine.TwoDimensionalColumn("SizeGuid",TwoDimensionalColumnType.ColumnGuid),
+                  ColumnDefine.TwoDimensionalColumn("Amount",TwoDimensionalColumnType.Row),
+                  ColumnDefine.ImageColumn("Picture", "图片"),
+              },
+                "sheet1", Sort,
+                null, "F3");
+            using (var file = new FileStream("CreateForImagesAndTwoDimetional" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
+            {
+                // stream.Seek(0, SeekOrigin.Begin);
+                CopyStream(stream, file);
+
+            }
+
+        }
+
         private IList<TwoDimensionalX> Sort(IList<TwoDimensionalX> columns)
         {
            return  columns.Distinct(). OrderBy(x=>x.Guid).ToList();

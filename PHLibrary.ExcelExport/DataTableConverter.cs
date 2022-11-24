@@ -153,12 +153,12 @@ namespace PHLibrary.ExcelExportExcelCreator
                                      {
                                          row[col] = groupByTwoDimensionalColumn.ToList().Select(x => x[col]).Sum(x => (int)x);
                                      }
-                                     
+
                                  }
                                  sumedRows.Add(row);
-                                 
+
                              }
-                              
+
                              return CreateGroup(sumedRows, g.Key);
                              //   return g;
                              ;
@@ -194,10 +194,20 @@ namespace PHLibrary.ExcelExportExcelCreator
                 {
                     foreach (var col2 in twoDimensionalColumnsOrdered)
                     {
-                        string colName = col2.Name;// col2.Guid!= string.Empty?col2.Guid:col2.Name;
 
-                        allColumns.Add(new DataColumn(colName.ToString()));
-                       
+                        string colName = col2.Name;// col2.Guid!= string.Empty?col2.Guid:col2.Name;
+                        string colCaption = col2.Name;
+                        if (!string.IsNullOrEmpty(col2.Guid))
+                        {
+                            colName = col2.Guid;
+                            colCaption = col2.Name;
+
+                        }
+                        var twoDimensionalColumn = new DataColumn(colName);
+                        twoDimensionalColumn.Caption = colCaption;
+                        twoDimensionalColumn.ExtendedProperties.Add("isGuid", true);
+                        allColumns.Add(twoDimensionalColumn);
+
                         // allColumns.Add(new DataColumn(col2.Guid.ToString()));
                     }
                     twoDimensinalColumnsAdded = true;
@@ -211,7 +221,8 @@ namespace PHLibrary.ExcelExportExcelCreator
 
             foreach (var col in allColumns)
             {
-                DataColumn newCol=new DataColumn(col.ColumnName,col.DataType);
+                DataColumn newCol = new DataColumn(col.ColumnName, col.DataType);
+                newCol.Caption=col.Caption;
                 newCol.ExtendedProperties["columnDefine"] = col.ExtendedProperties["columnDefine"];
                 newt.Columns.Add(newCol);// new DataColumn(col.ColumnName, col.DataType)); ;
             }
@@ -230,14 +241,15 @@ namespace PHLibrary.ExcelExportExcelCreator
                     //二维列数据填充
                     foreach (var r in group.ToList())
                     {
-                        if (r[twoDimentinalColumnNames.TwoDimensionalX.Name].ToString() == col.ColumnName)
+                        if (r[twoDimentinalColumnNames.TwoDimensionalX.Guid]==col.ColumnName||   r[twoDimentinalColumnNames.TwoDimensionalX.Name].ToString() == col.ColumnName)
                         {
                             row[col.ColumnName] = r[twoDimentinalColumnNames.YName];
 
-                        }else if (columnsBuilder.OtherColumns.Any(x => x.ColumnName == col.ColumnName))
+                        }
+                        else if (columnsBuilder.OtherColumns.Any(x => x.ColumnName == col.ColumnName))
                         {
                             row[col.ColumnName] = r[col.ColumnName];
-                            }
+                        }
                     }
                 }
                 newt.Rows.Add(row);

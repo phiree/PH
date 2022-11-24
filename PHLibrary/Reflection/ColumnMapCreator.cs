@@ -102,9 +102,9 @@ namespace PHLibrary.Reflection
                 , TwoDimensionalColumnType  twoDimensionalColumnType, bool isAmount)
             {
                 IsInGroup=isInGroup;
-                PropertyName = propertyName;
+                PropertyName=propertyName;
                  NeedFormatAmount=isAmount;
-                DisplayName = displayName??propertyName;
+                DisplayName = displayName;
                 Hide = hide;
                 IsImage = isImage;
                 DatetimeFormat = format;
@@ -112,7 +112,11 @@ namespace PHLibrary.Reflection
             }
         
             public DataColumn CreateDataColumn() { 
-                var dataColumn= new DataColumn(DisplayName,ColumnType);
+                
+                
+                var dataColumn= new DataColumn(PropertyName,ColumnType);
+                dataColumn.Caption=DisplayName;
+                
                 if(TwoDimensionalColumnType== TwoDimensionalColumnType.Row) { 
                     dataColumn.DataType=typeof(int);
                     }

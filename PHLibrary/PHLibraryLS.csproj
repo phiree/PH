@@ -6,7 +6,7 @@
     <Description>common library for future usage, maybe for others .</Description>
     <PackageId>PHLibraryLS</PackageId>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <PackageReleaseNotes>3.1
+    <PackageReleaseNotes>3.2
 优化命名，增加重要注释
 3.0
 使用传入定义替代自定义属性
@@ -54,13 +54,13 @@ improvement,
 first array's order can be diffrent with properties
 1.0.6
 support properties that dont have orderattribute</PackageReleaseNotes>
-    <Version>3.1</Version>
+    <Version>3.2</Version>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <Company>PHLibrary</Company>
     <Authors>PHLibrary</Authors>
     <PackageLicenseUrl></PackageLicenseUrl>
-    <FileVersion>3.1</FileVersion>
-    <AssemblyVersion>3.1</AssemblyVersion>
+    <FileVersion>3.2</FileVersion>
+    <AssemblyVersion>3.2</AssemblyVersion>
     <PackageProjectUrl>https://github.com/phiree/PHLibrary</PackageProjectUrl>
     <PackageIcon>icon.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

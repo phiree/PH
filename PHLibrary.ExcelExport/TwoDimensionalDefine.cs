@@ -1,4 +1,6 @@
-﻿namespace PHLibrary.ExcelExportExcelCreator
+﻿using System.Collections.Generic;
+
+namespace PHLibrary.ExcelExportExcelCreator
 {
     public class TwoDimensionalDefine
     {
@@ -12,6 +14,16 @@
 
             YName = yName;
         }
+       
+
+        public string[] BuildOrderBy() { 
+            var orderBy=new List<string>();
+            orderBy.Add(TwoDimensionalX.Name);
+            if (TwoDimensionalX.Guid != null) { 
+                orderBy.Add(TwoDimensionalX.Guid);
+                }
+            return orderBy.ToArray();
+            }
         public bool Contains(string columnName)
         {
             return TwoDimensionalX.Name == columnName || TwoDimensionalX.Guid == columnName || YName == columnName;

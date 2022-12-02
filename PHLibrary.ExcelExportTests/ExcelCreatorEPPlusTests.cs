@@ -216,9 +216,9 @@ namespace PHLibrary.ExcelExport.Tests
 
         }
 
-        private IList<TwoDimensionalX> Sort(IList<TwoDimensionalX> columns)
+        private IList<TwoDimensionalValue> Sort(IList<TwoDimensionalValue> columns)
         {
-           return  columns.Distinct(). OrderBy(x=>x.Guid).ToList();
+           return  columns.Distinct(). OrderBy(x=>x.Id).ToList();
             
         }
         

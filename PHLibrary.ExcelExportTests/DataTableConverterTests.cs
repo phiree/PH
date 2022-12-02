@@ -112,8 +112,8 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
             Assert.AreEqual(6, newTable.Columns.Count);
             Assert.AreEqual("春装001", newTable.Rows[0][0]);
             Assert.AreEqual("红色", newTable.Rows[0][1]);
-            Assert.AreEqual("2", newTable.Rows[0][2]);
-            Assert.AreEqual("1", newTable.Rows[0][3]);
+            Assert.AreEqual(2, newTable.Rows[0][2]);
+            Assert.AreEqual(1, newTable.Rows[0][3]);
             Assert.AreEqual("3", newTable.Rows[0][4]);
             Assert.AreEqual("蓝色", newTable.Rows[1][1]);
             Assert.AreEqual("5", newTable.Rows[1][2]);
@@ -146,13 +146,17 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
             dataTable.Columns.Add(col4);
             dataTable.Columns.Add(col5);
 
-             
-            dataTable.Rows.Add("春装001", "红色", "L", 1, "1");
-            dataTable.Rows.Add("春装001", "红色", "M", 2, "2");
-            dataTable.Rows.Add("春装001", "红色", "XL", 3, "3");
-            dataTable.Rows.Add("春装001", "蓝色", "L", 4, "1");
-            dataTable.Rows.Add("春装001", "蓝色", "M", 5, "2");
-            dataTable.Rows.Add("春装001", "蓝色", "XXL", 6, "4");
+            Guid guidM=Guid.NewGuid();
+            Guid guidL = Guid.NewGuid();
+            Guid guidXL= Guid.NewGuid();
+            Guid guidXXL = Guid.NewGuid();
+
+            dataTable.Rows.Add("春装001", "红色", "L", 1,guidM);
+            dataTable.Rows.Add("春装001", "红色", "M", 2, guidL);
+            dataTable.Rows.Add("春装001", "红色", "XL", 3, guidXL);
+            dataTable.Rows.Add("春装001", "蓝色", "L", 4, guidL);
+            dataTable.Rows.Add("春装001", "蓝色", "M", 5, guidM);
+            dataTable.Rows.Add("春装001", "蓝色", "XXL", 6, guidXXL);
             /*二维表：
             品名，  颜色      L M XL XXL
             春001  红色      1 2 3
@@ -162,12 +166,12 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
             return dataTable;
         }
 
-        private IList<TwoDimensionalX> Sort(IList<TwoDimensionalX> columns)
+        private IList<TwoDimensionalValue> Sort(IList<TwoDimensionalValue> columns)
         {
-            return new List<TwoDimensionalX> {new TwoDimensionalX("M","1")
-                ,new TwoDimensionalX("L","2")
-                ,new TwoDimensionalX("XL","3")
-                ,new TwoDimensionalX( "XXL","4") };
+            return new List<TwoDimensionalValue> {new TwoDimensionalValue("M",Guid.NewGuid())
+                ,new TwoDimensionalValue("L",Guid.NewGuid())
+                ,new TwoDimensionalValue("XL",Guid.NewGuid())
+                ,new TwoDimensionalValue("XXL",Guid.NewGuid())};
         }
 
         public class Student3

@@ -117,7 +117,7 @@ namespace PHLibrary.Reflection
             /// <param name="propertyName"></param>
             /// <param name="displayName"></param>
             /// <returns></returns>
-            public static ColumnDefine OtherColumn(string propertyName, string displayName)
+            public static ColumnDefine NormalColumn(string propertyName, string displayName)
             {
                 return new ColumnDefine(propertyName, displayName, false);
             }

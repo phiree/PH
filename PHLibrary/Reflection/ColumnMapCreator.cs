@@ -14,6 +14,60 @@ namespace PHLibrary.Reflection
     {
 
 
+        public class ColumnDefineBuilder
+        {
+
+
+            IList<ColumnDefine> columns = new List<ColumnDefine>();
+            public ColumnDefineBuilder AddNormalColumn(string property, string display, bool shouldAdd = true)
+            {
+
+                if (shouldAdd) columns.Add(ColumnDefine.NormalColumn(property, display));
+                return this;
+            }
+            public ColumnDefineBuilder AddImageColumn(string property, string display, bool shouldAdd = true)
+            {
+
+                if (shouldAdd) columns.Add(ColumnDefine.ImageColumn(property, display));
+                return this;
+            }
+            public ColumnDefineBuilder AddDatetimeColumn(string property, string display, string format, bool shouldAdd = true)
+            {
+
+                if (shouldAdd) columns.Add(ColumnDefine.DatetimeColumn(property, display, format));
+                return this;
+            }
+            public ColumnDefineBuilder AddTwoDimensionalColumns(string columnProperty, string columnGuidProperty, string rowProperty)
+            {
+
+                columns.Add(ColumnDefine.TwoDimensionalColumn(columnProperty, TwoDimensionalColumnType.Column));
+                columns.Add(ColumnDefine.TwoDimensionalColumn(columnGuidProperty, TwoDimensionalColumnType.ColumnGuid));
+                columns.Add(ColumnDefine.TwoDimensionalColumn(rowProperty, TwoDimensionalColumnType.Row));
+                return this;
+            }
+            public ColumnDefineBuilder AddAmountColumn(string property, string display, bool shouldAdd = true)
+            {
+
+                if (shouldAdd) columns.Add(ColumnDefine.AmountColumn(property, display));
+                return this;
+            }
+            public ColumnDefineBuilder AddGroupColumn(string property, string display, bool shouldAdd = true)
+            {
+
+                if (shouldAdd) columns.Add(ColumnDefine.GroupColumn(property, display));
+                return this;
+            }
+            public ColumnDefineBuilder AddHiddenColumn(string property, string display, bool shouldAdd = true)
+            {
+
+                if (shouldAdd) columns.Add(ColumnDefine.HiddenColumn(property, display));
+                return this;
+            }
+            public IList<ColumnDefine> Build()
+            {
+                return columns;
+            }
+        }
         public class ColumnDefine
         {
             /// <summary>

@@ -174,7 +174,7 @@ namespace PHLibrary.ExcelExport
                     {
                         if (summaryData != null)
                         {
-                            var summaryTableCreator = new SummaryTableCreator(sheet, 1);
+                            var summaryTableCreator = new SummaryTableCreator(sheet);
                             summaryTableHeight = summaryTableCreator.Create(summaryData);
                         }
                     }
@@ -185,7 +185,7 @@ namespace PHLibrary.ExcelExport
                     //create body 
                     FillSheetEpplusWithLoadRange(sheet, datatables[i], headerHeight, columnFormats, cellStyleSettings);
 
-
+                    sheet.Cells.AutoFitColumns();
 
                     LoadPictures(sheet, dataTable, headerHeight);
                 }

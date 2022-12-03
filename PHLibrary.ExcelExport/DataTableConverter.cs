@@ -202,6 +202,7 @@ namespace PHLibrary.ExcelExportExcelCreator
 
                         }
                         var twoDimensionalColumn = new DataColumn(colName);
+                        twoDimensionalColumn.DataType=typeof(int);
                         twoDimensionalColumn.Caption = colCaption;
                         twoDimensionalColumn.ExtendedProperties.Add("isGuid", true);
                         allColumns.Add(twoDimensionalColumn);
@@ -355,14 +356,15 @@ namespace PHLibrary.ExcelExportExcelCreator
         public DataTable Convert(IList<T> data, SortSize sortSize, string amountFormat, IList<ColumnDefine> columnDefines)
         {
 
-
-            new ColumnMapCreator().CheckColulmnDefines<T>(columnDefines);
+            var propertyInfos = typeof(T).GetProperties();
+            new ColumnMapCreator().CheckColulmnDefines(propertyInfos, columnDefines);
 
             var dataTable = new DataTable("Sheet1");
 
             foreach (var columnDefine in columnDefines)// var name in memberNames)
             {
-                dataTable.Columns.Add(columnDefine.CreateDataColumn());
+                var property=propertyInfos.Single(x=>x.Name.Equals(columnDefine.PropertyName, StringComparison.CurrentCultureIgnoreCase));
+                dataTable.Columns.Add(columnDefine.CreateDataColumn(property.PropertyType));
             }
 
             foreach (T t in data)

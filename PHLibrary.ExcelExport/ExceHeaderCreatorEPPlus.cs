@@ -12,7 +12,7 @@ namespace PHLibrary.ExcelExport
 
         ExcelWorksheet worksheet;
         int bottomMargin ;
-        public SummaryTableCreator(ExcelWorksheet worksheet, int bottomMargin = 1)
+        public SummaryTableCreator(ExcelWorksheet worksheet, int bottomMargin =0)
         {
             this.worksheet = worksheet;
             this.bottomMargin = bottomMargin;
@@ -26,20 +26,42 @@ namespace PHLibrary.ExcelExport
         public int Create(IList<IList<string>> summaryData)
         {
             int rowIndex = 0;
+            int maxColumns=0;
             foreach (var list in summaryData)
             {
                 
                 int colIndex = 0;
                 foreach (var cellData in list)
                 {
-
-                    worksheet.Cells[rowIndex + 1, colIndex + 1].Value = cellData;
+                    var cell= worksheet.Cells[rowIndex + 1, colIndex + 1];
+                    
+                    cell.Value = ConvertNumberValue(cellData);
+                    
                     colIndex++;
+                    if (colIndex >= maxColumns) { 
+                        maxColumns=colIndex;
+                        }
                 }
                 rowIndex++;
+              
             }
+            var cellRange = worksheet.Cells[rowIndex, maxColumns];
+            cellRange.AutoFitColumns();
             return rowIndex+bottomMargin;
         }
+        private object ConvertNumberValue(string cellData) { 
+            
+            int intValue;
+            decimal decimalValue;
+            if(int.TryParse(cellData,out intValue)) { 
+                return intValue;
+                }
+            if(decimal.TryParse(cellData,out decimalValue)) { 
+                return decimalValue;
+                }
+            return cellData;
+
+            }
 
     }
 

@@ -9,7 +9,9 @@
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/phiree/PHLibrary</RepositoryUrl>
     <PackageProjectUrl>https://github.com/phiree/PHLibrary</PackageProjectUrl>
-    <PackageReleaseNotes>3.0
+    <PackageReleaseNotes>3.1
+排序委托参数中的id改为guid类型。
+3.0
 增加多类型，以支持多sheet
 解决二维数据重复/非法问题
 2.1
@@ -85,11 +87,11 @@ fix: 格式化没有应用到最后一行数据
     <Product>lianshang</Product>
     <PackageId>PHLibrary.LSExcelExport</PackageId>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Version>3.0</Version>
+    <Version>3.1</Version>
     <Company>4yankeji</Company>
     <Authors>yf</Authors>
-    <FileVersion>3.0</FileVersion>
-    <AssemblyVersion>3.0</AssemblyVersion>
+    <FileVersion>3.1</FileVersion>
+    <AssemblyVersion>3.1</AssemblyVersion>
     <Copyright>无版权</Copyright>
   </PropertyGroup>
 

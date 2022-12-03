@@ -13,13 +13,13 @@ namespace PHLibrary.Reflection
     public class ColumnMapCreator
     {
 
-         
+
         public class ColumnDefine
         {
             /// <summary>
             /// 数据类属性名
             /// </summary>
-             public string PropertyName { get;}
+            public string PropertyName { get; }
             /// <summary>
             /// excel表头中文名
             /// </summary>
@@ -27,7 +27,7 @@ namespace PHLibrary.Reflection
             /// <summary>
             /// 是否参与分组
             /// </summary>
-            public bool IsInGroup { get;set;}
+            public bool IsInGroup { get; set; }
             /// <summary>
             /// 是否 隐藏
             /// </summary>
@@ -44,30 +44,41 @@ namespace PHLibrary.Reflection
             /// 二维列类型。
             /// </summary>
             public TwoDimensionalColumnType TwoDimensionalColumnType { get; }
-          /// <summary>
-          /// 是否需要自定义小数点精度
-          /// </summary>
-            public bool NeedFormatAmount { get;set;}
+            /// <summary>
+            /// 是否需要自定义小数点精度
+            /// </summary>
+            public bool NeedFormatAmount { get; set; }
 
+
+            private Type CalculateColumnType(Type propertyType)
+            {
+                if (IsImage) { return typeof(System.Drawing.Image); }
+                if (!String.IsNullOrEmpty(DatetimeFormat)) { return typeof(DateTime); }
+                if (NeedFormatAmount) { return typeof(double); }
+
+                return propertyType;
+            }
             public Type ColumnType
             {
-                get {
+                get
+                {
                     if (IsImage) { return typeof(System.Drawing.Image); }
-                    if (!String.IsNullOrEmpty( DatetimeFormat)) { return typeof(DateTime); }
-                    if (NeedFormatAmount) { return typeof(double);}
+                    if (!String.IsNullOrEmpty(DatetimeFormat)) { return typeof(DateTime); }
+                    if (NeedFormatAmount) { return typeof(double); }
 
                     return typeof(string);
-                    }
                 }
+            }
             /// <summary>
             /// 图片列
             /// </summary>
             /// <param name="propertyName"></param>
             /// <param name="displayName"></param>
             /// <returns></returns>
-            public static ColumnDefine ImageColumn(string propertyName,string displayName) { 
-                return new ColumnDefine(propertyName,displayName,false,false,true,"", TwoDimensionalColumnType.None,false);
-                }
+            public static ColumnDefine ImageColumn(string propertyName, string displayName)
+            {
+                return new ColumnDefine(propertyName, displayName, false, false, true, "", TwoDimensionalColumnType.None, false);
+            }
             /// <summary>
             /// 图片列
             /// </summary>
@@ -75,7 +86,7 @@ namespace PHLibrary.Reflection
             /// <returns></returns>
             public static ColumnDefine ImageColumn(string propertyName)
             {
-                return   ColumnDefine.ImageColumn(propertyName, propertyName);//, false, false, true, "", TwoDimensionalColumnType.None, false);
+                return ColumnDefine.ImageColumn(propertyName, propertyName);//, false, false, true, "", TwoDimensionalColumnType.None, false);
             }
             /// <summary>
             /// 时间列
@@ -84,9 +95,9 @@ namespace PHLibrary.Reflection
             /// <param name="displayName"></param>
             /// <param name="datetimeFormat">时间格式字符串</param>
             /// <returns></returns>
-            public static ColumnDefine DatetimeColumn(string propertyName,string displayName,string datetimeFormat)
+            public static ColumnDefine DatetimeColumn(string propertyName, string displayName, string datetimeFormat)
             {
-                return new ColumnDefine(propertyName, displayName,false,false,false,datetimeFormat, TwoDimensionalColumnType.None,false);
+                return new ColumnDefine(propertyName, displayName, false, false, false, datetimeFormat, TwoDimensionalColumnType.None, false);
             }
             /// <summary>
             /// 二维列
@@ -96,8 +107,8 @@ namespace PHLibrary.Reflection
             /// <returns></returns>
             public static ColumnDefine TwoDimensionalColumn(string propertyName, TwoDimensionalColumnType twoDimensionalColumnType)
             {
-                 
-                return new ColumnDefine(propertyName, propertyName,false, false,false, "", twoDimensionalColumnType,false);
+
+                return new ColumnDefine(propertyName, propertyName, false, false, false, "", twoDimensionalColumnType, false);
             }
             /// <summary>
             /// 需要指定精度的数字
@@ -109,7 +120,7 @@ namespace PHLibrary.Reflection
 
             {
 
-                return new ColumnDefine(propertyName, displayName,false, false, false, "", TwoDimensionalColumnType.None, true);
+                return new ColumnDefine(propertyName, displayName, false, false, false, "", TwoDimensionalColumnType.None, true);
             }
             /// <summary>
             /// 一般列
@@ -127,47 +138,52 @@ namespace PHLibrary.Reflection
             /// <param name="propertyName"></param>
             /// <param name="displayName"></param>
             /// <returns></returns>
-            public static ColumnDefine GroupColumn(string propertyName,string displayName) { 
-                return new ColumnDefine(propertyName,displayName,true);
-                }
+            public static ColumnDefine GroupColumn(string propertyName, string displayName)
+            {
+                return new ColumnDefine(propertyName, displayName, true);
+            }
             public static ColumnDefine HiddenColumn(string propertyName, string displayName)
             {
-                return new ColumnDefine(propertyName, displayName,false,true,false,"", TwoDimensionalColumnType.None,false);
+                return new ColumnDefine(propertyName, displayName, false, true, false, "", TwoDimensionalColumnType.None, false);
             }
 
 
             public ColumnDefine(string propertyName) : this(propertyName, propertyName, false) { }
             public ColumnDefine(string propertyName, string displayName) : this(propertyName, displayName, false) { }
-            public ColumnDefine(string propertyName,string displayName,bool isInGroup)
-                :this(propertyName,displayName, isInGroup,false, false,"",TwoDimensionalColumnType.None,false)
-                {  }
-            public ColumnDefine(string propertyName, string displayName,bool isInGroup, bool hide, bool isImage, string format
-                , TwoDimensionalColumnType  twoDimensionalColumnType, bool isAmount)
+            public ColumnDefine(string propertyName, string displayName, bool isInGroup)
+                : this(propertyName, displayName, isInGroup, false, false, "", TwoDimensionalColumnType.None, false)
+            { }
+            public ColumnDefine(string propertyName, string displayName, bool isInGroup, bool hide, bool isImage, string format
+                , TwoDimensionalColumnType twoDimensionalColumnType, bool isAmount)
             {
-                IsInGroup=isInGroup;
-                PropertyName=propertyName;
-                 NeedFormatAmount=isAmount;
+                IsInGroup = isInGroup;
+                PropertyName = propertyName;
+                NeedFormatAmount = isAmount;
                 DisplayName = displayName;
                 Hide = hide;
                 IsImage = isImage;
                 DatetimeFormat = format;
-                TwoDimensionalColumnType=twoDimensionalColumnType;
+                TwoDimensionalColumnType = twoDimensionalColumnType;
             }
-        
-            public DataColumn CreateDataColumn() { 
-                
-                
-                var dataColumn= new DataColumn(PropertyName,ColumnType);
-                dataColumn.Caption=DisplayName;
-                
-                if(TwoDimensionalColumnType== TwoDimensionalColumnType.Row) { 
-                    dataColumn.DataType=typeof(int);
-                    }
-                dataColumn.ExtendedProperties.Add("columnDefine",this);
-                return dataColumn;
+
+            public DataColumn CreateDataColumn(Type propertyType)
+            {
+
+
+                var dataColumn = new DataColumn(PropertyName, CalculateColumnType(propertyType));
+
+                dataColumn.Caption = DisplayName;
+
+                if (TwoDimensionalColumnType == TwoDimensionalColumnType.Row)
+                {
+                    dataColumn.DataType = typeof(int);
                 }
+                dataColumn.ExtendedProperties.Add("columnDefine", this);
+                return dataColumn;
             }
-        public enum TwoDimensionalColumnType { 
+        }
+        public enum TwoDimensionalColumnType
+        {
             None,
             /// <summary>
             /// 二维列
@@ -181,7 +197,7 @@ namespace PHLibrary.Reflection
             /// 二维行
             /// </summary>
             Row
-            }
+        }
         //public class ColumnDefine
         //{
         //    public ColumnDefine(string propertyName, string displayName, object[] attributes)
@@ -197,26 +213,25 @@ namespace PHLibrary.Reflection
 
 
         //}
-        public void CheckColulmnDefines<T>(IList<ColumnDefine> columnDefines) //where T : class
+        public void CheckColulmnDefines(PropertyInfo[] propertyInfos, IList<ColumnDefine> columnDefines) //where T : class
         {
 
 
-            var propertyInfos = typeof(T).GetProperties();
-             
+
             foreach (var columnDefine in columnDefines)
             {
                 if (!propertyInfos.Any(x => x.Name.ToLower() == columnDefine.PropertyName.ToLower()))
                 {
- 
-                    throw new Exception($"类型{nameof(T)}没有找到对应的属性{columnDefine.PropertyName}");
+
+                    throw new Exception($"没有找到对应的属性{columnDefine.PropertyName}");
                 }
             }
 
-           
+
 
         }
- 
-        
+
+
     }
 
 

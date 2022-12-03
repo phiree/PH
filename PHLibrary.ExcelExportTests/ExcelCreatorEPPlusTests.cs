@@ -186,18 +186,21 @@ namespace PHLibrary.ExcelExport.Tests
                 //new Order1103{ Name="春装002", Code="CZ002", Color="红色", Picture="https://www.kunming.cn/news/upload/resources/image/2019/12/24/280186.jpg?1577145717135",
                 //     Size="L",SizeGuid=guidL2,  Amount=7   ,Price=12345},
                 };
-            ExcelCreatorEPPlus excelCreator
-               = new ExcelCreatorEPPlus();
-            var stream = excelCreator.Create(list,
-                new ColumnDefineBuilder()
+            var columns= new ColumnDefineBuilder()
                   .AddGroupColumn("Name", "品名")
-                  .AddNormalColumn("Code", "Code", isHidden:true)
-                  .AddAmountColumn("Price", "价格")
+                  .AddNormalColumn("Code", "Code", isHidden: true)
+                 
                    .AddGroupColumn("Color", "颜色")
                    .AddTwoDimensionalColumns("Size", "", "Amount")
                   .AddImageColumn("Picture", "图片")
-                  .Build()
-              ,
+                  .Build();
+
+               columns      .Add(ColumnDefine.TwoDimensionalColumn("price", TwoDimensionalColumnType.Row));
+               
+            ExcelCreatorEPPlus excelCreator
+               = new ExcelCreatorEPPlus();
+            var stream = excelCreator.Create(list,
+                columns,
                 "sheet1", Sort,
                 null, "F3");
             using (var file = new FileStream("CreateForImagesAndTwoDimetional" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))

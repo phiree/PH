@@ -6,7 +6,9 @@
     <Description>common library for future usage, maybe for others .</Description>
     <PackageId>PHLibraryLS</PackageId>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <PackageReleaseNotes>3.4
+    <PackageReleaseNotes>3.4.1
+增加hidden属性
+3.4
 使用builder模式，简化列定义
 3.3
 feat: normalColumn类型默认属性本身类型，toptable数字格式处理，toptable默认margin为0
@@ -60,13 +62,13 @@ improvement,
 first array's order can be diffrent with properties
 1.0.6
 support properties that dont have orderattribute</PackageReleaseNotes>
-    <Version>3.4</Version>
+    <Version>3.4.1</Version>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <Company>PHLibrary</Company>
     <Authors>PHLibrary</Authors>
     <PackageLicenseUrl></PackageLicenseUrl>
-    <FileVersion>3.4</FileVersion>
-    <AssemblyVersion>3.4</AssemblyVersion>
+    <FileVersion>3.4.1</FileVersion>
+    <AssemblyVersion>3.4.1</AssemblyVersion>
     <PackageProjectUrl>https://github.com/phiree/PHLibrary</PackageProjectUrl>
     <PackageIcon>icon.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

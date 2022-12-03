@@ -26,8 +26,8 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
             var studentList = new List<Student> { new Student { Name = "yf" } };
             DataTableConverter<Student> converter = new DataTableConverter<Student>();
             var dataTable = converter.Convert(studentList, null, "F0",new List<ColumnDefine> {
-                new ColumnDefine("age","年龄" ),
-                 new ColumnDefine("name","姓名" )});
+                  ColumnDefine.NormalColumn("age","年龄",false ),
+                   ColumnDefine.NormalColumn("name","姓名" ,false)});
             Assert.AreEqual("年龄", dataTable.Columns[0].Caption);
             Assert.AreEqual("name", dataTable.Columns[1].ColumnName);
         }
@@ -37,8 +37,8 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
             var studentList = new List<Student2> { new Student2 { Name = "yf" } };
             DataTableConverter<Student2> converter = new DataTableConverter<Student2>();
             var dataTable = converter.Convert(studentList, null, "F0", new List<ColumnDefine> {
-                new ColumnDefine("age","年龄" ),
-                 new ColumnDefine("name","姓名" )});
+                ColumnDefine.NormalColumn("age","年龄",false ),
+                   ColumnDefine.NormalColumn("name","姓名" ,false)});
             Assert.AreEqual("年龄", dataTable.Columns[0].Caption);
             Assert.AreEqual("name", dataTable.Columns[1].ColumnName);
         }
@@ -49,7 +49,7 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
             var studentList = new List<Student3> { new Student3 { Birthday = null }, new Student3 { Birthday = birthday } };
             DataTableConverter<Student3> converter = new DataTableConverter<Student3>();
             var dataTable = converter.Convert(studentList, null, "F0", new List<ColumnDefine> {
-                  ColumnDefine.DatetimeColumn("birthday","生日","yyyy-mm-dd") 
+                  ColumnDefine.DatetimeColumn("birthday","生日","yyyy-mm-dd",false) 
                   });
 
             Assert.AreEqual("生日", dataTable.Columns[0].Caption);
@@ -68,11 +68,11 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
                 new List<Order1114> { new Order1114 { Amount = 1234 } }
                 , null
                 , "F0"
-                , new List<ColumnDefine> {  ColumnDefine.AmountColumn( "Amount"  ,"数量")}).Rows[0][0]
+                , new List<ColumnDefine> {  ColumnDefine.AmountColumn( "Amount"  ,"数量",false)}).Rows[0][0]
                 );
-            Assert.AreEqual(1.2, converter.Convert(new List<Order1114> { new Order1114 { Amount = 1234 } }, null, "F1", new List<ColumnDefine> { ColumnDefine.AmountColumn("Amount", "数量") }).Rows[0][0]);
-            Assert.AreEqual(1.23, converter.Convert(new List<Order1114> { new Order1114 { Amount = 1234 } }, null, "F2", new List<ColumnDefine> { ColumnDefine.AmountColumn("Amount", "数量") }).Rows[0][0]);
-            Assert.AreEqual(1.234, converter.Convert(new List<Order1114> { new Order1114 { Amount = 1234 } }, null, "F3", new List<ColumnDefine> { ColumnDefine.AmountColumn("Amount", "数量") }).Rows[0][0]);
+            Assert.AreEqual(1.2, converter.Convert(new List<Order1114> { new Order1114 { Amount = 1234 } }, null, "F1", new List<ColumnDefine> { ColumnDefine.AmountColumn("Amount", "数量",false) }).Rows[0][0]);
+            Assert.AreEqual(1.23, converter.Convert(new List<Order1114> { new Order1114 { Amount = 1234 } }, null, "F2", new List<ColumnDefine> { ColumnDefine.AmountColumn("Amount", "数量",false) }).Rows[0][0]);
+            Assert.AreEqual(1.234, converter.Convert(new List<Order1114> { new Order1114 { Amount = 1234 } }, null, "F3", new List<ColumnDefine> { ColumnDefine.AmountColumn("Amount", "数量", false) }).Rows[0][0]);
 
         }
 
@@ -125,10 +125,10 @@ namespace PHLibrary.ExcelExportExcelCreator.Tests
         {
             var dataTable = new DataTable();
             DataColumn col1= new DataColumn("品名", typeof(string));
-            col1.ExtendedProperties["columnDefine"]=ColumnDefine.GroupColumn ("name","品名");
+            col1.ExtendedProperties["columnDefine"]=ColumnDefine.GroupColumn ("name","品名", false);
 
                 DataColumn col2 = new DataColumn("颜色", typeof(string)); 
-                col2.ExtendedProperties["columnDefine"] = ColumnDefine.GroupColumn("color", "颜色");
+                col2.ExtendedProperties["columnDefine"] = ColumnDefine.GroupColumn("color", "颜色", false);
 
             DataColumn col3 = new DataColumn("尺码", typeof(string));
             col3.ExtendedProperties["columnDefine"] = ColumnDefine.TwoDimensionalColumn("size", TwoDimensionalColumnType.Column);

@@ -185,7 +185,7 @@ namespace PHLibrary.ExcelExport
                     //create body 
                     FillSheetEpplusWithLoadRange(sheet, datatables[i], headerHeight, columnFormats, cellStyleSettings);
 
-                    sheet.Cells.AutoFitColumns();
+                 
 
                     LoadPictures(sheet, dataTable, headerHeight);
                 }
@@ -257,6 +257,7 @@ namespace PHLibrary.ExcelExport
             }
             //image
             //datetime 
+            sheet.Cells.AutoFitColumns();
             SetFormatForDateColumn(sheet, dataTable);
             SetHiddenForDateColumn(sheet, dataTable);
 

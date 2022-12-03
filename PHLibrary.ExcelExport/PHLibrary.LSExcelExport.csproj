@@ -9,7 +9,9 @@
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/phiree/PHLibrary</RepositoryUrl>
     <PackageProjectUrl>https://github.com/phiree/PHLibrary</PackageProjectUrl>
-    <PackageReleaseNotes>3.2
+    <PackageReleaseNotes>3.2.1
+更新依赖包
+3.2
 feat: normalColumn类型默认属性本身类型，toptable数字格式处理，toptable默认margin为0
 3.1
 排序委托参数中的id改为guid类型。
@@ -89,11 +91,11 @@ fix: 格式化没有应用到最后一行数据
     <Product>lianshang</Product>
     <PackageId>PHLibrary.LSExcelExport</PackageId>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Version>3.2</Version>
+    <Version>3.2.1</Version>
     <Company>4yankeji</Company>
     <Authors>yf</Authors>
-    <FileVersion>3.2</FileVersion>
-    <AssemblyVersion>3.2</AssemblyVersion>
+    <FileVersion>3.2.1</FileVersion>
+    <AssemblyVersion>3.2.1</AssemblyVersion>
     <Copyright>无版权</Copyright>
   </PropertyGroup>
 

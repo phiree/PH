@@ -19,50 +19,45 @@ namespace PHLibrary.Reflection
 
 
             IList<ColumnDefine> columns = new List<ColumnDefine>();
-            public ColumnDefineBuilder AddNormalColumn(string property, string display, bool shouldAdd = true)
+            public ColumnDefineBuilder AddNormalColumn(string property, string display,bool isHidden=false, bool shouldAdd = true)
             {
 
-                if (shouldAdd) columns.Add(ColumnDefine.NormalColumn(property, display));
+                if (shouldAdd) columns.Add(ColumnDefine.NormalColumn(property, display,isHidden));
                 return this;
             }
-            public ColumnDefineBuilder AddImageColumn(string property, string display, bool shouldAdd = true)
+            public ColumnDefineBuilder AddImageColumn(string property, string display, bool isHidden = false, bool shouldAdd = true)
             {
 
-                if (shouldAdd) columns.Add(ColumnDefine.ImageColumn(property, display));
+                if (shouldAdd) columns.Add(ColumnDefine.ImageColumn(property, display, isHidden));
                 return this;
             }
-            public ColumnDefineBuilder AddDatetimeColumn(string property, string display, string format, bool shouldAdd = true)
+            public ColumnDefineBuilder AddDatetimeColumn(string property, string display, string format, bool isHidden = false, bool shouldAdd = true)
             {
 
-                if (shouldAdd) columns.Add(ColumnDefine.DatetimeColumn(property, display, format));
+                if (shouldAdd) columns.Add(ColumnDefine.DatetimeColumn(property, display, format, isHidden));
                 return this;
             }
             public ColumnDefineBuilder AddTwoDimensionalColumns(string columnProperty, string columnGuidProperty, string rowProperty)
             {
-
+               
                 columns.Add(ColumnDefine.TwoDimensionalColumn(columnProperty, TwoDimensionalColumnType.Column));
-                columns.Add(ColumnDefine.TwoDimensionalColumn(columnGuidProperty, TwoDimensionalColumnType.ColumnGuid));
+                if (!string.IsNullOrEmpty(columnGuidProperty)) columns.Add(ColumnDefine.TwoDimensionalColumn(columnGuidProperty, TwoDimensionalColumnType.ColumnGuid));
                 columns.Add(ColumnDefine.TwoDimensionalColumn(rowProperty, TwoDimensionalColumnType.Row));
                 return this;
             }
-            public ColumnDefineBuilder AddAmountColumn(string property, string display, bool shouldAdd = true)
+            public ColumnDefineBuilder AddAmountColumn(string property, string display, bool isHidden = false, bool shouldAdd = true)
             {
 
-                if (shouldAdd) columns.Add(ColumnDefine.AmountColumn(property, display));
+                if (shouldAdd) columns.Add(ColumnDefine.AmountColumn(property, display, isHidden));
                 return this;
             }
-            public ColumnDefineBuilder AddGroupColumn(string property, string display, bool shouldAdd = true)
+            public ColumnDefineBuilder AddGroupColumn(string property, string display, bool isHidden = false, bool shouldAdd = true)
             {
 
-                if (shouldAdd) columns.Add(ColumnDefine.GroupColumn(property, display));
+                if (shouldAdd) columns.Add(ColumnDefine.GroupColumn(property, display, isHidden));
                 return this;
             }
-            public ColumnDefineBuilder AddHiddenColumn(string property, string display, bool shouldAdd = true)
-            {
-
-                if (shouldAdd) columns.Add(ColumnDefine.HiddenColumn(property, display));
-                return this;
-            }
+             
             public IList<ColumnDefine> Build()
             {
                 return columns;
@@ -129,19 +124,11 @@ namespace PHLibrary.Reflection
             /// <param name="propertyName"></param>
             /// <param name="displayName"></param>
             /// <returns></returns>
-            public static ColumnDefine ImageColumn(string propertyName, string displayName)
+            public static ColumnDefine ImageColumn(string propertyName, string displayName,bool isHidden)
             {
-                return new ColumnDefine(propertyName, displayName, false, false, true, "", TwoDimensionalColumnType.None, false);
+                return new ColumnDefine(propertyName, displayName, false, isHidden, true, "", TwoDimensionalColumnType.None, false);
             }
-            /// <summary>
-            /// 图片列
-            /// </summary>
-            /// <param name="propertyName"></param>
-            /// <returns></returns>
-            public static ColumnDefine ImageColumn(string propertyName)
-            {
-                return ColumnDefine.ImageColumn(propertyName, propertyName);//, false, false, true, "", TwoDimensionalColumnType.None, false);
-            }
+    
             /// <summary>
             /// 时间列
             /// </summary>
@@ -149,9 +136,9 @@ namespace PHLibrary.Reflection
             /// <param name="displayName"></param>
             /// <param name="datetimeFormat">时间格式字符串</param>
             /// <returns></returns>
-            public static ColumnDefine DatetimeColumn(string propertyName, string displayName, string datetimeFormat)
+            public static ColumnDefine DatetimeColumn(string propertyName, string displayName, string datetimeFormat, bool isHidden)
             {
-                return new ColumnDefine(propertyName, displayName, false, false, false, datetimeFormat, TwoDimensionalColumnType.None, false);
+                return new ColumnDefine(propertyName, displayName, false, isHidden, false, datetimeFormat, TwoDimensionalColumnType.None, false);
             }
             /// <summary>
             /// 二维列
@@ -170,11 +157,11 @@ namespace PHLibrary.Reflection
             /// <param name="propertyName"></param>
             /// <param name="displayName"></param>
             /// <returns></returns>
-            public static ColumnDefine AmountColumn(string propertyName, string displayName)
+            public static ColumnDefine AmountColumn(string propertyName, string displayName, bool isHidden)
 
             {
 
-                return new ColumnDefine(propertyName, displayName, false, false, false, "", TwoDimensionalColumnType.None, true);
+                return new ColumnDefine(propertyName, displayName, false, isHidden, false, "", TwoDimensionalColumnType.None, true);
             }
             /// <summary>
             /// 一般列
@@ -182,9 +169,9 @@ namespace PHLibrary.Reflection
             /// <param name="propertyName"></param>
             /// <param name="displayName"></param>
             /// <returns></returns>
-            public static ColumnDefine NormalColumn(string propertyName, string displayName)
+            public static ColumnDefine NormalColumn(string propertyName, string displayName, bool isHidden)
             {
-                return new ColumnDefine(propertyName, displayName, false);
+                return new ColumnDefine(propertyName, displayName, false, isHidden, false, "", TwoDimensionalColumnType.None, false);
             }
             /// <summary>
             /// 二维数据 用来分组的列
@@ -192,9 +179,10 @@ namespace PHLibrary.Reflection
             /// <param name="propertyName"></param>
             /// <param name="displayName"></param>
             /// <returns></returns>
-            public static ColumnDefine GroupColumn(string propertyName, string displayName)
+            public static ColumnDefine GroupColumn(string propertyName, string displayName, bool isHidden)
             {
-                return new ColumnDefine(propertyName, displayName, true);
+                return new ColumnDefine(propertyName, displayName, true, isHidden, false, "", TwoDimensionalColumnType.None, false);
+
             }
             public static ColumnDefine HiddenColumn(string propertyName, string displayName)
             {
@@ -202,11 +190,8 @@ namespace PHLibrary.Reflection
             }
 
 
-            public ColumnDefine(string propertyName) : this(propertyName, propertyName, false) { }
-            public ColumnDefine(string propertyName, string displayName) : this(propertyName, displayName, false) { }
-            public ColumnDefine(string propertyName, string displayName, bool isInGroup)
-                : this(propertyName, displayName, isInGroup, false, false, "", TwoDimensionalColumnType.None, false)
-            { }
+            
+             
             public ColumnDefine(string propertyName, string displayName, bool isInGroup, bool hide, bool isImage, string format
                 , TwoDimensionalColumnType twoDimensionalColumnType, bool isAmount)
             {

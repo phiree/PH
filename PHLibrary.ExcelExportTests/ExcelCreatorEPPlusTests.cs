@@ -49,9 +49,9 @@ namespace PHLibrary.ExcelExport.Tests
             var stream = excelCreator.Create(
                 list,
                 new List<ColumnDefine> {
-                     new ColumnDefine("age","年龄" ),
-                     new ColumnDefine("name","姓名" ),
-                     ColumnDefine.ImageColumn("picture","tupian" )
+                     ColumnDefine.NormalColumn("age","年龄",false ),
+                   ColumnDefine.NormalColumn("name","姓名" ,false),
+            ColumnDefine.ImageColumn("picture","tupian" , false)
                      }, "sheet1",
                  null, null, "F3");
             using (var file = new FileStream("CreateForImages" + Guid.NewGuid() + ".xlsx", FileMode.Create, FileAccess.Write))
@@ -135,9 +135,9 @@ namespace PHLibrary.ExcelExport.Tests
             var stream = excelCreator.Create(list,
                   new ColumnDefineBuilder()
                     .AddGroupColumn("Name", "品名")
-                    .AddHiddenColumn("PGuid", "")
+                    .AddNormalColumn("PGuid", "",isHidden:true)
                     .AddAmountColumn("Price", "价格")
-                    .AddGroupColumn("Color", "颜色",false)
+                    .AddGroupColumn("Color", "颜色",shouldAdd: false)
                     .AddTwoDimensionalColumns("Size", "SizeGuid", "Amount")
                     .AddImageColumn("Picture", "图片")
                   .Build(),
@@ -191,7 +191,7 @@ namespace PHLibrary.ExcelExport.Tests
             var stream = excelCreator.Create(list,
                 new ColumnDefineBuilder()
                   .AddGroupColumn("Name", "品名")
-                  .AddHiddenColumn("PGuid", "")
+                  .AddNormalColumn("Code", "Code", isHidden:true)
                   .AddAmountColumn("Price", "价格")
                    .AddGroupColumn("Color", "颜色")
                    .AddTwoDimensionalColumns("Size", "", "Amount")
@@ -237,8 +237,8 @@ namespace PHLibrary.ExcelExport.Tests
                = new ExcelCreatorEPPlus();
             var stream = excelCreator.Create(list,
 
-                  new List<ColumnDefine> {new ColumnDefine("age","年龄"),
-                new ColumnDefine( "name", "姓名"),
+                  new List<ColumnDefine> {  ColumnDefine.NormalColumn("age","年龄",false),
+                  ColumnDefine.NormalColumn( "name", "姓名",false),
 
               },
 
@@ -281,13 +281,14 @@ namespace PHLibrary.ExcelExport.Tests
                     {
                         Data1 = list
                         ,
-                        PropertiesToDisplay1 = new List<ColumnDefine> { new ColumnDefine("age"), ColumnDefine.ImageColumn("picture") }
+                        PropertiesToDisplay1 = new List<ColumnDefine> {   ColumnDefine.NormalColumn("age","age",false), ColumnDefine.NormalColumn("name", "name", false) }
                         ,
                         SheetName1 = "表格1"
                         ,
                         Data2 = list2
                         ,
-                        PropertiesToDisplay2 = new List<ColumnDefine> { new ColumnDefine("age"), new ColumnDefine("name"), ColumnDefine.ImageColumn("picture") }
+                        PropertiesToDisplay2 = new List<ColumnDefine> { ColumnDefine.NormalColumn("age", "age", false)
+                        , ColumnDefine.NormalColumn("name", "name", false), ColumnDefine.ImageColumn("picture","picture",false) }
                         ,
                         SheetName2 = "表格2"
                     }
@@ -323,7 +324,7 @@ namespace PHLibrary.ExcelExport.Tests
                = new ExcelCreatorEPPlus();
             var stream = excelCreator.Create(
                 list
-                , new List<ColumnDefine> { new ColumnDefine("begin"), new ColumnDefine("end") }
+                , new List<ColumnDefine> {   ColumnDefine.NormalColumn("begin","begin",false),   ColumnDefine.NormalColumn("end","end",false) }
                 , null
                 , null
 

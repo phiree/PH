@@ -124,7 +124,7 @@ namespace PHLibrary.Reflection
             /// <param name="propertyName"></param>
             /// <param name="displayName"></param>
             /// <returns></returns>
-            public static ColumnDefine ImageColumn(string propertyName, string displayName,bool isHidden)
+            public static ColumnDefine ImageColumn(string propertyName, string displayName,bool isHidden = false)
             {
                 return new ColumnDefine(propertyName, displayName, false, isHidden, true, "", TwoDimensionalColumnType.None, false);
             }
@@ -136,7 +136,7 @@ namespace PHLibrary.Reflection
             /// <param name="displayName"></param>
             /// <param name="datetimeFormat">时间格式字符串</param>
             /// <returns></returns>
-            public static ColumnDefine DatetimeColumn(string propertyName, string displayName, string datetimeFormat, bool isHidden)
+            public static ColumnDefine DatetimeColumn(string propertyName, string displayName, string datetimeFormat, bool isHidden = false)
             {
                 return new ColumnDefine(propertyName, displayName, false, isHidden, false, datetimeFormat, TwoDimensionalColumnType.None, false);
             }
@@ -157,7 +157,7 @@ namespace PHLibrary.Reflection
             /// <param name="propertyName"></param>
             /// <param name="displayName"></param>
             /// <returns></returns>
-            public static ColumnDefine AmountColumn(string propertyName, string displayName, bool isHidden)
+            public static ColumnDefine AmountColumn(string propertyName, string displayName, bool isHidden = false)
 
             {
 
@@ -169,7 +169,7 @@ namespace PHLibrary.Reflection
             /// <param name="propertyName"></param>
             /// <param name="displayName"></param>
             /// <returns></returns>
-            public static ColumnDefine NormalColumn(string propertyName, string displayName, bool isHidden)
+            public static ColumnDefine NormalColumn(string propertyName, string displayName, bool isHidden = false)
             {
                 return new ColumnDefine(propertyName, displayName, false, isHidden, false, "", TwoDimensionalColumnType.None, false);
             }
@@ -179,7 +179,7 @@ namespace PHLibrary.Reflection
             /// <param name="propertyName"></param>
             /// <param name="displayName"></param>
             /// <returns></returns>
-            public static ColumnDefine GroupColumn(string propertyName, string displayName, bool isHidden)
+            public static ColumnDefine GroupColumn(string propertyName, string displayName, bool isHidden = false)
             {
                 return new ColumnDefine(propertyName, displayName, true, isHidden, false, "", TwoDimensionalColumnType.None, false);
 
